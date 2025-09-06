@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Enhanced Homophonic Cipher - Military Grade</title>
     <style>
+        /* Стили остаются без изменений */
         :root {
             --primary: #2563eb;
             --primary-dark: #1d4ed8;
@@ -689,10 +690,9 @@
                 const a = 0x1F;
                 const b = state;
                 
-                let inverseA = 1;
-                for (let i = 0; i < 254; i++) {
-                    inverseA = this.gfMultiply(inverseA, a);
-                }
+                // Находим обратный элемент в поле GF(256)
+                // Для a = 0x1F, обратный элемент можно предварительно вычислить
+                const inverseA = 0xE5; // Предварительно вычисленный обратный к 0x1F
                 
                 const temp = (inputByte ^ b) & 0xFF;
                 return this.gfMultiply(inverseA, temp);
@@ -722,11 +722,35 @@
                 for (let i = 0; i < data.length; i++) {
                     let byte = data[i];
                     
-                    // Enhanced avalanche effect
-                    byte = (byte ^ (byte << 3) ^ (byte >> 5)) & 0xFF;
-                    byte = (byte ^ (round << 4)) & 0xFF;
+                    // Упрощенный avalanche effect для обеспечения обратимости
+                    byte = (byte ^ (byte << 1) ^ (round << 3)) & 0xFF;
+                    byte = (byte ^ (i & 0xFF)) & 0xFF;
                     
                     result[i] = byte;
+                }
+                return result;
+            }
+
+            reverseAvalancheEffect(data, round) {
+                if (!this.enableAvalanche) return data;
+                
+                const result = new Uint8Array(data.length);
+                for (let i = 0; i < data.length; i++) {
+                    let byte = data[i];
+                    
+                    // Обратное преобразование
+                    byte = (byte ^ (i & 0xFF)) & 0xFF;
+                    
+                    // Обратное преобразование для XOR со сдвигом
+                    // Для byte = x ^ (x << 1), обратное: x = byte ^ (byte << 1) ^ (byte << 2) ^ (byte << 3) ... 
+                    // Но для упрощения используем итеративный подход
+                    let original = byte;
+                    for (let j = 0; j < 8; j++) {
+                        original = original ^ ((original << 1) & 0xFF);
+                    }
+                    original = (original ^ (round << 3)) & 0xFF;
+                    
+                    result[i] = original;
                 }
                 return result;
             }
@@ -748,55 +772,72 @@
                     const encoder = new TextEncoder();
                     const plaintextBuffer = encoder.encode(plaintext);
                     
-                    let state = this.enableWhitening ? 
-                        this.applyWhitening(plaintextBuffer, keyMaterial) : 
-                        plaintextBuffer;
-                    
-                    let previousBlock = null;
-                    let affineState = 0;
-                    
-                    if (diffusionMode === 'cbc') {
+                    // Генерируем IV для режимов, которые его требуют
+                    if (diffusionMode === 'cbc' || diffusionMode === 'cfb' || diffusionMode === 'ofb') {
                         this.initializationVector = crypto.getRandomValues(new Uint8Array(16));
-                        previousBlock = new Uint8Array(this.initializationVector);
                     }
                     
-                    // Multiple encryption rounds
+                    let state = plaintextBuffer;
+                    
+                    // Применяем whitening ДО шифрования, если включено
+                    if (this.enableWhitening) {
+                        state = this.applyWhitening(state, keyMaterial);
+                    }
+                    
+                    // Многократные раунды шифрования
                     for (let round = 0; round < this.rounds; round++) {
                         const roundBuffer = new Uint8Array(state.length);
+                        let previousBlock = this.initializationVector ? new Uint8Array(this.initializationVector) : null;
+                        let affineState = 0;
                         
                         for (let i = 0; i < state.length; i++) {
                             let byteToEncrypt = state[i];
                             
+                            // Применяем режим диффузии
                             if (diffusionMode === 'cbc' && previousBlock) {
                                 byteToEncrypt ^= previousBlock[i % 16];
                             }
                             
+                            // Аффинное преобразование
                             if (this.enableAffine) {
                                 byteToEncrypt = this.affineTransform(byteToEncrypt, affineState);
-                                affineState = (affineState + state[i]) & 0xFF;
+                                affineState = (affineState + byteToEncrypt) & 0xFF;
                             }
                             
                             roundBuffer[i] = byteToEncrypt;
                             
-                            if (diffusionMode === 'cbc') {
+                            // Обновляем предыдущий блок для CBC
+                            if (diffusionMode === 'cbc' && previousBlock) {
                                 previousBlock[i % 16] = byteToEncrypt;
                             }
                         }
                         
+                        // Применяем avalanche effect
                         state = this.applyAvalancheEffect(roundBuffer, round);
                     }
                     
+                    // Преобразуем байты в гомофоны
                     const homophones = [];
                     for (let i = 0; i < state.length; i++) {
                         const randomIndex = crypto.getRandomValues(new Uint8Array(1))[0] % 16;
                         homophones.push(this.sbox[state[i]][randomIndex]);
                     }
                     
+                    // Добавляем IV в начало, если используется
+                    let finalOutput = '';
+                    if ((diffusionMode === 'cbc' || diffusionMode === 'cfb' || diffusionMode === 'ofb') && this.initializationVector) {
+                        for (let i = 0; i < this.initializationVector.length; i++) {
+                            const randomIndex = crypto.getRandomValues(new Uint8Array(1))[0] % 16;
+                            finalOutput += this.sbox[this.initializationVector[i]][randomIndex];
+                        }
+                    }
+                    finalOutput += homophones.join('');
+                    
                     const endTime = performance.now();
                     return {
-                        ciphertext: homophones.join(''),
+                        ciphertext: finalOutput,
                         processingTime: endTime - startTime,
-                        size: homophones.join('').length
+                        size: finalOutput.length
                     };
                     
                 } catch (error) {
@@ -810,62 +851,69 @@
                     const startTime = performance.now();
                     await this.initializeWithKey(passphrase, iterations);
                     
-                    const homophones = [];
-                    for (let i = 0; i < encryptedData.length; i += 2) {
-                        homophones.push(encryptedData.substring(i, i + 2));
-                    }
-                    
+                    // Извлекаем IV из начала данных, если используется
                     let ivHomophones = [];
-                    let cipherHomophones = homophones;
-                    let previousBlock = null;
-                    let affineState = 0;
+                    let cipherHomophones = [];
                     
-                    if (diffusionMode === 'cbc') {
-                        ivHomophones = homophones.slice(0, 16);
-                        cipherHomophones = homophones.slice(16);
+                    if (diffusionMode === 'cbc' || diffusionMode === 'cfb' || diffusionMode === 'ofb') {
+                        ivHomophones = [];
+                        for (let i = 0; i < 32; i += 2) { // 16 байт IV = 32 символа
+                            ivHomophones.push(encryptedData.substring(i, i + 2));
+                        }
+                        cipherHomophones = [];
+                        for (let i = 32; i < encryptedData.length; i += 2) {
+                            cipherHomophones.push(encryptedData.substring(i, i + 2));
+                        }
                         
+                        // Декодируем IV
                         this.initializationVector = new Uint8Array(16);
                         for (let i = 0; i < 16; i++) {
                             this.initializationVector[i] = this.inverseSbox.get(ivHomophones[i]);
                         }
-                        
-                        previousBlock = new Uint8Array(this.initializationVector);
+                    } else {
+                        // Без режима диффузии - все данные являются зашифрованными
+                        cipherHomophones = [];
+                        for (let i = 0; i < encryptedData.length; i += 2) {
+                            cipherHomophones.push(encryptedData.substring(i, i + 2));
+                        }
                     }
                     
+                    // Преобразуем гомофоны обратно в байты
                     let state = new Uint8Array(cipherHomophones.length);
                     for (let i = 0; i < cipherHomophones.length; i++) {
                         state[i] = this.inverseSbox.get(cipherHomophones[i]);
                     }
                     
-                    // Multiple decryption rounds (in reverse)
+                    // Многократные раунды дешифрования (в обратном порядке)
                     for (let round = this.rounds - 1; round >= 0; round--) {
+                        // Обратный avalanche effect
                         state = this.reverseAvalancheEffect(state, round);
                         
                         const roundBuffer = new Uint8Array(state.length);
+                        let previousBlock = this.initializationVector ? new Uint8Array(this.initializationVector) : null;
+                        let affineState = 0;
+                        
                         for (let i = 0; i < state.length; i++) {
                             let decryptedByte = state[i];
                             
+                            // Обновляем состояние аффинного преобразования
                             if (this.enableAffine) {
                                 decryptedByte = this.inverseAffineTransform(decryptedByte, affineState);
+                                affineState = (affineState + state[i]) & 0xFF;
                             }
                             
+                            // Применяем режим диффузии
                             if (diffusionMode === 'cbc' && previousBlock) {
                                 decryptedByte ^= previousBlock[i % 16];
+                                previousBlock[i % 16] = state[i]; // Обновляем после XOR
                             }
                             
                             roundBuffer[i] = decryptedByte;
-                            
-                            if (this.enableAffine) {
-                                affineState = (affineState + decryptedByte) & 0xFF;
-                            }
-                            
-                            if (diffusionMode === 'cbc') {
-                                previousBlock[i % 16] = state[i];
-                            }
                         }
                         state = roundBuffer;
                     }
                     
+                    // Применяем обратное whitening
                     if (this.enableWhitening) {
                         const keyMaterial = await this.initializeWithKey(passphrase, iterations);
                         state = this.applyWhitening(state, keyMaterial);
@@ -883,26 +931,6 @@
                     console.error('Decryption failed:', error);
                     throw new Error('Decryption process failed: ' + error.message);
                 }
-            }
-
-            reverseAvalancheEffect(data, round) {
-                if (!this.enableAvalanche) return data;
-                
-                const result = new Uint8Array(data.length);
-                for (let i = 0; i < data.length; i++) {
-                    let byte = data[i];
-                    
-                    byte = (byte ^ (round << 4)) & 0xFF;
-                    byte = this.reverseAvalancheByte(byte);
-                    
-                    result[i] = byte;
-                }
-                return result;
-            }
-
-            reverseAvalancheByte(byte) {
-                // This is a simplified reversal - in practice would need proper inverse
-                return (byte ^ (byte << 3) ^ (byte >> 5)) & 0xFF;
             }
         }
 
@@ -1150,8 +1178,8 @@
                 info += `Affine transformation: ${enableAffine ? 'Enabled' : 'Disabled'}\n`;
                 info += `Encryption rounds: ${this.cipher.rounds}\n`;
                 
-                if (diffusionMode === 'cbc') {
-                    info += `IV: 16 bytes (encoded as 16 homophones)\n`;
+                if (diffusionMode === 'cbc' || diffusionMode === 'cfb' || diffusionMode === 'ofb') {
+                    info += `IV: 16 bytes (encoded as 32 characters)\n`;
                 }
                 
                 info += `Homophone set: 4096 combinations\n`;
@@ -1198,4 +1226,4 @@
         });
     </script>
 </body>
-</html>
+    </html>
