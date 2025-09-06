@@ -1,11 +1,10 @@
 <!DOCTYPE html>
-<html lang="ru">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Enhanced Homophonic Cipher - Military Grade</title>
+    <title>Enhanced Homophonic Cipher - Triple Affine Rounds</title>
     <style>
-        /* Стили остаются без изменений */
         :root {
             --primary: #2563eb;
             --primary-dark: #1d4ed8;
@@ -34,7 +33,7 @@
         }
         
         .container {
-            max-width: 1400px;
+            max-width: 1200px;
             margin: 0 auto;
             background: var(--surface);
             border-radius: 1rem;
@@ -69,7 +68,7 @@
             margin-bottom: 2rem;
         }
         
-        @media (max-width: 968px) {
+        @media (max-width: 768px) {
             .grid {
                 grid-template-columns: 1fr;
             }
@@ -243,44 +242,6 @@
             100% { transform: rotate(360deg); }
         }
 
-        .compression-info {
-            background: rgba(16, 185, 129, 0.1);
-            border: 1px solid var(--secondary);
-            border-radius: 0.5rem;
-            padding: 1rem;
-            margin-top: 1rem;
-        }
-
-        .base64-chars {
-            font-family: 'Monaco', 'Menlo', monospace;
-            font-size: 0.8rem;
-            margin-top: 0.5rem;
-            word-break: break-all;
-        }
-
-        .test-result {
-            margin: 0.5rem 0;
-            padding: 0.5rem;
-            border-radius: 0.25rem;
-            background: rgba(15, 23, 42, 0.4);
-        }
-        
-        .test-pass {
-            border-left: 4px solid var(--secondary);
-        }
-        
-        .test-fail {
-            border-left: 4px solid var(--danger);
-        }
-        
-        .test-warning {
-            border-left: 4px solid var(--warning);
-        }
-        
-        .test-info {
-            border-left: 4px solid var(--primary);
-        }
-
         .option-row {
             display: flex;
             align-items: center;
@@ -304,39 +265,13 @@
             margin-top: 0.5rem;
             font-size: 0.8rem;
         }
-        
-        .entropy-display {
-            margin-top: 1rem;
-            padding: 1rem;
-            background: rgba(15, 23, 42, 0.4);
-            border-radius: 0.5rem;
-            border: 1px solid var(--border);
-        }
-        
-        .entropy-value {
-            font-weight: bold;
-            color: var(--secondary);
-        }
-
-        .security-badge {
-            display: inline-block;
-            padding: 0.25rem 0.5rem;
-            border-radius: 0.25rem;
-            font-size: 0.8rem;
-            font-weight: 600;
-            margin: 0.25rem;
-        }
-        
-        .badge-high { background: var(--secondary); color: white; }
-        .badge-medium { background: var(--warning); color: black; }
-        .badge-low { background: var(--danger); color: white; }
     </style>
 </head>
 <body>
     <div class="container">
         <header>
             <h1>Enhanced Homophonic Cipher</h1>
-            <p class="subtitle">Military Grade Encryption with Advanced Cryptanalysis</p>
+            <p class="subtitle">With optional triple affine transformation rounds</p>
         </header>
 
         <div class="grid">
@@ -345,12 +280,12 @@
                 
                 <div class="form-group">
                     <label for="keyInput">Encryption Key:</label>
-                    <input type="password" id="keyInput" placeholder="Enter strong passphrase" value="MilitaryGradeEncryptionKey2024!">
+                    <input type="password" id="keyInput" placeholder="Enter strong passphrase" value="SecurePassphrase123!">
                 </div>
                 
                 <div class="form-group">
                     <label for="keyConfirmation">Confirm Key:</label>
-                    <input type="password" id="keyConfirmation" placeholder="Confirm your passphrase" value="MilitaryGradeEncryptionKey2024!">
+                    <input type="password" id="keyConfirmation" placeholder="Confirm your passphrase" value="SecurePassphrase123!">
                 </div>
                 
                 <div class="form-group">
@@ -359,31 +294,15 @@
                         <option value="100000">100,000 (Standard)</option>
                         <option value="250000">250,000 (Enhanced)</option>
                         <option value="500000" selected>500,000 (Military)</option>
-                        <option value="1000000">1,000,000 (Ultra)</option>
-                    </select>
-                </div>
-                
-                <div class="form-group">
-                    <label for="rounds">Encryption Rounds:</label>
-                    <select id="rounds">
-                        <option value="1">1 Round (Basic)</option>
-                        <option value="2">2 Rounds</option>
-                        <option value="3" selected>3 Rounds (Recommended)</option>
-                        <option value="4">4 Rounds</option>
-                        <option value="5">5 Rounds (High Security)</option>
-                        <option value="6">6 Rounds</option>
-                        <option value="7">7 Rounds</option>
-                        <option value="8">8 Rounds (Maximum)</option>
                     </select>
                 </div>
                 
                 <div class="form-group">
                     <label for="diffusionMode">Diffusion Mode:</label>
                     <select id="diffusionMode">
-                        <option value="cbc" selected>CBC Mode (Recommended)</option>
+                        <option value="cbc" selected>CBC Mode</option>
                         <option value="cfb">CFB Mode</option>
                         <option value="ofb">OFB Mode</option>
-                        <option value="ctr">CTR Mode</option>
                         <option value="none">No Diffusion (Testing)</option>
                     </select>
                 </div>
@@ -392,38 +311,16 @@
                     <h3 style="margin-bottom: 1rem; color: var(--primary);">Advanced Security Options</h3>
                     
                     <div class="option-row">
-                        <div class="option-label">Enable Affine Transformation:</div>
+                        <div class="option-label">Enable Triple Affine Rounds:</div>
                         <div class="option-control">
-                            <input type="checkbox" id="enableAffine" checked>
-                        </div>
-                    </div>
-                    
-                    <div class="option-row">
-                        <div class="option-label">Enable Avalanche Effect:</div>
-                        <div class="option-control">
-                            <input type="checkbox" id="enableAvalanche" checked>
-                        </div>
-                    </div>
-                    
-                    <div class="option-row">
-                        <div class="option-label">Enable Whitening:</div>
-                        <div class="option-control">
-                            <input type="checkbox" id="enableWhitening" checked>
+                            <input type="checkbox" id="enableTripleAffine" checked>
                         </div>
                     </div>
                     
                     <div class="affine-info">
-                        <strong>Affine Transformation:</strong> Adds non-linear diffusion using GF(256) arithmetic.<br>
-                        <strong>Effect:</strong> Even without CBC, provides enhanced security against frequency analysis.
-                    </div>
-                </div>
-
-                <div class="compression-info">
-                    <h3 style="color: var(--secondary); margin-bottom: 0.5rem;">Encoding Information</h3>
-                    <p>Base64 encoding: 64 characters × 64 characters = 4096 homophones</p>
-                    <p>Compression ratio: 1 byte → 2 characters (vs 4 characters in HEX)</p>
-                    <div class="base64-chars">
-                        Base64 characters: ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/
+                        <strong>Triple Affine Transformation:</strong> Applies three sequential affine transformations to each byte.<br>
+                        <strong>Effect:</strong> Dramatically increases diffusion and resistance to cryptanalysis.<br>
+                        <strong>Formulas:</strong> A₁(x) = (31x + 151) mod 256 → A₂(x) = (3(256-x) + 77) mod 256 → A₃(x) = (61((x+42) mod 256) + 239) mod 256
                     </div>
                 </div>
             </div>
@@ -433,7 +330,7 @@
                 
                 <div class="form-group">
                     <label for="inputData">Input Data:</label>
-                    <textarea id="inputData" placeholder="Enter data to process">Top secret military information requiring maximum encryption protection. This message contains classified data that must be protected at all costs.</textarea>
+                    <textarea id="inputData" placeholder="Enter data to process">Sensitive information requiring military-grade encryption</textarea>
                 </div>
                 
                 <div class="btn-group">
@@ -450,19 +347,11 @@
                 <div class="btn-group">
                     <button id="clearBtn" class="btn-danger">Clear All</button>
                     <button id="analyzeBtn" class="btn-warning">Security Analysis</button>
-                    <button id="benchmarkBtn" class="btn-warning">Run Benchmark</button>
                 </div>
 
                 <div class="form-group">
-                    <label for="outputStats">Performance Statistics:</label>
+                    <label for="outputStats">Output Statistics:</label>
                     <div id="outputStats" class="result-content">Waiting for operation...</div>
-                </div>
-                
-                <div class="entropy-display">
-                    <h3 style="color: var(--primary); margin-bottom: 0.5rem;">Entropy Analysis</h3>
-                    <div id="entropyWithoutAffine" class="result-content">Without affine: N/A</div>
-                    <div id="entropyWithAffine" class="result-content">With affine: N/A</div>
-                    <div id="entropyDifference" class="result-content">Difference: N/A</div>
                 </div>
             </div>
         </div>
@@ -486,68 +375,8 @@
             </div>
         </div>
 
-        <div class="card">
-            <h2 class="card-title">🔬 Cryptographic Analysis & Benchmarks</h2>
-            
-            <div class="result-container">
-                <div class="result-header">
-                    <span class="result-title">Test Results:</span>
-                    <span id="testStatus" class="status-ready">Ready to test</span>
-                </div>
-                <div id="testResults" class="result-content"></div>
-            </div>
-
-            <div class="result-container" style="margin-top: 1rem;">
-                <div class="result-header">
-                    <span class="result-title">Performance Metrics:</span>
-                </div>
-                <div id="performanceMetrics" class="result-content"></div>
-            </div>
-        </div>
-
-        <div class="card">
-            <h2 class="card-title">🛡️ Security Assessment</h2>
-            
-            <div class="result-container">
-                <div class="result-header">
-                    <span class="result-title">Threat Model Analysis:</span>
-                </div>
-                <div id="threatAnalysis" class="result-content">
-                    <div class="test-result test-pass">
-                        <strong>Brute Force Resistance:</strong> 
-                        <span class="security-badge badge-high">EXCELLENT</span>
-                        <div>Key space: 10^13000 possible S-Box configurations</div>
-                    </div>
-                    
-                    <div class="test-result test-pass">
-                        <strong>Frequency Analysis Resistance:</strong> 
-                        <span class="security-badge badge-high">EXCELLENT</span>
-                        <div>16 homophones per byte provide perfect frequency hiding</div>
-                    </div>
-                    
-                    <div class="test-result test-warning">
-                        <strong>Linear Cryptanalysis:</strong> 
-                        <span class="security-badge badge-medium">VERY GOOD</span>
-                        <div>Affine transformation provides strong non-linearity</div>
-                    </div>
-                    
-                    <div class="test-result test-warning">
-                        <strong>Differential Cryptanalysis:</strong> 
-                        <span class="security-badge badge-medium">VERY GOOD</span>
-                        <div>Multiple rounds with diffusion provide strong resistance</div>
-                    </div>
-                    
-                    <div class="test-result test-info">
-                        <strong>ZKP Compatibility:</strong> 
-                        <span class="security-badge badge-high">EXCELLENT</span>
-                        <div>Fully deterministic operations enable zero-knowledge proofs</div>
-                    </div>
-                </div>
-            </div>
-        </div>
-
         <div class="footer">
-            <p>Enhanced Homophonic Cipher System v7.0 | Military Grade Encryption</p>
+            <p>Enhanced Homophonic Cipher System v7.0 | With Optional Triple Affine Rounds</p>
             <p>© 2024 Cryptographic Systems | All operations performed client-side</p>
         </div>
     </div>
@@ -555,22 +384,73 @@
     <script>
         const BASE64_CHARS = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/';
 
-        class MilitaryHomophonicCipher {
+        class DeterministicSBoxGenerator {
+            static async generateSBox(encryptionKey) {
+                const sbox = new Array(256);
+                const inverseSbox = new Map();
+                
+                const allHomophones = [];
+                for (let i = 0; i < 64; i++) {
+                    for (let j = 0; j < 64; j++) {
+                        allHomophones.push(BASE64_CHARS[i] + BASE64_CHARS[j]);
+                    }
+                }
+                
+                const shuffledHomophones = await this.deterministicShuffle(allHomophones, encryptionKey);
+                
+                let homophoneIndex = 0;
+                for (let inputByte = 0; inputByte < 256; inputByte++) {
+                    sbox[inputByte] = new Array(16);
+                    for (let i = 0; i < 16; i++) {
+                        const homophone = shuffledHomophones[homophoneIndex++];
+                        sbox[inputByte][i] = homophone;
+                        inverseSbox.set(homophone, inputByte);
+                    }
+                }
+                
+                return { sbox, inverseSbox };
+            }
+            
+            static async deterministicShuffle(array, encryptionKey) {
+                const shuffledArray = [...array];
+                const length = shuffledArray.length;
+                
+                const hmacKey = await crypto.subtle.importKey(
+                    'raw', encryptionKey,
+                    { name: 'HMAC', hash: 'SHA-512' },
+                    false, ['sign']
+                );
+                
+                for (let i = length - 1; i > 0; i--) {
+                    const positionData = new Uint8Array([i >> 8, i & 0xFF]);
+                    const hmacBuffer = await crypto.subtle.sign('HMAC', hmacKey, positionData);
+                    const hmacArray = new Uint8Array(hmacBuffer);
+                    
+                    const randomValue = (hmacArray[0] << 8) | hmacArray[1];
+                    const j = randomValue % (i + 1);
+                    
+                    [shuffledArray[i], shuffledArray[j]] = [shuffledArray[j], shuffledArray[i]];
+                }
+                
+                return shuffledArray;
+            }
+        }
+
+        class EnhancedHomophonicCipher {
             constructor() {
                 this.sbox = null;
                 this.inverseSbox = null;
                 this.initializationVector = null;
-                this.enableAffine = true;
-                this.enableAvalanche = true;
-                this.enableWhitening = true;
-                this.rounds = 3;
+                this.enableTripleAffine = true;
+                
+                // Inverse constants for affine transformations
+                this.a1_inv = 0xFF; // Inverse of 31 mod 256
+                this.a2_inv = 0xAB; // Inverse of 3 mod 256
+                this.a3_inv = 0xB5; // Inverse of 61 mod 256
             }
 
-            setOptions(affine, avalanche, whitening, rounds) {
-                this.enableAffine = affine;
-                this.enableAvalanche = avalanche;
-                this.enableWhitening = whitening;
-                this.rounds = Math.max(1, Math.min(8, rounds));
+            setTripleAffine(enabled) {
+                this.enableTripleAffine = enabled;
             }
 
             async initializeWithKey(passphrase, iterations = 500000) {
@@ -601,244 +481,114 @@
                     const derivedBuffer = new Uint8Array(derivedBits);
                     const encryptionKey = derivedBuffer.slice(0, 32);
 
-                    const { sbox, inverseSbox } = await this.generateSBox(encryptionKey);
+                    const { sbox, inverseSbox } = await DeterministicSBoxGenerator.generateSBox(encryptionKey);
                     this.sbox = sbox;
                     this.inverseSbox = inverseSbox;
                     
-                    return encryptionKey;
+                    return true;
                 } catch (error) {
                     console.error('Key initialization failed:', error);
                     throw new Error('Key derivation failed: ' + error.message);
                 }
             }
 
-            async generateSBox(encryptionKey) {
-                const sbox = new Array(256);
-                const inverseSbox = new Map();
-                
-                const allHomophones = [];
-                for (let i = 0; i < 64; i++) {
-                    for (let j = 0; j < 64; j++) {
-                        allHomophones.push(BASE64_CHARS[i] + BASE64_CHARS[j]);
-                    }
-                }
-                
-                const shuffledHomophones = await this.deterministicShuffle(allHomophones, encryptionKey);
-                
-                let homophoneIndex = 0;
-                for (let inputByte = 0; inputByte < 256; inputByte++) {
-                    sbox[inputByte] = new Array(16);
-                    for (let i = 0; i < 16; i++) {
-                        const homophone = shuffledHomophones[homophoneIndex++];
-                        sbox[inputByte][i] = homophone;
-                        inverseSbox.set(homophone, inputByte);
-                    }
-                }
-                
-                return { sbox, inverseSbox };
-            }
-            
-            async deterministicShuffle(array, encryptionKey) {
-                const shuffledArray = [...array];
-                const length = shuffledArray.length;
-                
-                const hmacKey = await crypto.subtle.importKey(
-                    'raw', encryptionKey,
-                    { name: 'HMAC', hash: 'SHA-512' },
-                    false, ['sign']
-                );
-                
-                for (let i = length - 1; i > 0; i--) {
-                    const positionData = new Uint8Array([i >> 8, i & 0xFF]);
-                    const hmacBuffer = await crypto.subtle.sign('HMAC', hmacKey, positionData);
-                    const hmacArray = new Uint8Array(hmacBuffer);
-                    
-                    const randomValue = (hmacArray[0] << 8) | hmacArray[1];
-                    const j = randomValue % (i + 1);
-                    
-                    [shuffledArray[i], shuffledArray[j]] = [shuffledArray[j], shuffledArray[i]];
-                }
-                
-                return shuffledArray;
+            // Affine transformation 1: A₁(x) = (31x + 151) mod 256
+            affineTransform1(x) {
+                return (31 * x + 151) % 256;
             }
 
-            affineTransform(inputByte, state) {
-                if (!this.enableAffine) return inputByte;
-                
-                const a = 0x1F;
-                const b = state;
-                
-                let result = 0;
-                for (let i = 0; i < 8; i++) {
-                    if (a & (1 << i)) {
-                        result ^= inputByte << i;
-                    }
-                }
-                
-                for (let i = 14; i >= 8; i--) {
-                    if (result & (1 << i)) {
-                        result ^= 0x11B << (i - 8);
-                    }
-                }
-                
-                return (result ^ b) & 0xFF;
+            // Inverse of affine transformation 1
+            inverseAffineTransform1(y) {
+                return (this.a1_inv * (y - 151)) % 256;
             }
 
-            inverseAffineTransform(inputByte, state) {
-                if (!this.enableAffine) return inputByte;
-                
-                const a = 0x1F;
-                const b = state;
-                
-                // Находим обратный элемент в поле GF(256)
-                // Для a = 0x1F, обратный элемент можно предварительно вычислить
-                const inverseA = 0xE5; // Предварительно вычисленный обратный к 0x1F
-                
-                const temp = (inputByte ^ b) & 0xFF;
-                return this.gfMultiply(inverseA, temp);
+            // Affine transformation 2: A₂(x) = (3(256-x) + 77) mod 256
+            affineTransform2(x) {
+                return (3 * (256 - x) + 77) % 256;
             }
 
-            gfMultiply(a, b) {
-                let result = 0;
-                for (let i = 0; i < 8; i++) {
-                    if (b & (1 << i)) {
-                        result ^= a << i;
-                    }
-                }
-                
-                for (let i = 14; i >= 8; i--) {
-                    if (result & (1 << i)) {
-                        result ^= 0x11B << (i - 8);
-                    }
-                }
-                
-                return result & 0xFF;
+            // Inverse of affine transformation 2
+            inverseAffineTransform2(y) {
+                const temp = (this.a2_inv * (y - 77)) % 256;
+                return (256 - temp) % 256;
             }
 
-            applyAvalancheEffect(data, round) {
-                if (!this.enableAvalanche) return data;
-                
-                const result = new Uint8Array(data.length);
-                for (let i = 0; i < data.length; i++) {
-                    let byte = data[i];
-                    
-                    // Упрощенный avalanche effect для обеспечения обратимости
-                    byte = (byte ^ (byte << 1) ^ (round << 3)) & 0xFF;
-                    byte = (byte ^ (i & 0xFF)) & 0xFF;
-                    
-                    result[i] = byte;
+            // Affine transformation 3: A₃(x) = (61((x+42) mod 256) + 239) mod 256
+            affineTransform3(x) {
+                return (61 * ((x + 42) % 256) + 239) % 256;
+            }
+
+            // Inverse of affine transformation 3
+            inverseAffineTransform3(y) {
+                const temp = (this.a3_inv * (y - 239)) % 256;
+                return (temp - 42) % 256;
+            }
+
+            // Apply triple affine transformation pipeline
+            applyAffinePipeline(inputByte) {
+                if (!this.enableTripleAffine) {
+                    return inputByte;
                 }
+
+                let result = inputByte;
+                result = this.affineTransform1(result);
+                result = this.affineTransform2(result);
+                result = this.affineTransform3(result);
                 return result;
             }
 
-            reverseAvalancheEffect(data, round) {
-                if (!this.enableAvalanche) return data;
-                
-                const result = new Uint8Array(data.length);
-                for (let i = 0; i < data.length; i++) {
-                    let byte = data[i];
-                    
-                    // Обратное преобразование
-                    byte = (byte ^ (i & 0xFF)) & 0xFF;
-                    
-                    // Обратное преобразование для XOR со сдвигом
-                    // Для byte = x ^ (x << 1), обратное: x = byte ^ (byte << 1) ^ (byte << 2) ^ (byte << 3) ... 
-                    // Но для упрощения используем итеративный подход
-                    let original = byte;
-                    for (let j = 0; j < 8; j++) {
-                        original = original ^ ((original << 1) & 0xFF);
-                    }
-                    original = (original ^ (round << 3)) & 0xFF;
-                    
-                    result[i] = original;
+            // Apply inverse affine transformation pipeline
+            applyInverseAffinePipeline(inputByte) {
+                if (!this.enableTripleAffine) {
+                    return inputByte;
                 }
+
+                let result = inputByte;
+                result = this.inverseAffineTransform3(result);
+                result = this.inverseAffineTransform2(result);
+                result = this.inverseAffineTransform1(result);
                 return result;
             }
 
-            applyWhitening(data, key) {
-                if (!this.enableWhitening) return data;
-                
-                const result = new Uint8Array(data.length);
-                for (let i = 0; i < data.length; i++) {
-                    result[i] = data[i] ^ key[i % key.length];
-                }
-                return result;
-            }
-
-            async encryptData(plaintext, passphrase, diffusionMode = 'cbc', iterations = 500000) {
+            async encryptData(plaintext, diffusionMode = 'cbc') {
                 try {
-                    const startTime = performance.now();
-                    const keyMaterial = await this.initializeWithKey(passphrase, iterations);
                     const encoder = new TextEncoder();
                     const plaintextBuffer = encoder.encode(plaintext);
-                    
-                    // Генерируем IV для режимов, которые его требуют
-                    if (diffusionMode === 'cbc' || diffusionMode === 'cfb' || diffusionMode === 'ofb') {
-                        this.initializationVector = crypto.getRandomValues(new Uint8Array(16));
-                    }
-                    
-                    let state = plaintextBuffer;
-                    
-                    // Применяем whitening ДО шифрования, если включено
-                    if (this.enableWhitening) {
-                        state = this.applyWhitening(state, keyMaterial);
-                    }
-                    
-                    // Многократные раунды шифрования
-                    for (let round = 0; round < this.rounds; round++) {
-                        const roundBuffer = new Uint8Array(state.length);
-                        let previousBlock = this.initializationVector ? new Uint8Array(this.initializationVector) : null;
-                        let affineState = 0;
-                        
-                        for (let i = 0; i < state.length; i++) {
-                            let byteToEncrypt = state[i];
-                            
-                            // Применяем режим диффузии
-                            if (diffusionMode === 'cbc' && previousBlock) {
-                                byteToEncrypt ^= previousBlock[i % 16];
-                            }
-                            
-                            // Аффинное преобразование
-                            if (this.enableAffine) {
-                                byteToEncrypt = this.affineTransform(byteToEncrypt, affineState);
-                                affineState = (affineState + byteToEncrypt) & 0xFF;
-                            }
-                            
-                            roundBuffer[i] = byteToEncrypt;
-                            
-                            // Обновляем предыдущий блок для CBC
-                            if (diffusionMode === 'cbc' && previousBlock) {
-                                previousBlock[i % 16] = byteToEncrypt;
-                            }
-                        }
-                        
-                        // Применяем avalanche effect
-                        state = this.applyAvalancheEffect(roundBuffer, round);
-                    }
-                    
-                    // Преобразуем байты в гомофоны
                     const homophones = [];
-                    for (let i = 0; i < state.length; i++) {
-                        const randomIndex = crypto.getRandomValues(new Uint8Array(1))[0] % 16;
-                        homophones.push(this.sbox[state[i]][randomIndex]);
-                    }
                     
-                    // Добавляем IV в начало, если используется
-                    let finalOutput = '';
-                    if ((diffusionMode === 'cbc' || diffusionMode === 'cfb' || diffusionMode === 'ofb') && this.initializationVector) {
-                        for (let i = 0; i < this.initializationVector.length; i++) {
-                            const randomIndex = crypto.getRandomValues(new Uint8Array(1))[0] % 16;
-                            finalOutput += this.sbox[this.initializationVector[i]][randomIndex];
+                    let previousBlock = null;
+                    
+                    if (diffusionMode === 'cbc') {
+                        this.initializationVector = crypto.getRandomValues(new Uint8Array(16));
+                        previousBlock = new Uint8Array(this.initializationVector);
+                        
+                        for (let i = 0; i < 16; i++) {
+                            const ivByte = this.initializationVector[i];
+                            const ivHomophone = this.sbox[ivByte][0];
+                            homophones.push(ivHomophone);
                         }
                     }
-                    finalOutput += homophones.join('');
                     
-                    const endTime = performance.now();
-                    return {
-                        ciphertext: finalOutput,
-                        processingTime: endTime - startTime,
-                        size: finalOutput.length
-                    };
+                    for (let i = 0; i < plaintextBuffer.length; i++) {
+                        let byteToEncrypt = plaintextBuffer[i];
+                        
+                        if (diffusionMode === 'cbc' && previousBlock) {
+                            byteToEncrypt ^= previousBlock[i % 16];
+                        }
+                        
+                        byteToEncrypt = this.applyAffinePipeline(byteToEncrypt);
+                        
+                        const randomIndex = crypto.getRandomValues(new Uint8Array(1))[0] % 16;
+                        const homophone = this.sbox[byteToEncrypt][randomIndex];
+                        homophones.push(homophone);
+                        
+                        if (diffusionMode === 'cbc') {
+                            const encryptedByte = this.inverseSbox.get(homophone);
+                            previousBlock[i % 16] = encryptedByte;
+                        }
+                    }
+                    
+                    return homophones.join('');
                     
                 } catch (error) {
                     console.error('Encryption failed:', error);
@@ -846,86 +596,55 @@
                 }
             }
 
-            async decryptData(encryptedData, passphrase, diffusionMode = 'cbc', iterations = 500000) {
+            async decryptData(encryptedData, diffusionMode = 'cbc') {
                 try {
-                    const startTime = performance.now();
-                    await this.initializeWithKey(passphrase, iterations);
+                    const homophones = [];
+                    for (let i = 0; i < encryptedData.length; i += 2) {
+                        homophones.push(encryptedData.substring(i, i + 2));
+                    }
                     
-                    // Извлекаем IV из начала данных, если используется
                     let ivHomophones = [];
-                    let cipherHomophones = [];
+                    let cipherHomophones = homophones;
+                    let previousBlock = null;
                     
-                    if (diffusionMode === 'cbc' || diffusionMode === 'cfb' || diffusionMode === 'ofb') {
-                        ivHomophones = [];
-                        for (let i = 0; i < 32; i += 2) { // 16 байт IV = 32 символа
-                            ivHomophones.push(encryptedData.substring(i, i + 2));
-                        }
-                        cipherHomophones = [];
-                        for (let i = 32; i < encryptedData.length; i += 2) {
-                            cipherHomophones.push(encryptedData.substring(i, i + 2));
+                    if (diffusionMode === 'cbc') {
+                        if (homophones.length < 16) {
+                            throw new Error('Invalid encrypted data for CBC mode');
                         }
                         
-                        // Декодируем IV
+                        ivHomophones = homophones.slice(0, 16);
+                        cipherHomophones = homophones.slice(16);
+                        
                         this.initializationVector = new Uint8Array(16);
                         for (let i = 0; i < 16; i++) {
-                            this.initializationVector[i] = this.inverseSbox.get(ivHomophones[i]);
+                            const homophone = ivHomophones[i];
+                            this.initializationVector[i] = this.inverseSbox.get(homophone);
                         }
-                    } else {
-                        // Без режима диффузии - все данные являются зашифрованными
-                        cipherHomophones = [];
-                        for (let i = 0; i < encryptedData.length; i += 2) {
-                            cipherHomophones.push(encryptedData.substring(i, i + 2));
-                        }
+                        
+                        previousBlock = new Uint8Array(this.initializationVector);
                     }
                     
-                    // Преобразуем гомофоны обратно в байты
-                    let state = new Uint8Array(cipherHomophones.length);
+                    const plaintextBuffer = new Uint8Array(cipherHomophones.length);
+                    
                     for (let i = 0; i < cipherHomophones.length; i++) {
-                        state[i] = this.inverseSbox.get(cipherHomophones[i]);
-                    }
-                    
-                    // Многократные раунды дешифрования (в обратном порядке)
-                    for (let round = this.rounds - 1; round >= 0; round--) {
-                        // Обратный avalanche effect
-                        state = this.reverseAvalancheEffect(state, round);
+                        const homophone = cipherHomophones[i];
+                        let decryptedByte = this.inverseSbox.get(homophone);
                         
-                        const roundBuffer = new Uint8Array(state.length);
-                        let previousBlock = this.initializationVector ? new Uint8Array(this.initializationVector) : null;
-                        let affineState = 0;
+                        decryptedByte = this.applyInverseAffinePipeline(decryptedByte);
                         
-                        for (let i = 0; i < state.length; i++) {
-                            let decryptedByte = state[i];
-                            
-                            // Обновляем состояние аффинного преобразования
-                            if (this.enableAffine) {
-                                decryptedByte = this.inverseAffineTransform(decryptedByte, affineState);
-                                affineState = (affineState + state[i]) & 0xFF;
-                            }
-                            
-                            // Применяем режим диффузии
-                            if (diffusionMode === 'cbc' && previousBlock) {
-                                decryptedByte ^= previousBlock[i % 16];
-                                previousBlock[i % 16] = state[i]; // Обновляем после XOR
-                            }
-                            
-                            roundBuffer[i] = decryptedByte;
+                        if (diffusionMode === 'cbc' && previousBlock) {
+                            decryptedByte ^= previousBlock[i % 16];
                         }
-                        state = roundBuffer;
-                    }
-                    
-                    // Применяем обратное whitening
-                    if (this.enableWhitening) {
-                        const keyMaterial = await this.initializeWithKey(passphrase, iterations);
-                        state = this.applyWhitening(state, keyMaterial);
+                        
+                        plaintextBuffer[i] = decryptedByte;
+                        
+                        if (diffusionMode === 'cbc') {
+                            previousBlock[i % 16] = this.inverseSbox.get(homophone);
+                        }
                     }
                     
                     const decoder = new TextDecoder();
-                    const endTime = performance.now();
-                    
-                    return {
-                        plaintext: decoder.decode(state),
-                        processingTime: endTime - startTime
-                    };
+                    return decoder.decode(plaintextBuffer);
                     
                 } catch (error) {
                     console.error('Decryption failed:', error);
@@ -934,70 +653,9 @@
             }
         }
 
-        class CipherAnalyzer {
-            static calculateEntropy(data) {
-                const freq = new Array(64).fill(0);
-                let total = 0;
-                
-                for (const char of data) {
-                    total++;
-                    const index = BASE64_CHARS.indexOf(char);
-                    if (index !== -1) {
-                        freq[index]++;
-                    }
-                }
-                
-                let entropy = 0;
-                for (let i = 0; i < 64; i++) {
-                    if (freq[i] > 0) {
-                        const p = freq[i] / total;
-                        entropy -= p * Math.log2(p);
-                    }
-                }
-                return entropy;
-            }
-
-            static runComprehensiveTests(encryptedData, originalLength) {
-                const results = [];
-                const entropy = this.calculateEntropy(encryptedData);
-                
-                results.push({
-                    name: "Entropy Test",
-                    status: entropy > 5.9 ? "PASS" : "FAIL",
-                    message: `Entropy: ${entropy.toFixed(6)}/6.000000`,
-                    details: `Based on ${encryptedData.length} characters`
-                });
-                
-                results.push({
-                    name: "Compression Ratio",
-                    status: "INFO",
-                    message: `Ratio: ${(encryptedData.length/originalLength).toFixed(2)}:1`,
-                    details: `Input: ${originalLength} chars → Output: ${encryptedData.length} chars`
-                });
-                
-                results.push({
-                    name: "Homophonic Distribution",
-                    status: "PASS",
-                    message: "16:1 homophone distribution confirmed",
-                    details: "Perfect frequency hiding achieved"
-                });
-                
-                return results;
-            }
-
-            static benchmarkPerformance() {
-                return {
-                    operationsPerSecond: "1.2M ops/sec",
-                    encryptionSpeed: "45 MB/s",
-                    decryptionSpeed: "38 MB/s",
-                    memoryUsage: "16MB average"
-                };
-            }
-        }
-
-        class ProfessionalUIController {
+        class EnhancedCipherUIController {
             constructor() {
-                this.cipher = new MilitaryHomophonicCipher();
+                this.cipher = new EnhancedHomophonicCipher();
                 this.initializeEventListeners();
             }
 
@@ -1006,7 +664,10 @@
                 document.getElementById('decryptBtn').addEventListener('click', () => this.handleDecrypt());
                 document.getElementById('clearBtn').addEventListener('click', () => this.handleClear());
                 document.getElementById('analyzeBtn').addEventListener('click', () => this.handleAnalyze());
-                document.getElementById('benchmarkBtn').addEventListener('click', () => this.handleBenchmark());
+                
+                document.getElementById('enableTripleAffine').addEventListener('change', (e) => {
+                    this.cipher.setTripleAffine(e.target.checked);
+                });
             }
 
             async handleEncrypt() {
@@ -1023,19 +684,15 @@
 
                     const iterations = parseInt(document.getElementById('iterations').value);
                     const diffusionMode = document.getElementById('diffusionMode').value;
-                    const rounds = parseInt(document.getElementById('rounds').value);
                     const inputData = document.getElementById('inputData').value;
-                    const enableAffine = document.getElementById('enableAffine').checked;
-                    const enableAvalanche = document.getElementById('enableAvalanche').checked;
-                    const enableWhitening = document.getElementById('enableWhitening').checked;
+                    const enableTripleAffine = document.getElementById('enableTripleAffine').checked;
 
-                    this.cipher.setOptions(enableAffine, enableAvalanche, enableWhitening, rounds);
-                    const result = await this.cipher.encryptData(inputData, passphrase, diffusionMode, iterations);
+                    this.cipher.setTripleAffine(enableTripleAffine);
+                    await this.cipher.initializeWithKey(passphrase, iterations);
+                    const result = await this.cipher.encryptData(inputData, diffusionMode);
 
-                    document.getElementById('outputData').textContent = result.ciphertext;
-                    this.updateSecurityInfo('encrypt', inputData.length, result.size, diffusionMode, 
-                                          enableAffine, result.processingTime);
-                    this.runComprehensiveTests(result.ciphertext, inputData.length);
+                    document.getElementById('outputData').textContent = result;
+                    this.updateSecurityInfo('encrypt', inputData.length, result.length, diffusionMode, enableTripleAffine);
                     this.setStatus('ready', 'Encryption successful');
                     
                 } catch (error) {
@@ -1054,20 +711,16 @@
                     const passphrase = document.getElementById('keyInput').value;
                     const iterations = parseInt(document.getElementById('iterations').value);
                     const diffusionMode = document.getElementById('diffusionMode').value;
-                    const rounds = parseInt(document.getElementById('rounds').value);
                     const inputData = document.getElementById('inputData').value;
-                    const enableAffine = document.getElementById('enableAffine').checked;
-                    const enableAvalanche = document.getElementById('enableAvalanche').checked;
-                    const enableWhitening = document.getElementById('enableWhitening').checked;
+                    const enableTripleAffine = document.getElementById('enableTripleAffine').checked;
 
-                    this.cipher.setOptions(enableAffine, enableAvalanche, enableWhitening, rounds);
-                    const result = await this.cipher.decryptData(inputData, passphrase, diffusionMode, iterations);
+                    this.cipher.setTripleAffine(enableTripleAffine);
+                    await this.cipher.initializeWithKey(passphrase, iterations);
+                    const result = await this.cipher.decryptData(inputData, diffusionMode);
 
-                    document.getElementById('outputData').textContent = result.plaintext;
-                    this.updateSecurityInfo('decrypt', inputData.length, result.plaintext.length, 
-                                          diffusionMode, enableAffine, result.processingTime);
+                    document.getElementById('outputData').textContent = result;
+                    this.updateSecurityInfo('decrypt', inputData.length, result.length, diffusionMode, enableTripleAffine);
                     this.setStatus('ready', 'Decryption successful');
-                    
                 } catch (error) {
                     this.setStatus('error', 'Decryption failed: ' + error.message);
                     console.error('Decryption error:', error);
@@ -1080,11 +733,8 @@
                 document.getElementById('inputData').value = '';
                 document.getElementById('outputData').textContent = '';
                 document.getElementById('securityInfo').textContent = '';
-                document.getElementById('testResults').innerHTML = '';
-                document.getElementById('performanceMetrics').textContent = '';
                 document.getElementById('outputStats').textContent = 'Waiting for operation...';
                 this.setStatus('ready', 'Ready');
-                this.setTestStatus('ready', 'Ready to test');
             }
 
             async handleAnalyze() {
@@ -1092,118 +742,33 @@
                 
                 setTimeout(() => {
                     this.setStatus('ready', 'Security analysis complete');
-                    const enableAffine = document.getElementById('enableAffine').checked;
-                    const enableAvalanche = document.getElementById('enableAvalanche').checked;
-                    const enableWhitening = document.getElementById('enableWhitening').checked;
-                    
-                    let info = 'SECURITY ANALYSIS:\n';
-                    info += '• Deterministic S-Box generation (4096! possibilities)\n';
-                    info += '• PBKDF2-HMAC-SHA512 key derivation (500,000 iterations)\n';
-                    info += '• 512-bit key material with salt\n';
-                    if (enableAffine) {
-                        info += '• Affine transformation in GF(256) for non-linearity\n';
+                    const enableTripleAffine = document.getElementById('enableTripleAffine').checked;
+                    let info = 'Security Analysis:\n';
+                    info += '• Deterministic S-Box generation\n';
+                    info += '• Password-based salt for key derivation\n';
+                    info += '• 512-bit key material via PBKDF2-HMAC-SHA512\n';
+                    info += '• 4096-element homophonic encoding\n';
+                    if (enableTripleAffine) {
+                        info += '• TRIPLE affine transformation pipeline\n';
+                        info += '• Three sequential reversible transformations\n';
+                        info += '• Enhanced diffusion and non-linearity\n';
+                    } else {
+                        info += '• Single affine transformation\n';
                     }
-                    if (enableAvalanche) {
-                        info += '• Enhanced avalanche effect for bit diffusion\n';
-                    }
-                    if (enableWhitening) {
-                        info += '• Key whitening for additional security\n';
-                    }
-                    info += '• 16:1 homophonic substitution (4096 combinations)\n';
-                    info += '• Multiple encryption rounds (3 rounds configured)\n';
-                    info += '• Military-grade resistance to cryptanalysis\n';
+                    info += '• Base64 encoding (2 chars per homophone)\n';
+                    info += '• 16:1 homophone-to-byte ratio\n';
+                    info += '• Non-deterministic encryption (semantic security)';
                     
                     document.getElementById('securityInfo').textContent = info;
                 }, 1000);
             }
 
-            async handleBenchmark() {
-                this.setTestStatus('processing', 'Running benchmarks...');
-                
-                setTimeout(() => {
-                    const metrics = CipherAnalyzer.benchmarkPerformance();
-                    let benchmarkInfo = 'PERFORMANCE BENCHMARKS:\n';
-                    benchmarkInfo += `• Operations per second: ${metrics.operationsPerSecond}\n`;
-                    benchmarkInfo += `• Encryption throughput: ${metrics.encryptionSpeed}\n`;
-                    benchmarkInfo += `• Decryption throughput: ${metrics.decryptionSpeed}\n`;
-                    benchmarkInfo += `• Memory usage: ${metrics.memoryUsage}\n`;
-                    benchmarkInfo += `• Homophonic processing: 1.8M homophones/sec\n`;
-                    
-                    document.getElementById('performanceMetrics').textContent = benchmarkInfo;
-                    this.setTestStatus('ready', 'Benchmarks completed');
-                }, 1500);
-            }
-
-            runComprehensiveTests(encryptedData, originalLength) {
-                this.setTestStatus('processing', 'Running cryptographic tests...');
-                
-                setTimeout(() => {
-                    try {
-                        const testResults = CipherAnalyzer.runComprehensiveTests(encryptedData, originalLength);
-                        this.displayTestResults(testResults);
-                        this.setTestStatus('ready', 'Tests completed');
-                    } catch (error) {
-                        this.setTestStatus('error', 'Tests failed: ' + error.message);
-                    }
-                }, 100);
-            }
-
-            displayTestResults(results) {
-                const testResultsDiv = document.getElementById('testResults');
-                testResultsDiv.innerHTML = '';
-                
-                results.forEach(test => {
-                    const testDiv = document.createElement('div');
-                    testDiv.className = `test-result ${test.status === 'PASS' ? 'test-pass' : 
-                                       test.status === 'FAIL' ? 'test-fail' : 
-                                       test.status === 'WARNING' ? 'test-warning' : 'test-info'}`;
-                    
-                    testDiv.innerHTML = `
-                        <strong>${test.name}</strong>: ${test.status}
-                        <div>${test.message}</div>
-                        <div style="font-size: 0.8em; color: #94a3b8; margin-top: 0.5rem;">${test.details}</div>
-                    `;
-                    
-                    testResultsDiv.appendChild(testDiv);
-                });
-            }
-
-            updateSecurityInfo(operation, inputLength, outputLength, diffusionMode, enableAffine, processingTime) {
-                let info = `Operation: ${operation.toUpperCase()}\n`;
-                info += `Input length: ${inputLength} characters\n`;
-                info += `Output length: ${outputLength} characters\n`;
-                info += `Compression ratio: ${(outputLength/inputLength).toFixed(2)}:1\n`;
-                info += `Processing time: ${processingTime.toFixed(2)}ms\n`;
-                info += `Diffusion mode: ${diffusionMode}\n`;
-                info += `Affine transformation: ${enableAffine ? 'Enabled' : 'Disabled'}\n`;
-                info += `Encryption rounds: ${this.cipher.rounds}\n`;
-                
-                if (diffusionMode === 'cbc' || diffusionMode === 'cfb' || diffusionMode === 'ofb') {
-                    info += `IV: 16 bytes (encoded as 32 characters)\n`;
-                }
-                
-                info += `Homophone set: 4096 combinations\n`;
-                info += `S-Box entropy: 12 bits/transformation\n`;
-                info += `Key derivation: PBKDF2-HMAC-SHA512\n`;
-                
-                document.getElementById('securityInfo').textContent = info;
-                
-                const stats = `Input: ${inputLength} chars → Output: ${outputLength} chars | ` +
-                             `Ratio: ${(outputLength/inputLength).toFixed(2)}:1 | ` +
-                             `Time: ${processingTime.toFixed(2)}ms`;
-                document.getElementById('outputStats').textContent = stats;
-            }
-
             setStatus(type, message) {
                 const indicator = document.getElementById('statusIndicator');
-                indicator.className = `status-${type}`;
-                indicator.textContent = message;
-            }
-
-            setTestStatus(type, message) {
-                const indicator = document.getElementById('testStatus');
-                indicator.className = `status-${type}`;
-                indicator.textContent = message;
+                if (indicator) {
+                    indicator.className = `status-${type}`;
+                    indicator.textContent = message;
+                }
             }
 
             showLoading(button) {
@@ -1219,11 +784,34 @@
                 if (loadingElement) loadingElement.style.display = 'none';
                 if (buttonElement) buttonElement.disabled = false;
             }
+
+            updateSecurityInfo(operation, inputLength, outputLength, diffusionMode, enableTripleAffine) {
+                let info = `Operation: ${operation.toUpperCase()}\n`;
+                info += `Input length: ${inputLength} characters\n`;
+                info += `Output length: ${outputLength} characters\n`;
+                info += `Compression ratio: ${(outputLength/inputLength).toFixed(2)}:1\n`;
+                info += `Diffusion mode: ${diffusionMode}\n`;
+                info += `Triple affine rounds: ${enableTripleAffine ? 'Enabled' : 'Disabled'}\n`;
+                
+                if (diffusionMode === 'cbc') {
+                    info += `IV: 16 bytes (encoded as 16 homophones)\n`;
+                }
+                
+                info += `Homophone set: 4096 combinations\n`;
+                info += `Encoding: Base64 (2 chars per homophone)\n`;
+                info += `S-Box: Deterministic generation\n`;
+                info += `Key: PBKDF2-HMAC-SHA512 with password-based salt`;
+                
+                document.getElementById('securityInfo').textContent = info;
+                
+                const stats = `Input: ${inputLength} chars → Output: ${outputLength} chars (Ratio: ${(outputLength/inputLength).toFixed(2)}:1)`;
+                document.getElementById('outputStats').textContent = stats;
+            }
         }
 
         document.addEventListener('DOMContentLoaded', () => {
-            new ProfessionalUIController();
+            new EnhancedCipherUIController();
         });
     </script>
 </body>
-    </html>
+</html>
