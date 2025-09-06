@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Enhanced Homophonic Cipher - Triple Affine Rounds</title>
+    <title>Enhanced Homophonic Cipher - Fixed Implementation</title>
     <style>
         :root {
             --primary: #2563eb;
@@ -442,10 +442,11 @@
                 this.inverseSbox = null;
                 this.initializationVector = null;
                 this.enableTripleAffine = true;
+                this.affineState = 0;
                 
                 // Inverse constants for affine transformations
                 this.a1_inv = 0xFF; // Inverse of 31 mod 256
-                this.a2_inv = 0xAB; // Inverse of 3 mod 256
+                this.a2_inv = 0xAB; // Inverse of 3 mod 256  
                 this.a3_inv = 0xB5; // Inverse of 61 mod 256
             }
 
@@ -492,44 +493,62 @@
                 }
             }
 
-            // Affine transformation 1: A₁(x) = (31x + 151) mod 256
+            // Аффинное преобразование 1: A₁(x) = (31x + 151) mod 256
             affineTransform1(x) {
                 return (31 * x + 151) % 256;
             }
 
-            // Inverse of affine transformation 1
+            // Обратное преобразование 1
             inverseAffineTransform1(y) {
                 return (this.a1_inv * (y - 151)) % 256;
             }
 
-            // Affine transformation 2: A₂(x) = (3(256-x) + 77) mod 256
+            // Аффинное преобразование 2: A₂(x) = (3(256-x) + 77) mod 256  
             affineTransform2(x) {
                 return (3 * (256 - x) + 77) % 256;
             }
 
-            // Inverse of affine transformation 2
+            // Обратное преобразование 2
             inverseAffineTransform2(y) {
                 const temp = (this.a2_inv * (y - 77)) % 256;
                 return (256 - temp) % 256;
             }
 
-            // Affine transformation 3: A₃(x) = (61((x+42) mod 256) + 239) mod 256
+            // Аффинное преобразование 3: A₃(x) = (61((x+42) mod 256) + 239) mod 256
             affineTransform3(x) {
                 return (61 * ((x + 42) % 256) + 239) % 256;
             }
 
-            // Inverse of affine transformation 3
+            // Обратное преобразование 3
             inverseAffineTransform3(y) {
                 const temp = (this.a3_inv * (y - 239)) % 256;
                 return (temp - 42) % 256;
             }
 
-            // Apply triple affine transformation pipeline
+            // Применение тройного аффинного преобразования
             applyAffinePipeline(inputByte) {
                 if (!this.enableTripleAffine) {
-                    return inputByte;
+                    // Если опция выключена, используем оригинальное преобразование
+                    const a = 0x1F;
+                    const b = this.affineState;
+                    
+                    let result = 0;
+                    for (let i = 0; i < 8; i++) {
+                        if (a & (1 << i)) {
+                            result ^= inputByte << i;
+                        }
+                    }
+                    
+                    for (let i = 14; i >= 8; i--) {
+                        if (result & (1 << i)) {
+                            result ^= 0x11B << (i - 8);
+                        }
+                    }
+                    
+                    return (result ^ b) & 0xFF;
                 }
 
+                // Тройное преобразование
                 let result = inputByte;
                 result = this.affineTransform1(result);
                 result = this.affineTransform2(result);
@@ -537,17 +556,46 @@
                 return result;
             }
 
-            // Apply inverse affine transformation pipeline
+            // Применение обратного тройного аффинного преобразования
             applyInverseAffinePipeline(inputByte) {
                 if (!this.enableTripleAffine) {
-                    return inputByte;
+                    // Если опция выключена, используем оригинальное обратное преобразование
+                    const a = 0x1F;
+                    const b = this.affineState;
+                    
+                    // Вычисляем обратный элемент для a в GF(256)
+                    let inverseA = 1;
+                    for (let i = 0; i < 254; i++) {
+                        inverseA = this.gfMultiply(inverseA, a);
+                    }
+                    
+                    const temp = (inputByte ^ b) & 0xFF;
+                    return this.gfMultiply(inverseA, temp);
                 }
 
+                // Обратное тройное преобразование
                 let result = inputByte;
                 result = this.inverseAffineTransform3(result);
                 result = this.inverseAffineTransform2(result);
                 result = this.inverseAffineTransform1(result);
                 return result;
+            }
+
+            gfMultiply(a, b) {
+                let result = 0;
+                for (let i = 0; i < 8; i++) {
+                    if (b & (1 << i)) {
+                        result ^= a << i;
+                    }
+                }
+                
+                for (let i = 14; i >= 8; i--) {
+                    if (result & (1 << i)) {
+                        result ^= 0x11B << (i - 8);
+                    }
+                }
+                
+                return result & 0xFF;
             }
 
             async encryptData(plaintext, diffusionMode = 'cbc') {
@@ -557,6 +605,7 @@
                     const homophones = [];
                     
                     let previousBlock = null;
+                    this.affineState = 0;
                     
                     if (diffusionMode === 'cbc') {
                         this.initializationVector = crypto.getRandomValues(new Uint8Array(16));
@@ -577,6 +626,7 @@
                         }
                         
                         byteToEncrypt = this.applyAffinePipeline(byteToEncrypt);
+                        this.affineState = (this.affineState + plaintextBuffer[i]) & 0xFF;
                         
                         const randomIndex = crypto.getRandomValues(new Uint8Array(1))[0] % 16;
                         const homophone = this.sbox[byteToEncrypt][randomIndex];
@@ -606,6 +656,7 @@
                     let ivHomophones = [];
                     let cipherHomophones = homophones;
                     let previousBlock = null;
+                    this.affineState = 0;
                     
                     if (diffusionMode === 'cbc') {
                         if (homophones.length < 16) {
@@ -637,6 +688,7 @@
                         }
                         
                         plaintextBuffer[i] = decryptedByte;
+                        this.affineState = (this.affineState + plaintextBuffer[i]) & 0xFF;
                         
                         if (diffusionMode === 'cbc') {
                             previousBlock[i % 16] = this.inverseSbox.get(homophone);
@@ -752,8 +804,6 @@
                         info += '• TRIPLE affine transformation pipeline\n';
                         info += '• Three sequential reversible transformations\n';
                         info += '• Enhanced diffusion and non-linearity\n';
-                    } else {
-                        info += '• Single affine transformation\n';
                     }
                     info += '• Base64 encoding (2 chars per homophone)\n';
                     info += '• 16:1 homophone-to-byte ratio\n';
@@ -797,7 +847,7 @@
                     info += `IV: 16 bytes (encoded as 16 homophones)\n`;
                 }
                 
-                info += `Homophone set: 4096 combinations\n`;
+                info += `Homophone set: 4096 combinations\n';
                 info += `Encoding: Base64 (2 chars per homophone)\n`;
                 info += `S-Box: Deterministic generation\n`;
                 info += `Key: PBKDF2-HMAC-SHA512 with password-based salt`;
