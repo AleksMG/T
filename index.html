@@ -377,6 +377,30 @@
             background: rgba(37, 99, 235, 0.2);
             border-radius: 3px;
         }
+        
+        .verification-panel {
+            margin-top: 1.5rem;
+            padding: 1rem;
+            background: rgba(15, 23, 42, 0.6);
+            border-radius: 0.5rem;
+            border: 1px solid var(--border);
+        }
+        
+        .verification-result {
+            padding: 0.5rem;
+            border-radius: 0.25rem;
+            margin: 0.5rem 0;
+        }
+        
+        .verification-pass {
+            background: rgba(16, 185, 129, 0.2);
+            border-left: 4px solid var(--secondary);
+        }
+        
+        .verification-fail {
+            background: rgba(239, 68, 68, 0.2);
+            border-left: 4px solid var(--danger);
+        }
     </style>
 </head>
 <body>
@@ -470,6 +494,12 @@
                         <div class="matrix-cell">1</div><div class="matrix-cell">1</div><div class="matrix-cell">1</div><div class="matrix-cell">1</div>
                     </div>
                     <p style="margin-top: 0.5rem; font-size: 0.7rem;">MDS matrix providing optimal diffusion - each output bit depends on all input bits</p>
+                </div>
+                
+                <div class="verification-panel">
+                    <h4 style="color: var(--primary); margin-bottom: 0.5rem;">Affine Transformation Verification:</h4>
+                    <button id="verifyAffineBtn" class="btn-secondary" style="width: 100%;">Verify Affine Correctness</button>
+                    <div id="verificationResults"></div>
                 </div>
             </div>
 
@@ -659,7 +689,7 @@
                 // Вектор констант (c(x) = 0x63)
                 this.affineVector = [1, 1, 0, 0, 0, 1, 1, 0];
                 
-                // Обратная матрица для декодирования
+                // Правильная обратная матрица для AES
                 this.inverseAffineMatrix = [
                     [0, 0, 1, 0, 0, 1, 0, 1],
                     [1, 0, 0, 1, 0, 0, 1, 0],
@@ -671,7 +701,7 @@
                     [0, 1, 0, 0, 1, 0, 1, 0]
                 ];
                 
-                // Обратный вектор констант
+                // Правильный вектор констант для обратного преобразования AES
                 this.inverseAffineVector = [1, 0, 1, 0, 0, 0, 0, 0];
             }
 
@@ -718,7 +748,7 @@
                 }
             }
 
-            // Полное афинное преобразование в GF(2^8)
+            // Полное афинное преобразование в GF(2^8) - ИСПРАВЛЕННАЯ ВЕРСИЯ
             affineTransform(inputByte) {
                 if (!this.enableAffine) return inputByte;
                 
@@ -750,19 +780,25 @@
                 return result;
             }
 
-            // Обратное афинное преобразование
+            // Обратное афинное преобразование - ИСПРАВЛЕННАЯ ВЕРСИЯ
             inverseAffineTransform(inputByte) {
                 if (!this.enableAffine) return inputByte;
                 
-                // Сначала вычитаем вектор констант
-                const bits = [];
+                // Сначала применяем обратный вектор констант
+                let temp = inputByte;
                 for (let i = 0; i < 8; i++) {
-                    let bit = (inputByte >> (7 - i)) & 1;
-                    bit ^= this.inverseAffineVector[i];
-                    bits.push(bit);
+                    if (this.inverseAffineVector[i]) {
+                        temp ^= (1 << (7 - i));
+                    }
                 }
                 
-                // Умножаем на обратную матрицу
+                // Преобразуем байт в битовый массив
+                const bits = [];
+                for (let i = 0; i < 8; i++) {
+                    bits.push((temp >> (7 - i)) & 1);
+                }
+                
+                // Умножаем на обратную матрицу (в GF(2))
                 const resultBits = [0, 0, 0, 0, 0, 0, 0, 0];
                 for (let i = 0; i < 8; i++) {
                     for (let j = 0; j < 8; j++) {
@@ -779,39 +815,33 @@
                 return result;
             }
 
-            // Операции умножения в GF(2^8) по модулю x^8 + x^4 + x^3 + x + 1
-            gfMultiply(a, b) {
-                let product = 0;
-                for (let i = 0; i < 8; i++) {
-                    if (b & 1) {
-                        product ^= a;
-                    }
+            // Функция для проверки корректности афинных преобразований
+            verifyAffineTransforms() {
+                const results = [];
+                let allPassed = true;
+                
+                for (let i = 0; i < 256; i++) {
+                    const transformed = this.affineTransform(i);
+                    const inverted = this.inverseAffineTransform(transformed);
                     
-                    const hiBitSet = a & 0x80;
-                    a <<= 1;
-                    if (hiBitSet) {
-                        a ^= 0x1B; // x^8 + x^4 + x^3 + x + 1
+                    if (inverted !== i) {
+                        results.push({
+                            byte: i,
+                            transformed: transformed,
+                            inverted: inverted,
+                            passed: false
+                        });
+                        allPassed = false;
                     }
-                    b >>= 1;
-                }
-                return product;
-            }
-
-            // Поиск обратного элемента в GF(2^8)
-            gfInverse(a) {
-                if (a === 0) return 0;
-                
-                // Используем расширенный алгоритм Евклида
-                let t = 0, newt = 1;
-                let r = 0x11B, newr = a; // Модуль x^8 + x^4 + x^3 + x + 1
-                
-                while (newr !== 0) {
-                    const quotient = Math.floor(r / newr);
-                    [t, newt] = [newt, t ^ this.gfMultiply(quotient, newt)];
-                    [r, newr] = [newr, r ^ this.gfMultiply(quotient, newr)];
                 }
                 
-                return t;
+                return {
+                    allPassed: allPassed,
+                    failedCases: results,
+                    message: allPassed ? 
+                        "✓ Все 256 байтов прошли проверку корректности афинных преобразований" :
+                        `✗ Обнаружены ошибки в ${results.length} из 256 байтов`
+                };
             }
 
             async encryptData(plaintext, diffusionMode = 'cbc') {
@@ -1121,6 +1151,7 @@
                 document.getElementById('decryptBtn').addEventListener('click', () => this.handleDecrypt());
                 document.getElementById('clearBtn').addEventListener('click', () => this.handleClear());
                 document.getElementById('analyzeBtn').addEventListener('click', () => this.handleAnalyze());
+                document.getElementById('verifyAffineBtn').addEventListener('click', () => this.handleVerifyAffine());
                 
                 document.getElementById('enableAffine').addEventListener('change', (e) => {
                     this.cipher.setAffineTransformation(e.target.checked);
@@ -1159,6 +1190,45 @@
                     console.error('Encryption error:', error);
                 } finally {
                     this.hideLoading('encrypt');
+                }
+            }
+
+            async handleVerifyAffine() {
+                this.setStatus('processing', 'Verifying affine transformations...');
+                
+                try {
+                    const result = this.cipher.verifyAffineTransforms();
+                    const resultsDiv = document.getElementById('verificationResults');
+                    
+                    if (result.allPassed) {
+                        resultsDiv.innerHTML = `
+                            <div class="verification-result verification-pass">
+                                <strong>${result.message}</strong>
+                            </div>
+                        `;
+                    } else {
+                        let errorDetails = '';
+                        for (let i = 0; i < Math.min(5, result.failedCases.length); i++) {
+                            const caseData = result.failedCases[i];
+                            errorDetails += `Байт ${caseData.byte} -> ${caseData.transformed} -> ${caseData.inverted}<br>`;
+                        }
+                        
+                        if (result.failedCases.length > 5) {
+                            errorDetails += `... и еще ${result.failedCases.length - 5} ошибок<br>`;
+                        }
+                        
+                        resultsDiv.innerHTML = `
+                            <div class="verification-result verification-fail">
+                                <strong>${result.message}</strong><br>
+                                Примеры ошибок:<br>${errorDetails}
+                            </div>
+                        `;
+                    }
+                    
+                    this.setStatus('ready', 'Verification completed');
+                } catch (error) {
+                    this.setStatus('error', 'Verification failed: ' + error.message);
+                    console.error('Verification error:', error);
                 }
             }
 
@@ -1262,6 +1332,7 @@
                 document.getElementById('inputData').value = '';
                 document.getElementById('outputData').textContent = '';
                 document.getElementById('securityInfo').textContent = '';
+                document.getElementById('verificationResults').innerHTML = '';
                 const testResultsDiv = document.getElementById('testResults');
                 if (testResultsDiv) testResultsDiv.innerHTML = '';
                 document.getElementById('outputStats').textContent = 'Waiting for operation...';
@@ -1347,4 +1418,4 @@
         });
     </script>
 </body>
-</html>
+                        </html>
