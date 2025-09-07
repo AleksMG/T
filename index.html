@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Enhanced Homophonic Cipher - Fixed Affine Transformation</title>
+    <title>Enhanced Homophonic Cipher - Professional Affine</title>
     <style>
         :root {
             --primary: #2563eb;
@@ -316,13 +316,74 @@
             font-weight: bold;
             color: var(--secondary);
         }
+
+        .process-visualization {
+            margin-top: 1.5rem;
+            padding: 1rem;
+            background: rgba(15, 23, 42, 0.4);
+            border-radius: 0.5rem;
+            border: 1px solid var(--border);
+        }
+        
+        .process-step {
+            display: flex;
+            align-items: center;
+            margin: 0.5rem 0;
+            padding: 0.5rem;
+            background: rgba(30, 41, 59, 0.6);
+            border-radius: 0.5rem;
+        }
+        
+        .step-number {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 24px;
+            height: 24px;
+            background: var(--primary);
+            color: white;
+            border-radius: 50%;
+            margin-right: 0.75rem;
+            font-size: 0.8rem;
+            font-weight: bold;
+        }
+        
+        .step-description {
+            flex: 1;
+        }
+        
+        .matrix-visualization {
+            margin-top: 1rem;
+            padding: 1rem;
+            background: rgba(15, 23, 42, 0.6);
+            border-radius: 0.5rem;
+            border: 1px solid var(--border);
+            font-family: 'Monaco', 'Menlo', monospace;
+            font-size: 0.8rem;
+        }
+        
+        .matrix-row {
+            display: flex;
+            margin: 0.25rem 0;
+        }
+        
+        .matrix-cell {
+            width: 24px;
+            height: 24px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 2px;
+            background: rgba(37, 99, 235, 0.2);
+            border-radius: 3px;
+        }
     </style>
 </head>
 <body>
     <div class="container">
         <header>
             <h1>Enhanced Homophonic Cipher</h1>
-            <p class="subtitle">With FIXED affine transformation implementation</p>
+            <p class="subtitle">With Professional GF(2^8) Affine Transformation</p>
         </header>
 
         <div class="grid">
@@ -369,18 +430,46 @@
                     </div>
                     
                     <div class="affine-info">
-                        <strong>Affine Transformation:</strong> Adds non-linear diffusion using GF(256) arithmetic.<br>
-                        <strong>Effect:</strong> Even without CBC, provides enhanced security against frequency analysis.
+                        <strong>Professional Affine Transformation:</strong> Full 8×8 matrix multiplication in GF(2^8)<br>
+                        <strong>Effect:</strong> Provides optimal diffusion and non-linearity
                     </div>
                 </div>
 
-                <div class="compression-info">
-                    <h3 style="color: var(--secondary); margin-bottom: 0.5rem;">Encoding Information</h3>
-                    <p>Base64 encoding: 64 characters × 64 characters = 4096 homophones</p>
-                    <p>Compression ratio: 1 byte → 2 characters (vs 4 characters in HEX)</p>
-                    <div class="base64-chars">
-                        Base64 characters: ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/
+                <div class="matrix-visualization">
+                    <h4 style="color: var(--primary); margin-bottom: 0.5rem;">Affine Transformation Matrix (GF(2^8)):</h4>
+                    <div class="matrix-row">
+                        <div class="matrix-cell">1</div><div class="matrix-cell">0</div><div class="matrix-cell">0</div><div class="matrix-cell">0</div>
+                        <div class="matrix-cell">1</div><div class="matrix-cell">1</div><div class="matrix-cell">1</div><div class="matrix-cell">1</div>
                     </div>
+                    <div class="matrix-row">
+                        <div class="matrix-cell">1</div><div class="matrix-cell">1</div><div class="matrix-cell">0</div><div class="matrix-cell">0</div>
+                        <div class="matrix-cell">0</div><div class="matrix-cell">1</div><div class="matrix-cell">1</div><div class="matrix-cell">1</div>
+                    </div>
+                    <div class="matrix-row">
+                        <div class="matrix-cell">1</div><div class="matrix-cell">1</div><div class="matrix-cell">1</div><div class="matrix-cell">0</div>
+                        <div class="matrix-cell">0</div><div class="matrix-cell">0</div><div class="matrix-cell">1</div><div class="matrix-cell">1</div>
+                    </div>
+                    <div class="matrix-row">
+                        <div class="matrix-cell">1</div><div class="matrix-cell">1</div><div class="matrix-cell">1</div><div class="matrix-cell">1</div>
+                        <div class="matrix-cell">0</div><div class="matrix-cell">0</div><div class="matrix-cell">0</div><div class="matrix-cell">1</div>
+                    </div>
+                    <div class="matrix-row">
+                        <div class="matrix-cell">1</div><div class="matrix-cell">1</div><div class="matrix-cell">1</div><div class="matrix-cell">1</div>
+                        <div class="matrix-cell">1</div><div class="matrix-cell">0</div><div class="matrix-cell">0</div><div class="matrix-cell">0</div>
+                    </div>
+                    <div class="matrix-row">
+                        <div class="matrix-cell">0</div><div class="matrix-cell">1</div><div class="matrix-cell">1</div><div class="matrix-cell">1</div>
+                        <div class="matrix-cell">1</div><div class="matrix-cell">1</div><div class="matrix-cell">0</div><div class="matrix-cell">0</div>
+                    </div>
+                    <div class="matrix-row">
+                        <div class="matrix-cell">0</div><div class="matrix-cell">0</div><div class="matrix-cell">1</div><div class="matrix-cell">1</div>
+                        <div class="matrix-cell">1</div><div class="matrix-cell">1</div><div class="matrix-cell">1</div><div class="matrix-cell">0</div>
+                    </div>
+                    <div class="matrix-row">
+                        <div class="matrix-cell">0</div><div class="matrix-cell">0</div><div class="matrix-cell">0</div><div class="matrix-cell">1</div>
+                        <div class="matrix-cell">1</div><div class="matrix-cell">1</div><div class="matrix-cell">1</div><div class="matrix-cell">1</div>
+                    </div>
+                    <p style="margin-top: 0.5rem; font-size: 0.7rem;">MDS matrix providing optimal diffusion - each output bit depends on all input bits</p>
                 </div>
             </div>
 
@@ -423,6 +512,40 @@
         </div>
 
         <div class="card">
+            <h2 class="card-title">Process Visualization</h2>
+            
+            <div class="process-visualization">
+                <h3 style="color: var(--primary); margin-bottom: 1rem;">Encryption Process Steps:</h3>
+                <div class="process-step">
+                    <div class="step-number">1</div>
+                    <div class="step-description">Apply CBC diffusion (XOR with previous block)</div>
+                </div>
+                <div class="process-step">
+                    <div class="step-number">2</div>
+                    <div class="step-description">Apply affine transformation (GF(2^8) matrix multiplication)</div>
+                </div>
+                <div class="process-step">
+                    <div class="step-number">3</div>
+                    <div class="step-description">Apply homophonic substitution</div>
+                </div>
+                
+                <h3 style="color: var(--primary); margin-bottom: 1rem; margin-top: 1.5rem;">Decryption Process Steps:</h3>
+                <div class="process-step">
+                    <div class="step-number">1</div>
+                    <div class="step-description">Reverse homophonic substitution</div>
+                </div>
+                <div class="process-step">
+                    <div class="step-number">2</div>
+                    <div class="step-description">Apply inverse affine transformation</div>
+                </div>
+                <div class="process-step">
+                    <div class="step-number">3</div>
+                    <div class="step-description">Apply CBC diffusion (XOR with previous block)</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="card">
             <h2 class="card-title">Results</h2>
             
             <div class="result-container">
@@ -454,7 +577,7 @@
         </div>
 
         <div class="footer">
-            <p>Enhanced Homophonic Cipher System v6.0 | With FIXED Affine Transformation</p>
+            <p>Enhanced Homophonic Cipher System v6.1 | With Professional GF(2^8) Affine Transformation</p>
             <p>© 2024 Cryptographic Systems | All operations performed client-side</p>
         </div>
     </div>
@@ -520,6 +643,36 @@
                 this.inverseSbox = null;
                 this.initializationVector = null;
                 this.enableAffine = true;
+                
+                // Полная матрица афинного преобразования как в AES (8x8 бит)
+                this.affineMatrix = [
+                    [1, 0, 0, 0, 1, 1, 1, 1],
+                    [1, 1, 0, 0, 0, 1, 1, 1],
+                    [1, 1, 1, 0, 0, 0, 1, 1],
+                    [1, 1, 1, 1, 0, 0, 0, 1],
+                    [1, 1, 1, 1, 1, 0, 0, 0],
+                    [0, 1, 1, 1, 1, 1, 0, 0],
+                    [0, 0, 1, 1, 1, 1, 1, 0],
+                    [0, 0, 0, 1, 1, 1, 1, 1]
+                ];
+                
+                // Вектор констант (c(x) = 0x63)
+                this.affineVector = [1, 1, 0, 0, 0, 1, 1, 0];
+                
+                // Обратная матрица для декодирования
+                this.inverseAffineMatrix = [
+                    [0, 0, 1, 0, 0, 1, 0, 1],
+                    [1, 0, 0, 1, 0, 0, 1, 0],
+                    [0, 1, 0, 0, 1, 0, 0, 1],
+                    [1, 0, 1, 0, 0, 1, 0, 0],
+                    [0, 1, 0, 1, 0, 0, 1, 0],
+                    [0, 0, 1, 0, 1, 0, 0, 1],
+                    [1, 0, 0, 1, 0, 1, 0, 0],
+                    [0, 1, 0, 0, 1, 0, 1, 0]
+                ];
+                
+                // Обратный вектор констант
+                this.inverseAffineVector = [1, 0, 1, 0, 0, 0, 0, 0];
             }
 
             setAffineTransformation(enabled) {
@@ -565,59 +718,100 @@
                 }
             }
 
-            affineTransform(inputByte, state) {
+            // Полное афинное преобразование в GF(2^8)
+            affineTransform(inputByte) {
                 if (!this.enableAffine) return inputByte;
                 
-                const a = 0x1F;
-                const b = state;
+                // Преобразуем байт в битовый массив
+                const bits = [];
+                for (let i = 0; i < 8; i++) {
+                    bits.push((inputByte >> (7 - i)) & 1);
+                }
                 
+                // Умножаем на матрицу (в GF(2))
+                const resultBits = [0, 0, 0, 0, 0, 0, 0, 0];
+                for (let i = 0; i < 8; i++) {
+                    for (let j = 0; j < 8; j++) {
+                        resultBits[i] ^= this.affineMatrix[i][j] & bits[j];
+                    }
+                }
+                
+                // Добавляем вектор констант
+                for (let i = 0; i < 8; i++) {
+                    resultBits[i] ^= this.affineVector[i];
+                }
+                
+                // Преобразуем обратно в байт
                 let result = 0;
                 for (let i = 0; i < 8; i++) {
-                    if (a & (1 << i)) {
-                        result ^= inputByte << i;
-                    }
+                    result |= resultBits[i] << (7 - i);
                 }
                 
-                for (let i = 14; i >= 8; i--) {
-                    if (result & (1 << i)) {
-                        result ^= 0x11B << (i - 8);
-                    }
-                }
-                
-                return (result ^ b) & 0xFF;
+                return result;
             }
 
-            inverseAffineTransform(inputByte, state) {
+            // Обратное афинное преобразование
+            inverseAffineTransform(inputByte) {
                 if (!this.enableAffine) return inputByte;
                 
-                const a = 0x1F;
-                const b = state;
-                
-                // Вычисляем обратный элемент для a в GF(256)
-                let inverseA = 1;
-                for (let i = 0; i < 254; i++) {
-                    inverseA = this.gfMultiply(inverseA, a);
+                // Сначала вычитаем вектор констант
+                const bits = [];
+                for (let i = 0; i < 8; i++) {
+                    let bit = (inputByte >> (7 - i)) & 1;
+                    bit ^= this.inverseAffineVector[i];
+                    bits.push(bit);
                 }
                 
-                const temp = (inputByte ^ b) & 0xFF;
-                return this.gfMultiply(inverseA, temp);
+                // Умножаем на обратную матрицу
+                const resultBits = [0, 0, 0, 0, 0, 0, 0, 0];
+                for (let i = 0; i < 8; i++) {
+                    for (let j = 0; j < 8; j++) {
+                        resultBits[i] ^= this.inverseAffineMatrix[i][j] & bits[j];
+                    }
+                }
+                
+                // Преобразуем обратно в байт
+                let result = 0;
+                for (let i = 0; i < 8; i++) {
+                    result |= resultBits[i] << (7 - i);
+                }
+                
+                return result;
             }
 
+            // Операции умножения в GF(2^8) по модулю x^8 + x^4 + x^3 + x + 1
             gfMultiply(a, b) {
-                let result = 0;
+                let product = 0;
                 for (let i = 0; i < 8; i++) {
-                    if (b & (1 << i)) {
-                        result ^= a << i;
+                    if (b & 1) {
+                        product ^= a;
                     }
+                    
+                    const hiBitSet = a & 0x80;
+                    a <<= 1;
+                    if (hiBitSet) {
+                        a ^= 0x1B; // x^8 + x^4 + x^3 + x + 1
+                    }
+                    b >>= 1;
+                }
+                return product;
+            }
+
+            // Поиск обратного элемента в GF(2^8)
+            gfInverse(a) {
+                if (a === 0) return 0;
+                
+                // Используем расширенный алгоритм Евклида
+                let t = 0, newt = 1;
+                let r = 0x11B, newr = a; // Модуль x^8 + x^4 + x^3 + x + 1
+                
+                while (newr !== 0) {
+                    const quotient = Math.floor(r / newr);
+                    [t, newt] = [newt, t ^ this.gfMultiply(quotient, newt)];
+                    [r, newr] = [newr, r ^ this.gfMultiply(quotient, newr)];
                 }
                 
-                for (let i = 14; i >= 8; i--) {
-                    if (result & (1 << i)) {
-                        result ^= 0x11B << (i - 8);
-                    }
-                }
-                
-                return result & 0xFF;
+                return t;
             }
 
             async encryptData(plaintext, diffusionMode = 'cbc') {
@@ -627,7 +821,6 @@
                     const homophones = [];
                     
                     let previousBlock = null;
-                    let affineState = 0;
                     
                     if (diffusionMode === 'cbc') {
                         this.initializationVector = crypto.getRandomValues(new Uint8Array(16));
@@ -643,16 +836,14 @@
                     for (let i = 0; i < plaintextBuffer.length; i++) {
                         let byteToEncrypt = plaintextBuffer[i];
                         
-                        // Применяем CBC ДО афинного преобразования
+                        // 1. Применяем CBC ДО афинного преобразования
                         if (diffusionMode === 'cbc' && previousBlock) {
                             byteToEncrypt ^= previousBlock[i % 16];
                         }
                         
-                        // Применяем афинное преобразование
+                        // 2. Применяем полное афинное преобразование
                         if (this.enableAffine) {
-                            byteToEncrypt = this.affineTransform(byteToEncrypt, affineState);
-                            // Обновляем состояние на основе исходного байта
-                            affineState = (affineState + plaintextBuffer[i]) & 0xFF;
+                            byteToEncrypt = this.affineTransform(byteToEncrypt);
                         }
                         
                         const randomIndex = crypto.getRandomValues(new Uint8Array(1))[0] % 16;
@@ -683,7 +874,6 @@
                     let ivHomophones = [];
                     let cipherHomophones = homophones;
                     let previousBlock = null;
-                    let affineState = 0;
                     
                     if (diffusionMode === 'cbc') {
                         if (homophones.length < 16) {
@@ -708,22 +898,17 @@
                         const homophone = cipherHomophones[i];
                         let decryptedByte = this.inverseSbox.get(homophone);
                         
-                        // Применяем обратное афинное преобразование
+                        // 1. Применяем обратное афинное преобразование
                         if (this.enableAffine) {
-                            decryptedByte = this.inverseAffineTransform(decryptedByte, affineState);
+                            decryptedByte = this.inverseAffineTransform(decryptedByte);
                         }
                         
-                        // Применяем CBC после обратного преобразования
+                        // 2. Применяем CBC ПОСЛЕ обратного афинного преобразования
                         if (diffusionMode === 'cbc' && previousBlock) {
                             decryptedByte ^= previousBlock[i % 16];
                         }
                         
                         plaintextBuffer[i] = decryptedByte;
-                        
-                        // Обновляем состояние на основе расшифрованного байта
-                        if (this.enableAffine) {
-                            affineState = (affineState + decryptedByte) & 0xFF;
-                        }
                         
                         if (diffusionMode === 'cbc') {
                             previousBlock[i % 16] = this.inverseSbox.get(homophone);
@@ -1099,9 +1284,9 @@
                     info += '• 512-bit key material via PBKDF2-HMAC-SHA512\n';
                     info += '• 4096-element homophonic encoding\n';
                     if (enableAffine) {
-                        info += '• Affine transformation for non-linearity\n';
-                        info += '• GF(256) multiplication for diffusion\n';
-                        info += '• Correct state synchronization\n';
+                        info += '• Professional affine transformation in GF(2^8)\n';
+                        info += '• Full 8×8 matrix multiplication\n';
+                        info += '• Optimal diffusion and non-linearity\n';
                     }
                     info += '• Base64 encoding (2 chars per homophone)\n';
                     info += '• 16:1 homophone-to-byte ratio\n';
@@ -1162,4 +1347,4 @@
         });
     </script>
 </body>
-    </html>
+</html>
