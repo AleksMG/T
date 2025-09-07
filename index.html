@@ -679,105 +679,130 @@
                 this.initializationVector = null;
                 this.enableAffine = true;
                 this.previousResult = 0;
+                
+                // AES affine transformation matrix and constants
+                this.aesMatrix = [
+                    [1,0,0,0,1,1,1,1],
+                    [1,1,0,0,0,1,1,1],
+                    [1,1,1,0,0,0,1,1],
+                    [1,1,1,1,0,0,0,1],
+                    [1,1,1,1,1,0,0,0],
+                    [0,1,1,1,1,1,0,0],
+                    [0,0,1,1,1,1,1,0],
+                    [0,0,0,1,1,1,1,1]
+                ];
+                
+                this.invAesMatrix = [
+                    [0,0,1,0,0,1,0,1],
+                    [1,0,0,1,0,0,1,0],
+                    [0,1,0,0,1,0,0,1],
+                    [1,0,1,0,0,1,0,0],
+                    [0,1,0,1,0,0,1,0],
+                    [0,0,1,0,1,0,0,1],
+                    [1,0,0,1,0,1,0,0],
+                    [0,1,0,0,1,0,1,0]
+                ];
+                
+                // GF(2^8) polynomial: x^8 + x^4 + x^3 + x + 1
+                this.gfPoly = 0x11B;
             }
 
             setAffineTransformation(enabled) {
                 this.enableAffine = enabled;
             }
 
-            async initializeWithKey(passphrase, iterations = 500000) {
-                try {
-                    const encoder = new TextEncoder();
-                    const passphraseBuffer = encoder.encode(passphrase);
-                    
-                    const salt = await crypto.subtle.digest('SHA-256', passphraseBuffer);
-                    
-                    const importedKey = await crypto.subtle.importKey(
-                        'raw', passphraseBuffer,
-                        { name: 'PBKDF2' },
-                        false,
-                        ['deriveBits', 'deriveKey']
-                    );
-
-                    const derivedBits = await crypto.subtle.deriveBits(
-                        {
-                            name: 'PBKDF2',
-                            salt: salt,
-                            iterations: iterations,
-                            hash: 'SHA-512'
-                        },
-                        importedKey,
-                        512
-                    );
-
-                    const derivedBuffer = new Uint8Array(derivedBits);
-                    const encryptionKey = derivedBuffer.slice(0, 32);
-
-                    const { sbox, inverseSbox } = await DeterministicSBoxGenerator.generateSBox(encryptionKey);
-                    this.sbox = sbox;
-                    this.inverseSbox = inverseSbox;
-                    
-                    return true;
-                } catch (error) {
-                    console.error('Key initialization failed:', error);
-                    throw new Error('Key derivation failed: ' + error.message);
+            // Умножение в GF(2^8)
+            gfMultiply(a, b) {
+                let product = 0;
+                for (let i = 0; i < 8; i++) {
+                    if (b & 1) {
+                        product ^= a;
+                    }
+                    const hiBit = a & 0x80;
+                    a <<= 1;
+                    if (hiBit) {
+                        a ^= this.gfPoly;
+                    }
+                    b >>= 1;
                 }
+                return product;
+            }
+
+            // Обращение в GF(2^8) - НЕЛИНЕЙНАЯ операция!
+            gfInverse(a) {
+                if (a === 0) return 0;
+                
+                // Алгоритм расширенного Евклида
+                let r0 = this.gfPoly, r1 = a;
+                let s0 = 0, s1 = 1;
+                
+                while (r1 !== 1) {
+                    const degree0 = 31 - Math.clz32(r0);
+                    const degree1 = 31 - Math.clz32(r1);
+                    const shift = degree0 - degree1;
+                    
+                    if (shift < 0) {
+                        [r0, r1] = [r1, r0];
+                        [s0, s1] = [s1, s0];
+                        continue;
+                    }
+                    
+                    r0 ^= r1 << shift;
+                    s0 ^= s1 << shift;
+                }
+                
+                return s1;
             }
 
             // Правильное афинное преобразование AES
             affineTransform(inputByte) {
-                const bits = [];
-                for (let i = 0; i < 8; i++) {
-                    bits.push((inputByte >> (7 - i)) & 1);
-                }
+                if (!this.enableAffine) return inputByte;
                 
-                // AES affine transformation formula
-                const resultBits = [
-                    bits[0] ^ bits[4] ^ bits[5] ^ bits[6] ^ bits[7] ^ 1,
-                    bits[1] ^ bits[5] ^ bits[6] ^ bits[7] ^ bits[0] ^ 1,
-                    bits[2] ^ bits[6] ^ bits[7] ^ bits[0] ^ bits[1] ^ 0,
-                    bits[3] ^ bits[7] ^ bits[0] ^ bits[1] ^ bits[2] ^ 0,
-                    bits[4] ^ bits[0] ^ bits[1] ^ bits[2] ^ bits[3] ^ 0,
-                    bits[5] ^ bits[1] ^ bits[2] ^ bits[3] ^ bits[4] ^ 1,
-                    bits[6] ^ bits[2] ^ bits[3] ^ bits[4] ^ bits[5] ^ 1,
-                    bits[7] ^ bits[3] ^ bits[4] ^ bits[5] ^ bits[6] ^ 0
-                ];
+                if (inputByte === 0) return 0x63;
                 
+                // 1. Обращение в GF(2^8) - НЕЛИНЕЙНАЯ часть!
+                const inv = this.gfInverse(inputByte);
+                
+                // 2. Афинное преобразование
                 let result = 0;
+                const constant = 0x63;
+                
                 for (let i = 0; i < 8; i++) {
-                    result |= resultBits[i] << (7 - i);
+                    let bit = 0;
+                    for (let j = 0; j < 8; j++) {
+                        if (this.aesMatrix[i][j]) {
+                            bit ^= (inv >> (7 - j)) & 1;
+                        }
+                    }
+                    bit ^= (constant >> (7 - i)) & 1;
+                    result |= bit << (7 - i);
                 }
                 
-                this.previousResult = result;
                 return result;
             }
 
             // Правильное обратное афинное преобразование AES
             inverseAffineTransform(inputByte) {
-                const bits = [];
-                for (let i = 0; i < 8; i++) {
-                    bits.push((inputByte >> (7 - i)) & 1);
-                }
+                if (!this.enableAffine) return inputByte;
                 
-                // Inverse AES affine transformation formula
-                const resultBits = [
-                    bits[7] ^ bits[6] ^ bits[5] ^ bits[4] ^ bits[3] ^ 0,
-                    bits[0] ^ bits[7] ^ bits[6] ^ bits[5] ^ bits[4] ^ 1,
-                    bits[1] ^ bits[0] ^ bits[7] ^ bits[6] ^ bits[5] ^ 1,
-                    bits[2] ^ bits[1] ^ bits[0] ^ bits[7] ^ bits[6] ^ 0,
-                    bits[3] ^ bits[2] ^ bits[1] ^ bits[0] ^ bits[7] ^ 0,
-                    bits[4] ^ bits[3] ^ bits[2] ^ bits[1] ^ bits[0] ^ 0,
-                    bits[5] ^ bits[4] ^ bits[3] ^ bits[2] ^ bits[1] ^ 1,
-                    bits[6] ^ bits[5] ^ bits[4] ^ bits[3] ^ bits[2] ^ 1
-                ];
-                
+                // 1. Обратное афинное преобразование
                 let result = 0;
+                const constant = 0x05;
+                
                 for (let i = 0; i < 8; i++) {
-                    result |= resultBits[i] << (7 - i);
+                    let bit = 0;
+                    for (let j = 0; j < 8; j++) {
+                        if (this.invAesMatrix[i][j]) {
+                            bit ^= (inputByte >> (7 - j)) & 1;
+                        }
+                    }
+                    bit ^= (constant >> i) & 1;
+                    result |= bit << i;
                 }
                 
-                this.previousResult = result;
-                return result;
+                // 2. Обратное обращение в GF(2^8)
+                if (result === 0) return 0;
+                return this.gfInverse(result);
             }
 
             // Проверка корректности преобразований
@@ -831,6 +856,45 @@
                     outputBits: outputBits,
                     invertedByte: invertedByte
                 };
+            }
+
+            async initializeWithKey(passphrase, iterations = 500000) {
+                try {
+                    const encoder = new TextEncoder();
+                    const passphraseBuffer = encoder.encode(passphrase);
+                    
+                    const salt = await crypto.subtle.digest('SHA-256', passphraseBuffer);
+                    
+                    const importedKey = await crypto.subtle.importKey(
+                        'raw', passphraseBuffer,
+                        { name: 'PBKDF2' },
+                        false,
+                        ['deriveBits', 'deriveKey']
+                    );
+
+                    const derivedBits = await crypto.subtle.deriveBits(
+                        {
+                            name: 'PBKDF2',
+                            salt: salt,
+                            iterations: iterations,
+                            hash: 'SHA-512'
+                        },
+                        importedKey,
+                        512
+                    );
+
+                    const derivedBuffer = new Uint8Array(derivedBits);
+                    const encryptionKey = derivedBuffer.slice(0, 32);
+
+                    const { sbox, inverseSbox } = await DeterministicSBoxGenerator.generateSBox(encryptionKey);
+                    this.sbox = sbox;
+                    this.inverseSbox = inverseSbox;
+                    
+                    return true;
+                } catch (error) {
+                    console.error('Key initialization failed:', error);
+                    throw new Error('Key derivation failed: ' + error.message);
+                }
             }
 
             async encryptData(plaintext, diffusionMode = 'cbc') {
@@ -1240,7 +1304,7 @@
             }
 
             async handleTestByte() {
-                const testByte = parseInt(document.getElementById('testByte').value) || 0;
+                const testByte = parseInt(prompt('Enter byte value (0-255):', '65')) || 0;
                 if (testByte < 0 || testByte > 255) {
                     alert('Please enter a byte value between 0 and 255');
                     return;
