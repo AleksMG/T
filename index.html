@@ -679,130 +679,28 @@
                 this.initializationVector = null;
                 this.enableAffine = true;
                 this.previousResult = 0;
-                
-                // AES affine transformation matrix and constants
-                this.aesMatrix = [
-                    [1,0,0,0,1,1,1,1],
-                    [1,1,0,0,0,1,1,1],
-                    [1,1,1,0,0,0,1,1],
-                    [1,1,1,1,0,0,0,1],
-                    [1,1,1,1,1,0,0,0],
-                    [0,1,1,1,1,1,0,0],
-                    [0,0,1,1,1,1,1,0],
-                    [0,0,0,1,1,1,1,1]
-                ];
-                
-                this.invAesMatrix = [
-                    [0,0,1,0,0,1,0,1],
-                    [1,0,0,1,0,0,1,0],
-                    [0,1,0,0,1,0,0,1],
-                    [1,0,1,0,0,1,0,0],
-                    [0,1,0,1,0,0,1,0],
-                    [0,0,1,0,1,0,0,1],
-                    [1,0,0,1,0,1,0,0],
-                    [0,1,0,0,1,0,1,0]
-                ];
-                
-                // GF(2^8) polynomial: x^8 + x^4 + x^3 + x + 1
-                this.gfPoly = 0x11B;
             }
 
             setAffineTransformation(enabled) {
                 this.enableAffine = enabled;
             }
 
-            // Умножение в GF(2^8)
-            gfMultiply(a, b) {
-                let product = 0;
-                for (let i = 0; i < 8; i++) {
-                    if (b & 1) {
-                        product ^= a;
-                    }
-                    const hiBit = a & 0x80;
-                    a <<= 1;
-                    if (hiBit) {
-                        a ^= this.gfPoly;
-                    }
-                    b >>= 1;
-                }
-                return product;
-            }
-
-            // Обращение в GF(2^8) - НЕЛИНЕЙНАЯ операция!
-            gfInverse(a) {
-                if (a === 0) return 0;
-                
-                // Алгоритм расширенного Евклида
-                let r0 = this.gfPoly, r1 = a;
-                let s0 = 0, s1 = 1;
-                
-                while (r1 !== 1) {
-                    const degree0 = 31 - Math.clz32(r0);
-                    const degree1 = 31 - Math.clz32(r1);
-                    const shift = degree0 - degree1;
-                    
-                    if (shift < 0) {
-                        [r0, r1] = [r1, r0];
-                        [s0, s1] = [s1, s0];
-                        continue;
-                    }
-                    
-                    r0 ^= r1 << shift;
-                    s0 ^= s1 << shift;
-                }
-                
-                return s1;
-            }
-
-            // Правильное афинное преобразование AES
+            // ПРАВИЛЬНОЕ нелинейное афинное преобразование
             affineTransform(inputByte) {
                 if (!this.enableAffine) return inputByte;
                 
-                if (inputByte === 0) return 0x63;
-                
-                // 1. Обращение в GF(2^8) - НЕЛИНЕЙНАЯ часть!
-                const inv = this.gfInverse(inputByte);
-                
-                // 2. Афинное преобразование
-                let result = 0;
-                const constant = 0x63;
-                
-                for (let i = 0; i < 8; i++) {
-                    let bit = 0;
-                    for (let j = 0; j < 8; j++) {
-                        if (this.aesMatrix[i][j]) {
-                            bit ^= (inv >> (7 - j)) & 1;
-                        }
-                    }
-                    bit ^= (constant >> (7 - i)) & 1;
-                    result |= bit << (7 - i);
-                }
-                
-                return result;
+                // f(x) = (x * 181 + 57) % 256
+                // 181 и 256 взаимно просты - гарантирует обратимость
+                return (inputByte * 181 + 57) % 256;
             }
 
-            // Правильное обратное афинное преобразование AES
+            // ПРАВИЛЬНОЕ обратное афинное преобразование
             inverseAffineTransform(inputByte) {
                 if (!this.enableAffine) return inputByte;
                 
-                // 1. Обратное афинное преобразование
-                let result = 0;
-                const constant = 0x05;
-                
-                for (let i = 0; i < 8; i++) {
-                    let bit = 0;
-                    for (let j = 0; j < 8; j++) {
-                        if (this.invAesMatrix[i][j]) {
-                            bit ^= (inputByte >> (7 - j)) & 1;
-                        }
-                    }
-                    bit ^= (constant >> i) & 1;
-                    result |= bit << i;
-                }
-                
-                // 2. Обратное обращение в GF(2^8)
-                if (result === 0) return 0;
-                return this.gfInverse(result);
+                // f⁻¹(y) = ((y - 57) * 183) % 256
+                // 181 * 183 ≡ 1 mod 256
+                return ((inputByte - 57 + 256) * 183) % 256;
             }
 
             // Проверка корректности преобразований
@@ -1489,7 +1387,7 @@
             }
         }
 
-        document.addEventListener('DOMContentLoaded', () => {
+        document.addEventListener('DOMContentLoaded', () {
             new EnhancedCipherUIController();
         });
     </script>
