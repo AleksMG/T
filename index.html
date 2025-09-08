@@ -5,137 +5,382 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>TriFid - Профессиональная реализация</title>
     <style>
+        :root {
+            --primary-dark: #0d1117;
+            --secondary-dark: #161b22;
+            --accent-dark: #1f6feb;
+            --text-primary: #e6edf3;
+            --text-secondary: #7d8590;
+            --success: #3fb950;
+            --error: #f85149;
+            --warning: #d29922;
+        }
+
         body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            max-width: 1000px;
+            font-family: 'SF Mono', 'Monaco', 'Consolas', monospace;
+            background-color: var(--primary-dark);
+            color: var(--text-primary);
+            line-height: 1.6;
+            max-width: 1200px;
             margin: 0 auto;
             padding: 20px;
-            background-color: #1a1a2e;
-            color: #e6e6e6;
         }
-        h1, h2 {
-            color: #4cc9f0;
+
+        header {
             text-align: center;
-        }
-        .container {
-            display: flex;
-            gap: 20px;
-            flex-wrap: wrap;
-            justify-content: center;
-        }
-        .panel {
-            background: #16213e;
+            margin-bottom: 30px;
             padding: 20px;
-            border-radius: 10px;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
-            flex: 1;
-            min-width: 300px;
+            border-bottom: 1px solid var(--secondary-dark);
         }
-        textarea, input, button, select {
-            width: 100%;
-            margin: 8px 0;
-            padding: 12px;
-            border: 1px solid #4cc9f0;
+
+        h1 {
+            color: var(--accent-dark);
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+        }
+
+        h2 {
+            color: var(--text-secondary);
+            font-size: 1.5rem;
+            font-weight: 400;
+        }
+
+        .container {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        @media (max-width: 900px) {
+            .container {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .panel {
+            background: var(--secondary-dark);
             border-radius: 6px;
-            box-sizing: border-box;
-            font-size: 16px;
-            background-color: #0f3460;
-            color: #e6e6e6;
+            padding: 20px;
+            border: 1px solid #30363d;
         }
-        textarea {
-            min-height: 120px;
-            font-family: monospace;
-        }
-        button {
-            background: #4cc9f0;
-            color: #1a1a2e;
-            border: none;
-            cursor: pointer;
-            font-weight: bold;
-            padding: 14px;
-            transition: background 0.3s;
-            border-radius: 6px;
-        }
-        button:hover {
-            background: #2b8cb6;
-        }
-        .status {
-            padding: 12px;
-            margin: 12px 0;
-            border-radius: 6px;
-            font-weight: bold;
-        }
-        .success {
-            background: #4caf50;
-            color: white;
-        }
-        .error {
-            background: #f44336;
-            color: white;
-        }
-        .warning {
-            background: #ff9800;
-            color: white;
-        }
-        .checkbox-container {
+
+        .panel-header {
             display: flex;
             align-items: center;
-            margin: 10px 0;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid #30363d;
         }
-        .checkbox-container input {
+
+        .panel-title {
+            font-size: 1.3rem;
+            font-weight: 600;
+            color: var(--accent-dark);
+            margin-left: 10px;
+        }
+
+        .input-group {
+            margin-bottom: 15px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: 500;
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+        }
+
+        input, textarea {
+            width: 100%;
+            padding: 10px;
+            background-color: #0d1117;
+            border: 1px solid #30363d;
+            border-radius: 4px;
+            color: var(--text-primary);
+            font-family: inherit;
+            font-size: 0.95rem;
+        }
+
+        textarea {
+            min-height: 120px;
+            resize: vertical;
+        }
+
+        input:focus, textarea:focus {
+            outline: none;
+            border-color: var(--accent-dark);
+            box-shadow: 0 0 0 3px rgba(31, 111, 235, 0.3);
+        }
+
+        .checkbox-group {
+            display: flex;
+            align-items: center;
+            margin: 15px 0;
+        }
+
+        .checkbox-group input {
             width: auto;
             margin-right: 10px;
         }
-        .explanation {
-            background: #0f3460;
+
+        .btn {
+            display: block;
+            width: 100%;
+            padding: 12px;
+            background-color: var(--accent-dark);
+            color: white;
+            border: none;
+            border-radius: 6px;
+            font-family: inherit;
+            font-weight: 500;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: background-color 0.2s;
+            margin-top: 15px;
+        }
+
+        .btn:hover {
+            background-color: #2c67d1;
+        }
+
+        .btn:active {
+            background-color: #255cbc;
+        }
+
+        .status {
+            padding: 12px;
+            border-radius: 6px;
+            margin: 15px 0;
+            font-size: 0.9rem;
+            display: none;
+        }
+
+        .status.visible {
+            display: block;
+        }
+
+        .status.success {
+            background-color: rgba(63, 185, 80, 0.15);
+            border: 1px solid rgba(63, 185, 80, 0.4);
+            color: var(--success);
+        }
+
+        .status.error {
+            background-color: rgba(248, 81, 73, 0.15);
+            border: 1px solid rgba(248, 81, 73, 0.4);
+            color: var(--error);
+        }
+
+        .result-container {
+            margin-top: 20px;
+            padding: 15px;
+            background-color: rgba(13, 17, 23, 0.5);
+            border-radius: 6px;
+            border: 1px solid #30363d;
+        }
+
+        .result-label {
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+            margin-bottom: 8px;
+        }
+
+        .result-content {
+            font-family: 'SF Mono', monospace;
+            word-break: break-all;
+            padding: 10px;
+            background-color: rgba(0, 0, 0, 0.2);
+            border-radius: 4px;
+            max-height: 200px;
+            overflow-y: auto;
+        }
+
+        .iv-generation {
+            margin-top: 15px;
+            padding: 15px;
+            background-color: rgba(13, 17, 23, 0.5);
+            border-radius: 6px;
+            border: 1px solid #30363d;
+            font-size: 0.85rem;
+        }
+
+        .iv-generation h3 {
+            color: var(--text-secondary);
+            margin-bottom: 10px;
+            font-size: 1rem;
+        }
+
+        .technical-info {
+            margin-top: 30px;
             padding: 20px;
-            border-radius: 8px;
-            margin-top: 25px;
-            border-left: 5px solid #4cc9f0;
+            background-color: var(--secondary-dark);
+            border-radius: 6px;
+            border: 1px solid #30363d;
+            font-size: 0.9rem;
+        }
+
+        .technical-info h3 {
+            color: var(--accent-dark);
+            margin-bottom: 15px;
+        }
+
+        .info-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 15px;
+        }
+
+        .info-item {
+            padding: 10px;
+            background-color: rgba(13, 17, 23, 0.5);
+            border-radius: 4px;
+        }
+
+        .info-label {
+            color: var(--text-secondary);
+            font-size: 0.8rem;
+            margin-bottom: 5px;
+        }
+
+        .info-value {
+            font-family: 'SF Mono', monospace;
+            word-break: break-all;
+        }
+
+        footer {
+            text-align: center;
+            margin-top: 40px;
+            padding-top: 20px;
+            border-top: 1px solid #30363d;
+            color: var(--text-secondary);
+            font-size: 0.9rem;
         }
     </style>
 </head>
 <body>
-    <h1>TriFid - Профессиональная реализация</h1>
-    <h2>Омофоническое шифрование с афинным преобразованием</h2>
+    <header>
+        <h1>TriFid</h1>
+        <h2>Профессиональная реализация омофонического шифрования с афинным преобразованием</h2>
+    </header>
 
     <div class="container">
         <div class="panel">
-            <h2>Шифрование</h2>
-            <input type="text" id="encryptKey" placeholder="Ключевая фраза" value="секретный ключ">
-            <input type="text" id="encryptIV" placeholder="Вектор инициализации (IV)" value="инициализация">
-            <div class="checkbox-container">
+            <div class="panel-header">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
+                </svg>
+                <div class="panel-title">Шифрование</div>
+            </div>
+            
+            <div class="input-group">
+                <label for="encryptKey">Ключевая фраза</label>
+                <input type="text" id="encryptKey" placeholder="Введите ключевую фразу" value="секретный ключ">
+            </div>
+            
+            <div class="checkbox-group">
                 <input type="checkbox" id="encryptCBCMode">
                 <label for="encryptCBCMode">Режим CBC</label>
             </div>
-            <div class="checkbox-container">
+            
+            <div class="checkbox-group">
                 <input type="checkbox" id="encryptHomophonicMode" checked>
                 <label for="encryptHomophonicMode">Омофоническое шифрование</label>
             </div>
-            <textarea id="plainText" placeholder="Текст для шифрования">Пример текста для шифрования</textarea>
-            <button onclick="encrypt()">Зашифровать</button>
+            
+            <div class="input-group">
+                <label for="plainText">Текст для шифрования</label>
+                <textarea id="plainText" placeholder="Введите текст для шифрования">Пример текста для шифрования</textarea>
+            </div>
+            
+            <button class="btn" onclick="encrypt()">Зашифровать</button>
+            
             <div id="encryptStatus" class="status"></div>
-            <div>Шифротекст: <span id="cipherHex"></span></div>
+            
+            <div class="result-container">
+                <div class="result-label">Шифротекст:</div>
+                <div id="cipherHex" class="result-content"></div>
+            </div>
+            
+            <div class="iv-generation">
+                <h3>Генерация IV</h3>
+                <div>IV генерируется автоматически из ключа с помощью HMAC-SHA256</div>
+                <div id="encryptIVValue" class="result-content" style="margin-top: 10px; font-size: 0.8rem;"></div>
+            </div>
         </div>
 
         <div class="panel">
-            <h2>Дешифрование</h2>
-            <input type="text" id="decryptKey" placeholder="Ключевая фраза" value="секретный ключ">
-            <input type="text" id="decryptIV" placeholder="Вектор инициализации (IV)" value="инициализация">
-            <div class="checkbox-container">
+            <div class="panel-header">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M15 7h3a5 5 0 0 1 5 5 5 5 0 0 1-5 5h-3m-6 0H6a5 5 0 0 1-5-5 5 5 0 0 1 5-5h3"></path>
+                    <line x1="8" y1="12" x2="16" y2="12"></line>
+                </svg>
+                <div class="panel-title">Дешифрование</div>
+            </div>
+            
+            <div class="input-group">
+                <label for="decryptKey">Ключевая фраза</label>
+                <input type="text" id="decryptKey" placeholder="Введите ключевую фразу" value="секретный ключ">
+            </div>
+            
+            <div class="checkbox-group">
                 <input type="checkbox" id="decryptCBCMode">
                 <label for="decryptCBCMode">Режим CBC</label>
             </div>
-            <div class="checkbox-container">
+            
+            <div class="checkbox-group">
                 <input type="checkbox" id="decryptHomophonicMode" checked>
                 <label for="decryptHomophonicMode">Омофоническое шифрование</label>
             </div>
-            <textarea id="cipherText" placeholder="Шифротекст"></textarea>
-            <button onclick="decrypt()">Дешифровать</button>
+            
+            <div class="input-group">
+                <label for="cipherText">Шифротекст</label>
+                <textarea id="cipherText" placeholder="Введите шифротекст для дешифрования"></textarea>
+            </div>
+            
+            <button class="btn" onclick="decrypt()">Дешифровать</button>
+            
             <div id="decryptStatus" class="status"></div>
-            <div>Результат: <span id="decryptedText"></span></div>
+            
+            <div class="result-container">
+                <div class="result-label">Результат:</div>
+                <div id="decryptedText" class="result-content"></div>
+            </div>
+            
+            <div class="iv-generation">
+                <h3>Генерация IV</h3>
+                <div>IV генерируется автоматически из ключа с помощью HMAC-SHA256</div>
+                <div id="decryptIVValue" class="result-content" style="margin-top: 10px; font-size: 0.8rem;"></div>
+            </div>
         </div>
     </div>
+
+    <div class="technical-info">
+        <h3>Техническая информация</h3>
+        <div class="info-grid">
+            <div class="info-item">
+                <div class="info-label">Афинное преобразование</div>
+                <div class="info-value">y = (11 * x + 19) mod 256</div>
+            </div>
+            <div class="info-item">
+                <div class="info-label">Обратное преобразование</div>
+                <div class="info-value">x = (163 * (y - 19)) mod 256</div>
+            </div>
+            <div class="info-item">
+                <div class="info-label">Генерация S-Box</div>
+                <div class="info-value">PBKDF2 с SHA-512, 100000 итераций</div>
+            </div>
+            <div class="info-item">
+                <div class="info-label">Генерация IV</div>
+                <div class="info-value">HMAC-SHA256 от ключа</div>
+            </div>
+        </div>
+    </div>
+
+    <footer>
+        <div>TriFid &copy; 2023 | Профессиональная криптографическая реализация</div>
+    </footer>
 
     <script>
         // Глобальные переменные
@@ -162,6 +407,29 @@
             // Обработка отрицательных значений
             while (result < 0) result += m;
             return result % m;
+        }
+
+        // Генерация IV из ключа с помощью HMAC-SHA256
+        async function generateIVFromKey(key) {
+            const encoder = new TextEncoder();
+            const keyData = encoder.encode(key);
+            
+            // Используем HMAC-SHA256 для генерации IV из ключа
+            const cryptoKey = await crypto.subtle.importKey(
+                'raw',
+                keyData,
+                { name: 'HMAC', hash: 'SHA-256' },
+                false,
+                ['sign']
+            );
+            
+            const iv = await crypto.subtle.sign(
+                'HMAC',
+                cryptoKey,
+                encoder.encode('IV_GENERATION')
+            );
+            
+            return new Uint8Array(iv).slice(0, 16); // Берем первые 16 байт
         }
 
         // Криптографически стойкое перемешивание Фишера-Йейтса
@@ -370,7 +638,6 @@
         // Базовое шифрование
         async function encrypt() {
             const key = document.getElementById('encryptKey').value;
-            const ivText = document.getElementById('encryptIV').value;
             const text = document.getElementById('plainText').value;
             const useCBC = document.getElementById('encryptCBCMode').checked;
             const useHomophonic = document.getElementById('encryptHomophonicMode').checked;
@@ -387,18 +654,21 @@
                     await createHomophonicSbox(key);
                 }
                 
+                // Генерация IV из ключа
+                const iv = await generateIVFromKey(key);
+                document.getElementById('encryptIVValue').textContent = Array.from(iv).map(b => b.toString(16).padStart(2, '0')).join('');
+                
                 const encoder = new TextEncoder();
                 const data = encoder.encode(text);
-                const ivData = encoder.encode(ivText);
                 
                 let prevCipher = 0;
                 const resultBytes = new Uint8Array(data.length);
                 let resultText = '';
                 
                 for (let i = 0; i < data.length; i++) {
-                    // Правильная реализация CBC
+                    // Правильная реализация CBC с использованием всего IV
                     const currentXorValue = useCBC ? 
-                        (i === 0 ? (ivData[0] || 0) : prevCipher) : 
+                        (i < iv.length ? iv[i] : resultBytes[i - iv.length]) : 
                         0;
                     
                     const cipherByte = encryptByte(data[i], currentXorValue, dynSbox);
@@ -433,7 +703,6 @@
         // Базовое дешифрование
         async function decrypt() {
             const key = document.getElementById('decryptKey').value;
-            const ivText = document.getElementById('decryptIV').value;
             const cipherData = document.getElementById('cipherText').value;
             const useCBC = document.getElementById('decryptCBCMode').checked;
             const useHomophonic = document.getElementById('decryptHomophonicMode').checked;
@@ -450,8 +719,9 @@
                     await createHomophonicSbox(key);
                 }
                 
-                const encoder = new TextEncoder();
-                const ivData = encoder.encode(ivText);
+                // Генерация IV из ключа (такого же, как при шифровании)
+                const iv = await generateIVFromKey(key);
+                document.getElementById('decryptIVValue').textContent = Array.from(iv).map(b => b.toString(16).padStart(2, '0')).join('');
                 
                 let byteArray;
                 if (useHomophonic) {
@@ -481,8 +751,9 @@
                 const result = new Uint8Array(byteArray.length);
                 
                 for (let i = 0; i < byteArray.length; i++) {
+                    // Правильная реализация CBC с использованием всего IV
                     const currentXorValue = useCBC ? 
-                        (i === 0 ? (ivData[0] || 0) : byteArray[i-1]) : 
+                        (i < iv.length ? iv[i] : byteArray[i - iv.length]) : 
                         0;
                     
                     result[i] = decryptByte(byteArray[i], currentXorValue, dynSboxInverse);
@@ -502,7 +773,12 @@
         function showStatus(elementId, type, message) {
             const element = document.getElementById(elementId);
             element.textContent = message;
-            element.className = 'status ' + type;
+            element.className = 'status ' + type + ' visible';
+            
+            // Автоматическое скрытие через 5 секунд
+            setTimeout(() => {
+                element.className = 'status';
+            }, 5000);
         }
 
         // Тест обратимости (для отладки)
