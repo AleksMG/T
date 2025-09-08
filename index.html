@@ -96,8 +96,8 @@
     </style>
 </head>
 <body>
-    <h1>TriFid - Профессиональная реалиacja</h1>
-    <h2>Омофоническое шифрование с улучшенной безопасностью</h2>
+    <h1>TriFid - Профессиональная реализация</h1>
+    <h2>Омофоническое шифрование с афинным преобразованием</h2>
 
     <div class="container">
         <div class="panel">
@@ -146,6 +146,18 @@
         let homophonicSbox = null;
         let homophonicSboxInverse = null;
         let currentKey = "";
+
+        // Афинное преобразование: y = (a * x + b) mod m
+        function affineTransform(x, a = 0x1F, b = 0x63, m = 256) {
+            return (a * x + b) % m;
+        }
+
+        // Обратное афинное преобразование
+        function inverseAffineTransform(y, a = 0x1F, b = 0x63, m = 256) {
+            // Обратный элемент для a = 0x1F (31) mod 256 = 143 (0x8F)
+            const a_inv = 143;
+            return (a_inv * (y - b + m)) % m;
+        }
 
         // Криптографически стойкое перемешивание Фишера-Йейтса
         async function cryptoShuffle(array, key, salt = "") {
@@ -317,15 +329,17 @@
             }
         }
 
-        // Функции шифрования
+        // Функции шифрования с афинным преобразованием
         function encryptByte(byte, prevCipher, dynSbox) {
             const xorByte = byte ^ prevCipher;
             const r = (xorByte >> 4) & 0x0F;
             const c = xorByte & 0x0F;
             
+            // Static S-Box → Афинное преобразование → Dynamic S-Box
             const staticValue = staticSbox[r][c];
-            const newR = (staticValue >> 4) & 0x0F;
-            const newC = staticValue & 0x0F;
+            const affineValue = affineTransform(staticValue);
+            const newR = (affineValue >> 4) & 0x0F;
+            const newC = affineValue & 0x0F;
             
             return dynSbox[newR][newC];
         }
@@ -333,7 +347,8 @@
         function decryptByte(cipherByte, prevCipher, dynSboxInverse) {
             const dynamicValue = cipherByte;
             const staticValue = dynSboxInverse[dynamicValue];
-            const xorByte = staticSboxInverse[staticValue];
+            const affineValue = inverseAffineTransform(staticValue);
+            const xorByte = staticSboxInverse[affineValue];
             
             return xorByte ^ prevCipher;
         }
@@ -367,8 +382,7 @@
                 let resultText = '';
                 
                 for (let i = 0; i < data.length; i++) {
-                    // ПРАВИЛЬНАЯ РЕАЛИЗАЦИЯ CBC:
-                    // Для первого байта используем первый байт IV, для остальных - предыдущий зашифрованный байт
+                    // Правильная реализация CBC
                     const currentXorValue = useCBC ? 
                         (i === 0 ? (ivData[0] || 0) : prevCipher) : 
                         0;
@@ -384,7 +398,7 @@
                         resultText += options[randomIndex];
                     }
                     
-                    prevCipher = cipherByte;  // Сохраняем для следующей итерации CBC
+                    prevCipher = cipherByte;
                 }
                 
                 if (!useHomophonic) {
@@ -453,8 +467,6 @@
                 const result = new Uint8Array(byteArray.length);
                 
                 for (let i = 0; i < byteArray.length; i++) {
-                    // ПРАВИЛЬНАЯ РЕАЛИЗАЦИЯ CBC для дешифрования:
-                    // Для первого байта используем первый байт IV, для остальных - предыдущий байт шифротекста
                     const currentXorValue = useCBC ? 
                         (i === 0 ? (ivData[0] || 0) : byteArray[i-1]) : 
                         0;
