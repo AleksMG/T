@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>TriFid - Профессиональная реализация</title>
+    <title>TriBox</title>
     <style>
         :root {
             --primary-dark: #0d1117;
@@ -149,6 +149,14 @@
             background-color: #255cbc;
         }
 
+        .btn-secondary {
+            background-color: #30363d;
+        }
+
+        .btn-secondary:hover {
+            background-color: #3d444d;
+        }
+
         .status {
             padding: 12px;
             border-radius: 6px;
@@ -212,6 +220,50 @@
             font-size: 1rem;
         }
 
+        .entropy-analysis {
+            margin-top: 20px;
+            padding: 15px;
+            background-color: rgba(13, 17, 23, 0.5);
+            border-radius: 6px;
+            border: 1px solid #30363d;
+        }
+
+        .entropy-analysis h3 {
+            color: var(--text-secondary);
+            margin-bottom: 10px;
+            font-size: 1rem;
+        }
+
+        .entropy-result {
+            font-family: 'SF Mono', monospace;
+            padding: 10px;
+            background-color: rgba(0, 0, 0, 0.2);
+            border-radius: 4px;
+        }
+
+        .entropy-bar {
+            height: 20px;
+            background: linear-gradient(90deg, #f85149 0%, #d29922 50%, #3fb950 100%);
+            border-radius: 3px;
+            margin-top: 10px;
+            position: relative;
+        }
+
+        .entropy-value {
+            position: absolute;
+            height: 100%;
+            background-color: rgba(31, 111, 235, 0.5);
+            border-radius: 3px;
+        }
+
+        .entropy-labels {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 5px;
+            font-size: 0.8rem;
+            color: var(--text-secondary);
+        }
+
         .technical-info {
             margin-top: 30px;
             padding: 20px;
@@ -261,8 +313,8 @@
 </head>
 <body>
     <header>
-        <h1>TriFid</h1>
-        <h2>Профессиональная реализация омофонического шифрования с афинным преобразованием</h2>
+        <h1>TriBox</h1>
+        <h2>Омофонического шифрования с афинным преобразованием</h2>
     </header>
 
     <div class="container">
@@ -301,6 +353,23 @@
             <div class="result-container">
                 <div class="result-label">Шифротекст:</div>
                 <div id="cipherHex" class="result-content"></div>
+            </div>
+            
+            <button class="btn btn-secondary" onclick="analyzeEntropy('encrypt')">Анализ энтропии</button>
+            
+            <div class="entropy-analysis" id="encryptEntropy" style="display: none;">
+                <h3>Анализ энтропии шифротекста</h3>
+                <div class="entropy-result" id="encryptEntropyResult"></div>
+                <div class="entropy-bar">
+                    <div class="entropy-value" id="encryptEntropyBar"></div>
+                </div>
+                <div class="entropy-labels">
+                    <span>0</span>
+                    <span>2</span>
+                    <span>4</span>
+                    <span>6</span>
+                    <span id="entropyMaxLabel">8</span>
+                </div>
             </div>
             
             <div class="iv-generation">
@@ -348,6 +417,23 @@
                 <div id="decryptedText" class="result-content"></div>
             </div>
             
+            <button class="btn btn-secondary" onclick="analyzeEntropy('decrypt')">Анализ энтропии</button>
+            
+            <div class="entropy-analysis" id="decryptEntropy" style="display: none;">
+                <h3>Анализ энтропии шифротекста</h3>
+                <div class="entropy-result" id="decryptEntropyResult"></div>
+                <div class="entropy-bar">
+                    <div class="entropy-value" id="decryptEntropyBar"></div>
+                </div>
+                <div class="entropy-labels">
+                    <span>0</span>
+                    <span>2</span>
+                    <span>4</span>
+                    <span>6</span>
+                    <span>8</span>
+                </div>
+            </div>
+            
             <div class="iv-generation">
                 <h3>Генерация IV</h3>
                 <div>IV генерируется автоматически из ключа с помощью HMAC-SHA256</div>
@@ -379,7 +465,7 @@
     </div>
 
     <footer>
-        <div>TriFid &copy; 2023 | Профессиональная криптографическая реализация</div>
+        <div>TriBox &copy; 2025</div>
     </footer>
 
     <script>
@@ -391,6 +477,8 @@
         let homophonicSbox = null;
         let homophonicSboxInverse = null;
         let currentKey = "";
+        let lastEncryptedData = null;
+        let lastEncryptedFormat = null;
 
         // Афинное преобразование: y = (a * x + b) mod m
         function affineTransform(x, a = 11, b = 19, m = 256) {
@@ -689,9 +777,13 @@
                     const hexResult = Array.from(resultBytes).map(b => b.toString(16).padStart(2, '0')).join('');
                     document.getElementById('cipherText').value = hexResult;
                     document.getElementById('cipherHex').textContent = hexResult;
+                    lastEncryptedData = resultBytes;
+                    lastEncryptedFormat = 'hex';
                 } else {
                     document.getElementById('cipherText').value = resultText;
                     document.getElementById('cipherHex').textContent = resultText;
+                    lastEncryptedData = resultText;
+                    lastEncryptedFormat = 'homophonic';
                 }
                 
                 showStatus('encryptStatus', 'success', `Успешно зашифровано ${data.length} байт`);
@@ -766,6 +858,84 @@
                 showStatus('decryptStatus', 'success', `Успешно дешифровано ${byteArray.length} байт`);
             } catch (error) {
                 showStatus('decryptStatus', 'error', 'Ошибка при дешифровании: ' + error.message);
+            }
+        }
+
+        // Функция для расчета энтропии Шеннона
+        function calculateShannonEntropy(data, isHex = false) {
+            let byteData;
+            
+            if (isHex) {
+                // Для HEX: преобразуем строку HEX в байты
+                byteData = new Uint8Array(data.length / 2);
+                for (let i = 0; i < data.length; i += 2) {
+                    byteData[i/2] = parseInt(data.substr(i, 2), 16);
+                }
+            } else {
+                // Для текста: преобразуем строку в байты
+                const encoder = new TextEncoder();
+                byteData = encoder.encode(data);
+            }
+            
+            // Считаем частоту каждого байта
+            const frequency = new Array(256).fill(0);
+            for (let i = 0; i < byteData.length; i++) {
+                frequency[byteData[i]]++;
+            }
+            
+            // Вычисляем энтропию
+            let entropy = 0;
+            for (let i = 0; i < 256; i++) {
+                if (frequency[i] > 0) {
+                    const p = frequency[i] / byteData.length;
+                    entropy -= p * Math.log2(p);
+                }
+            }
+            
+            return entropy;
+        }
+
+        // Анализ энтропии
+        function analyzeEntropy(mode) {
+            const useHomophonic = mode === 'encrypt' ? 
+                document.getElementById('encryptHomophonicMode').checked : 
+                document.getElementById('decryptHomophonicMode').checked;
+            
+            let data, isHex;
+            
+            if (mode === 'encrypt') {
+                data = document.getElementById('cipherHex').textContent;
+                isHex = !useHomophonic;
+            } else {
+                data = document.getElementById('cipherText').value;
+                isHex = !document.getElementById('decryptHomophonicMode').checked;
+            }
+            
+            if (!data) {
+                showStatus(mode + 'Status', 'error', 'Нет данных для анализа энтропии');
+                return;
+            }
+            
+            try {
+                const entropy = calculateShannonEntropy(data, isHex);
+                const maxEntropy = isHex ? 8 : 6; // Максимальная энтропия: 8 для байтов, 6 для Base64-like
+                const percentage = (entropy / maxEntropy) * 100;
+                
+                const resultElement = document.getElementById(mode + 'EntropyResult');
+                const barElement = document.getElementById(mode + 'EntropyBar');
+                const containerElement = document.getElementById(mode + 'Entropy');
+                
+                resultElement.textContent = `Энтропия Шеннона: ${entropy.toFixed(4)} бит/байт (${percentage.toFixed(1)}% от максимальной ${maxEntropy})`;
+                barElement.style.width = percentage + '%';
+                containerElement.style.display = 'block';
+                
+                // Обновляем максимальную метку для encrypt панели
+                if (mode === 'encrypt') {
+                    document.getElementById('entropyMaxLabel').textContent = maxEntropy.toString();
+                }
+                
+            } catch (error) {
+                showStatus(mode + 'Status', 'error', 'Ошибка при анализе энтропии: ' + error.message);
             }
         }
 
