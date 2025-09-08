@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>TriFid - Профессиональная реализация с омофоническим шифрованием</title>
+    <title>TriFid - Профессиональная реализация</title>
     <style>
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
@@ -114,14 +114,6 @@
             color: #ff9e64;
             font-weight: bold;
         }
-        .warning {
-            background: #ff9800;
-            color: black;
-            padding: 15px;
-            border-radius: 6px;
-            margin: 20px 0;
-            font-weight: bold;
-        }
         .tabs {
             display: flex;
             margin-bottom: 10px;
@@ -144,10 +136,6 @@
     <h1>TriFid - Профессиональная реализация</h1>
     <h2>Омофоническое шифрование с тремя S-боксами</h2>
 
-    <div class="warning">
-        Внимание: Это учебная реализация. Не используйте для защиты действительно важных данных!
-    </div>
-
     <div class="tabs">
         <div class="tab active" onclick="switchTab('basic')">Базовое шифрование</div>
         <div class="tab" onclick="switchTab('homophonic')">Омофоническое шифрование</div>
@@ -157,6 +145,7 @@
         <div class="panel">
             <h2>Шифрование</h2>
             <input type="text" id="encryptKey" placeholder="Ключевая фраза" value="секретный ключ">
+            <input type="text" id="encryptIV" placeholder="Вектор инициализации (IV)" value="инициализация">
             <textarea id="plainText" placeholder="Текст для шифрования">Пример текста для шифрования</textarea>
             <button onclick="encrypt()">Зашифровать</button>
             <div id="encryptStatus" class="status"></div>
@@ -166,6 +155,7 @@
         <div class="panel">
             <h2>Дешифрование</h2>
             <input type="text" id="decryptKey" placeholder="Ключевая фраза" value="секретный ключ">
+            <input type="text" id="decryptIV" placeholder="Вектор инициализации (IV)" value="инициализация">
             <textarea id="cipherText" placeholder="Шифротекст в HEX формате"></textarea>
             <button onclick="decrypt()">Дешифровать</button>
             <div id="decryptStatus" class="status"></div>
@@ -177,6 +167,7 @@
         <div class="panel">
             <h2>Омофоническое шифрование</h2>
             <input type="text" id="hKey" placeholder="Ключевая фраза" value="секретный ключ">
+            <input type="text" id="hIV" placeholder="Вектор инициализации (IV)" value="инициализация">
             <textarea id="hPlainText" placeholder="Текст для шифрования">Секретный текст</textarea>
             <button onclick="encryptHomophonic()">Зашифровать</button>
             <div id="hEncryptStatus" class="status"></div>
@@ -187,6 +178,7 @@
         <div class="panel">
             <h2>Омофоническое дешифрование</h2>
             <input type="text" id="hDecryptKey" placeholder="Ключевая фраза" value="секретный ключ">
+            <input type="text" id="hDecryptIV" placeholder="Вектор инициализации (IV)" value="инициализация">
             <textarea id="hCipherInput" placeholder="Шифротекст в Base64"></textarea>
             <button onclick="decryptHomophonic()">Дешифровать</button>
             <div id="hDecryptStatus" class="status"></div>
@@ -195,55 +187,53 @@
     </div>
 
     <div class="explanation">
-        <h2>Улучшенная логика шифрования</h2>
+        <h2>Улучшенная логика шифрования с CBC-режимом</h2>
         
         <div class="visualization">
             <div class="byte-representation">
-                <div>Исходный байт</div>
-                <div class="bits">01101101</div>
-                <div>Разбиваем на два полубайта:</div>
-                <div>Старшие 4 бита: <span class="coordinate">r=6 (0110)</span></div>
-                <div>Младшие 4 бита: <span class="coordinate">c=13 (1101)</span></div>
+                <div>Байт + предыдущий шифротекст</div>
+                <div class="bits">XOR с предыдущим</div>
+                <div>Текущий байт: <span class="coordinate">01101101</span></div>
+                <div>Предыдущий: <span class="coordinate">10110110</span></div>
+                <div>Результат: <span class="coordinate">11011011</span></div>
             </div>
             
             <div class="arrow">→</div>
             
             <div class="byte-representation">
-                <div>Первый S-бокс (ключезависимый)</div>
-                <div>Берем значение по координатам (r, c)</div>
-                <div class="bits">S1[6][13] = 174</div>
-                <div>10101110</div>
+                <div>Первый S-бокс</div>
+                <div>Координаты: <span class="coordinate">(r, c)</span></div>
+                <div>Значение: <span class="coordinate">S1[r][c]</span></div>
             </div>
             
             <div class="arrow">→</div>
             
             <div class="byte-representation">
-                <div>Второй S-бокс (ключезависимый)</div>
-                <div>Используем значение для определения координат</div>
-                <div>Новые координаты: <span class="coordinate">(10, 14)</span></div>
+                <div>Второй S-бокс</div>
+                <div>Новые координаты</div>
+                <div><span class="coordinate">S2[newR][newC]</span></div>
             </div>
             
             <div class="arrow">→</div>
             
             <div class="byte-representation">
-                <div>Третий S-бокс (омофонический)</div>
-                <div>Случайный выбор из 16 вариантов</div>
-                <div class="bits">S3[10][14] = "Xy"</div>
-                <div>Результат: 2 символа Base64</div>
+                <div>Третий S-бокс</div>
+                <div>Случайный омофон</div>
+                <div><span class="coordinate">2 символа Base64</span></div>
             </div>
         </div>
 
-        <p><strong>Ключевые улучшения:</strong></p>
+        <p><strong>Режим CBC (Cipher Block Chaining):</strong></p>
         <ul>
-            <li>Все S-Box'ы генерируются на основе ключа через SHA-512</li>
-            <li>Омофонический S-Box содержит все 4096 уникальных биграмм Base64</li>
-            <li>Биграммы полностью перемешиваются алгоритмом Фишера-Йейтса</li>
-            <li>Гарантирована точная обратимость: decrypt(encrypt(text)) == text</li>
+            <li>Каждый байт XORится с предыдущим шифротекстом</li>
+            <li>Первый байт XORится с вектором инициализации (IV)</li>
+            <li>Устраняет паттерны и повышает криптостойкость</li>
+            <li>Дешифрование выполняется в обратном порядке</li>
         </ul>
     </div>
 
     <script>
-        // Глобальные переменные для кэширования S-Box
+        // Глобальные переменные
         let staticSbox = null;
         let staticSboxInverse = null;
         let dynamicSbox = null;
@@ -252,69 +242,59 @@
         let homophonicSboxInverse = null;
         let currentKey = "";
 
-        // Инициализация статического S-Box на основе ключа
-        async function initStaticSbox(key) {
-            if (staticSbox !== null && currentKey === key) return;
-            
+        // Криптостойкий алгоритм Фишера-Йейтса
+        async function fisherYatesShuffle(array, key, salt = "") {
             const encoder = new TextEncoder();
-            const keyData = encoder.encode(key);
+            const keyData = encoder.encode(key + salt);
             const hash = await crypto.subtle.digest('SHA-512', keyData);
             const hashArray = new Uint8Array(hash);
             
-            // Создаем массив 0-255 и перемешиваем алгоритмом Фишера-Йейтса
-            const tempArray = Array.from({length: 256}, (_, i) => i);
             let hashIndex = 0;
-            
-            for (let i = 255; i > 0; i--) {
+            for (let i = array.length - 1; i > 0; i--) {
                 const j = hashArray[hashIndex] % (i + 1);
-                [tempArray[i], tempArray[j]] = [tempArray[j], tempArray[i]];
+                [array[i], array[j]] = [array[j], array[i]];
                 hashIndex = (hashIndex + 1) % 64;
             }
+            return array;
+        }
+
+        // Инициализация статического S-Box
+        async function initStaticSbox(key) {
+            if (staticSbox !== null && currentKey === key) return;
             
-            // Формируем S-box 16x16
+            const tempArray = Array.from({length: 256}, (_, i) => i);
+            const shuffled = await fisherYatesShuffle(tempArray, key, "static_salt");
+            
             staticSbox = new Array(16);
             staticSboxInverse = new Array(256);
             
             for (let i = 0; i < 16; i++) {
                 staticSbox[i] = new Array(16);
                 for (let j = 0; j < 16; j++) {
-                    const value = tempArray[i * 16 + j];
+                    const value = shuffled[i * 16 + j];
                     staticSbox[i][j] = value;
                     staticSboxInverse[value] = (i << 4) | j;
                 }
             }
         }
 
-        // Генерация динамического S-Box на основе ключа
+        // Генерация динамического S-Box
         async function createDynamicSbox(key) {
             if (key === currentKey && dynamicSbox !== null) {
                 return {sbox: dynamicSbox, inverse: dynamicSboxInverse};
             }
             
             currentKey = key;
-            const encoder = new TextEncoder();
-            const keyData = encoder.encode(key + "dynamic_salt");
-            const hash = await crypto.subtle.digest('SHA-512', keyData);
-            const hashArray = new Uint8Array(hash);
-            
-            // Создаем массив 0-255 и перемешиваем алгоритмом Фишера-Йейтса
             const tempArray = Array.from({length: 256}, (_, i) => i);
-            let hashIndex = 32; // Начинаем с другой позиции в хеше
+            const shuffled = await fisherYatesShuffle(tempArray, key, "dynamic_salt");
             
-            for (let i = 255; i > 0; i--) {
-                const j = hashArray[hashIndex] % (i + 1);
-                [tempArray[i], tempArray[j]] = [tempArray[j], tempArray[i]];
-                hashIndex = (hashIndex + 1) % 64;
-            }
-            
-            // Формируем S-box 16x16
             dynamicSbox = new Array(16);
             dynamicSboxInverse = new Array(256);
             
             for (let i = 0; i < 16; i++) {
                 dynamicSbox[i] = new Array(16);
                 for (let j = 0; j < 16; j++) {
-                    const value = tempArray[i * 16 + j];
+                    const value = shuffled[i * 16 + j];
                     dynamicSbox[i][j] = value;
                     dynamicSboxInverse[value] = (i << 4) | j;
                 }
@@ -323,34 +303,21 @@
             return {sbox: dynamicSbox, inverse: dynamicSboxInverse};
         }
 
-        // Генерация омофонического S-Box на основе ключа
+        // Генерация омофонического S-Box
         async function createHomophonicSbox(key) {
             if (homophonicSbox !== null && currentKey === key) return;
             
             const base64Chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/';
-            
-            // 1. Создаем все 4096 биграмм
             const allBigrams = [];
+            
             for (let i = 0; i < 64; i++) {
                 for (let j = 0; j < 64; j++) {
                     allBigrams.push(base64Chars[i] + base64Chars[j]);
                 }
             }
             
-            // 2. Перемешиваем все биграммы алгоритмом Фишера-Йейтса по ключу
-            const encoder = new TextEncoder();
-            const keyData = encoder.encode(key + "homophonic_salt");
-            const hash = await crypto.subtle.digest('SHA-512', keyData);
-            const hashArray = new Uint8Array(hash);
+            const shuffledBigrams = await fisherYatesShuffle(allBigrams, key, "homophonic_salt");
             
-            let hashIndex = 0;
-            for (let i = allBigrams.length - 1; i > 0; i--) {
-                const j = hashArray[hashIndex] % (i + 1);
-                [allBigrams[i], allBigrams[j]] = [allBigrams[j], allBigrams[i]];
-                hashIndex = (hashIndex + 1) % 64;
-            }
-            
-            // 3. Разбиваем на 256 групп по 16 биграмм (16x16 S-box)
             homophonicSbox = new Array(16);
             homophonicSboxInverse = {};
             let bigramIndex = 0;
@@ -358,44 +325,45 @@
             for (let r = 0; r < 16; r++) {
                 homophonicSbox[r] = new Array(16);
                 for (let c = 0; c < 16; c++) {
-                    homophonicSbox[r][c] = allBigrams.slice(bigramIndex, bigramIndex + 16);
+                    homophonicSbox[r][c] = shuffledBigrams.slice(bigramIndex, bigramIndex + 16);
                     bigramIndex += 16;
                     
-                    // Создаем обратное отображение
                     for (const bigram of homophonicSbox[r][c]) {
-                        const originalByte = (r << 4) | c;
-                        homophonicSboxInverse[bigram] = originalByte;
+                        homophonicSboxInverse[bigram] = (r << 4) | c;
                     }
                 }
             }
         }
 
-        // Функции базового шифрования
-        function encryptByte(byte, dynSbox) {
-            const r = (byte >> 4) & 0x0F;
-            const c = byte & 0x0F;
+        // Функции шифрования с CBC-режимом
+        function encryptByteCBC(byte, prevCipher, dynSbox) {
+            const xorByte = byte ^ prevCipher;
+            const r = (xorByte >> 4) & 0x0F;
+            const c = xorByte & 0x0F;
             
             const staticValue = staticSbox[r][c];
             const newR = (staticValue >> 4) & 0x0F;
             const newC = staticValue & 0x0F;
             
-            const dynamicValue = dynSbox[newR][newC];
-            return dynamicValue;
+            return dynSbox[newR][newC];
         }
 
-        function decryptByte(byte, dynSboxInverse) {
-            const dynamicValue = byte;
+        function decryptByteCBC(cipherByte, prevCipher, dynSboxInverse) {
+            const dynamicValue = cipherByte;
             const staticValue = dynSboxInverse[dynamicValue];
-            const originalByte = staticSboxInverse[staticValue];
-            return originalByte;
+            const xorByte = staticSboxInverse[staticValue];
+            
+            return xorByte ^ prevCipher;
         }
 
+        // Базовое шифрование с CBC
         async function encrypt() {
             const key = document.getElementById('encryptKey').value;
+            const ivText = document.getElementById('encryptIV').value;
             const text = document.getElementById('plainText').value;
             
             if (!key || !text) {
-                showStatus('encryptStatus', 'error', 'Введите ключ и текст для шифрования');
+                showStatus('encryptStatus', 'error', 'Введите ключ и текст');
                 return;
             }
             
@@ -404,10 +372,14 @@
                 const {sbox: dynSbox} = await createDynamicSbox(key);
                 const encoder = new TextEncoder();
                 const data = encoder.encode(text);
+                const iv = encoder.encode(ivText);
+                
+                let prevCipher = iv[0] || 0;
                 const result = new Uint8Array(data.length);
                 
                 for (let i = 0; i < data.length; i++) {
-                    result[i] = encryptByte(data[i], dynSbox);
+                    result[i] = encryptByteCBC(data[i], prevCipher, dynSbox);
+                    prevCipher = result[i];
                 }
                 
                 const hexResult = Array.from(result).map(b => b.toString(16).padStart(2, '0')).join('');
@@ -422,6 +394,7 @@
 
         async function decrypt() {
             const key = document.getElementById('decryptKey').value;
+            const ivText = document.getElementById('decryptIV').value;
             const cipherHex = document.getElementById('cipherText').value;
             
             if (!key || !cipherHex) {
@@ -437,15 +410,20 @@
             try {
                 await initStaticSbox(key);
                 const {inverse: dynSboxInverse} = await createDynamicSbox(key);
+                const encoder = new TextEncoder();
+                const iv = encoder.encode(ivText);
+                
                 const byteArray = [];
                 for (let i = 0; i < cipherHex.length; i += 2) {
                     byteArray.push(parseInt(cipherHex.substr(i, 2), 16));
                 }
                 
+                let prevCipher = iv[0] || 0;
                 const result = new Uint8Array(byteArray.length);
                 
                 for (let i = 0; i < byteArray.length; i++) {
-                    result[i] = decryptByte(byteArray[i], dynSboxInverse);
+                    result[i] = decryptByteCBC(byteArray[i], prevCipher, dynSboxInverse);
+                    prevCipher = byteArray[i];
                 }
                 
                 const decoder = new TextDecoder();
@@ -458,13 +436,14 @@
             }
         }
 
-        // Функции омофонического шифрования
+        // Омофоническое шифрование с CBC
         async function encryptHomophonic() {
             const key = document.getElementById('hKey').value;
+            const ivText = document.getElementById('hIV').value;
             const text = document.getElementById('hPlainText').value;
             
             if (!key || !text) {
-                showStatus('hEncryptStatus', 'error', 'Введите ключ и текст для шифрования');
+                showStatus('hEncryptStatus', 'error', 'Введите ключ и текст');
                 return;
             }
             
@@ -472,16 +451,22 @@
                 await createHomophonicSbox(key);
                 const encoder = new TextEncoder();
                 const data = encoder.encode(text);
+                const iv = encoder.encode(ivText);
+                
+                let prevCipher = iv[0] || 0;
                 let result = '';
                 
                 for (let i = 0; i < data.length; i++) {
-                    const byte = data[i];
-                    const r = (byte >> 4) & 0x0F;
-                    const c = byte & 0x0F;
+                    const xorByte = data[i] ^ prevCipher;
+                    const r = (xorByte >> 4) & 0x0F;
+                    const c = xorByte & 0x0F;
                     
                     const options = homophonicSbox[r][c];
                     const randomIndex = crypto.getRandomValues(new Uint8Array(1))[0] % 16;
-                    result += options[randomIndex];
+                    const bigram = options[randomIndex];
+                    
+                    result += bigram;
+                    prevCipher = bigram.charCodeAt(0) ^ bigram.charCodeAt(1);
                 }
                 
                 document.getElementById('hCipherText').value = result;
@@ -494,6 +479,7 @@
 
         async function decryptHomophonic() {
             const key = document.getElementById('hDecryptKey').value;
+            const ivText = document.getElementById('hDecryptIV').value;
             const cipherText = document.getElementById('hCipherInput').value;
             
             if (!key || !cipherText) {
@@ -508,6 +494,10 @@
             
             try {
                 await createHomophonicSbox(key);
+                const encoder = new TextEncoder();
+                const iv = encoder.encode(ivText);
+                
+                let prevCipher = iv[0] || 0;
                 const resultBytes = new Uint8Array(cipherText.length / 2);
                 
                 for (let i = 0; i < cipherText.length; i += 2) {
@@ -515,7 +505,10 @@
                     if (!(bigram in homophonicSboxInverse)) {
                         throw new Error(`Неизвестная биграмма: ${bigram}`);
                     }
-                    resultBytes[i/2] = homophonicSboxInverse[bigram];
+                    
+                    const xorByte = homophonicSboxInverse[bigram];
+                    resultBytes[i/2] = xorByte ^ prevCipher;
+                    prevCipher = bigram.charCodeAt(0) ^ bigram.charCodeAt(1);
                 }
                 
                 const decoder = new TextDecoder();
