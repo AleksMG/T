@@ -148,24 +148,19 @@
         let currentKey = "";
 
         // Афинное преобразование: y = (a * x + b) mod m
-        function affineTransform(x, a = 0x1F, b = 0x63, m = 256) {
+        function affineTransform(x, a = 11, b = 19, m = 256) {
             return (a * x + b) % m;
         }
 
-        // Обратное афинное преобразование (ИСПРАВЛЕННАЯ ВЕРСИЯ)
-        function inverseAffineTransform(y, a = 0x1F, b = 0x63, m = 256) {
-            // Для a = 0x1F (31) обратный элемент по модулю 256 = 143 (0x8F)
-            // Проверка: (31 * 143) % 256 = 4433 % 256 = 1
-            const a_inv = 143;
-            
-            // Корректная формула: x = a_inv * (y - b) mod m
+        // Обратное афинное преобразование
+        function inverseAffineTransform(y, a = 11, b = 19, m = 256) {
+            // Обратный элемент для a=11 mod 256 = 163
+            // Проверка: (11 * 163) % 256 = 1793 % 256 = 1
+            const a_inv = 163;
             let result = a_inv * (y - b);
             
             // Обработка отрицательных значений
-            while (result < 0) {
-                result += m;
-            }
-            
+            while (result < 0) result += m;
             return result % m;
         }
 
@@ -345,9 +340,13 @@
             const r = (xorByte >> 4) & 0x0F;
             const c = xorByte & 0x0F;
             
-            // Static S-Box → Афинное преобразование → Dynamic S-Box
+            // Static S-Box
             const staticValue = staticSbox[r][c];
+            
+            // Афинное преобразование между S-Box'ами
             const affineValue = affineTransform(staticValue);
+            
+            // Dynamic S-Box
             const newR = (affineValue >> 4) & 0x0F;
             const newC = affineValue & 0x0F;
             
@@ -355,9 +354,14 @@
         }
 
         function decryptByte(cipherByte, prevCipher, dynSboxInverse) {
+            // Dynamic S-Box (обратный)
             const dynamicValue = cipherByte;
             const staticValue = dynSboxInverse[dynamicValue];
+            
+            // Обратное афинное преобразование
             const affineValue = inverseAffineTransform(staticValue);
+            
+            // Static S-Box (обратный)
             const xorByte = staticSboxInverse[affineValue];
             
             return xorByte ^ prevCipher;
@@ -499,6 +503,25 @@
             const element = document.getElementById(elementId);
             element.textContent = message;
             element.className = 'status ' + type;
+        }
+
+        // Тест обратимости (для отладки)
+        async function testReversibility() {
+            await initStaticSbox("test");
+            await createDynamicSbox("test");
+            
+            console.log("=== ТЕСТ ОБРАТИМОСТИ ===");
+            for (let i = 0; i < 256; i++) {
+                const encrypted = encryptByte(i, 0, dynamicSbox);
+                const decrypted = decryptByte(encrypted, 0, dynamicSboxInverse);
+                
+                if (i !== decrypted) {
+                    console.error("Ошибка при byte:", i, "encrypted:", encrypted, "decrypted:", decrypted);
+                    return false;
+                }
+            }
+            console.log("Все преобразования обратимы!");
+            return true;
         }
     </script>
 </body>
