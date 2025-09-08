@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>TriFid - Профессиональная реализация</title>
+    <title>TriFid - Профессиональная реализация с омофоническим шифрованием</title>
     <style>
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
@@ -122,17 +122,38 @@
             margin: 20px 0;
             font-weight: bold;
         }
+        .tabs {
+            display: flex;
+            margin-bottom: 10px;
+        }
+        .tab {
+            padding: 10px 20px;
+            background: #0f3460;
+            cursor: pointer;
+            border-radius: 5px 5px 0 0;
+            margin-right: 5px;
+        }
+        .tab.active {
+            background: #4cc9f0;
+            color: #1a1a2e;
+            font-weight: bold;
+        }
     </style>
 </head>
 <body>
     <h1>TriFid - Профессиональная реализация</h1>
-    <h2>Корректный шифр с двумя S-боксами</h2>
+    <h2>Омофоническое шифрование с тремя S-боксами</h2>
 
     <div class="warning">
         Внимание: Это учебная реализация. Не используйте для защиты действительно важных данных!
     </div>
 
-    <div class="container">
+    <div class="tabs">
+        <div class="tab active" onclick="switchTab('basic')">Базовое шифрование</div>
+        <div class="tab" onclick="switchTab('homophonic')">Омофоническое шифрование</div>
+    </div>
+
+    <div class="container" id="basicTab">
         <div class="panel">
             <h2>Шифрование</h2>
             <input type="text" id="encryptKey" placeholder="Ключевая фраза" value="секретный ключ">
@@ -152,8 +173,27 @@
         </div>
     </div>
 
+    <div class="container" id="homophonicTab" style="display: none;">
+        <div class="panel">
+            <h2>Омофоническое шифрование</h2>
+            <textarea id="hPlainText" placeholder="Текст для шифрования">Секретный текст</textarea>
+            <button onclick="encryptHomophonic()">Зашифровать</button>
+            <div id="hEncryptStatus" class="status"></div>
+            <div>Шифротекст (Base64):</div>
+            <textarea id="hCipherText" readonly></textarea>
+        </div>
+
+        <div class="panel">
+            <h2>Омофоническое дешифрование</h2>
+            <textarea id="hCipherInput" placeholder="Шифротекст в Base64"></textarea>
+            <button onclick="decryptHomophonic()">Дешифровать</button>
+            <div id="hDecryptStatus" class="status"></div>
+            <div>Результат: <span id="hDecryptedText"></span></div>
+        </div>
+    </div>
+
     <div class="explanation">
-        <h2>Исправленная логика шифрования</h2>
+        <h2>Улучшенная логика шифрования</h2>
         
         <div class="visualization">
             <div class="byte-representation">
@@ -184,18 +224,18 @@
             <div class="arrow">→</div>
             
             <div class="byte-representation">
-                <div>Зашифрованный байт</div>
-                <div>Формируем из координат: (10 << 4) | 14</div>
-                <div class="bits">10101110</div>
-                <div>174 (0xAE)</div>
+                <div>Третий S-бокс (омофонический)</div>
+                <div>Случайный выбор из 16 вариантов</div>
+                <div class="bits">S3[10][14] = "Xy"</div>
+                <div>Результат: 2 символа Base64</div>
             </div>
         </div>
 
         <p><strong>Ключевые улучшения:</strong></p>
         <ul>
-            <li>Статический S-Box теперь является биективной перестановкой (все значения уникальны)</li>
-            <li>Реализованы корректные обратные преобразования для дешифрования</li>
-            <li>Улучшена генерация S-Box на основе ключа</li>
+            <li>Статический S-Box является биективной перестановкой (все значения уникальны)</li>
+            <li>Динамический S-Box генерируется на основе ключа</li>
+            <li>Омофонический S-Box обеспечивает устойчивость к частотному анализу</li>
             <li>Гарантирована точная обратимость: decrypt(encrypt(text)) == text</li>
         </ul>
     </div>
@@ -207,32 +247,31 @@
         let dynamicSbox = null;
         let dynamicSboxInverse = null;
         let currentKey = "";
+        let homophonicSbox = null;
+        let homophonicSboxInverse = null;
 
-        // Инициализация статического S-Box (один раз при загрузке)
+        // Инициализация статического S-Box
         function initStaticSbox() {
             if (staticSbox !== null) return;
             
-            // Используем детерминированный PRNG на основе RC4 для заполнения
             const seed = "static_sbox_initialization_seed_constant";
             const prng = new RC4PRNG(seed);
             
-            // Создаем массив [0..255] и перемешиваем его
             const tempArray = Array.from({length: 256}, (_, i) => i);
             for (let i = 255; i > 0; i--) {
                 const j = prng.next() % (i + 1);
                 [tempArray[i], tempArray[j]] = [tempArray[j], tempArray[i]];
             }
             
-            // Заполняем S-Box 16x16
             staticSbox = new Array(16);
-            staticSboxInverse = new Array(256); // Инверсный S-Box для быстрого поиска
+            staticSboxInverse = new Array(256);
             
             for (let i = 0; i < 16; i++) {
                 staticSbox[i] = new Array(16);
                 for (let j = 0; j < 16; j++) {
                     const value = tempArray[i * 16 + j];
                     staticSbox[i][j] = value;
-                    staticSboxInverse[value] = (i << 4) | j; // Сохраняем обратное отображение
+                    staticSboxInverse[value] = (i << 4) | j;
                 }
             }
         }
@@ -247,17 +286,14 @@
             const encoder = new TextEncoder();
             const keyData = encoder.encode(key);
             
-            // Инициализируем PRNG с ключом
             const prng = new RC4PRNG(keyData);
             
-            // Создаем массив [0..255] и тщательно перемешиваем
             const tempArray = Array.from({length: 256}, (_, i) => i);
             for (let i = 255; i > 0; i--) {
                 const j = prng.next() % (i + 1);
                 [tempArray[i], tempArray[j]] = [tempArray[j], tempArray[i]];
             }
             
-            // Заполняем S-Box 16x16 и инверсный S-Box
             dynamicSbox = new Array(16);
             dynamicSboxInverse = new Array(256);
             
@@ -273,14 +309,50 @@
             return {sbox: dynamicSbox, inverse: dynamicSboxInverse};
         }
 
-        // Простой PRNG на основе алгоритма RC4
+        // Генерация омофонического S-Box
+        function createHomophonicSbox() {
+            if (homophonicSbox !== null) return;
+            
+            const base64Chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/';
+            const totalVariants = 4096;
+            let allPossibleBigrams = [];
+            
+            for (let i = 0; i < 64; i++) {
+                for (let j = 0; j < 64; j++) {
+                    allPossibleBigrams.push(base64Chars[i] + base64Chars[j]);
+                }
+            }
+            
+            for (let i = totalVariants - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [allPossibleBigrams[i], allPossibleBigrams[j]] = [allPossibleBigrams[j], allPossibleBigrams[i]];
+            }
+            
+            homophonicSbox = new Array(16);
+            homophonicSboxInverse = {};
+            
+            let bigramIndex = 0;
+            for (let r = 0; r < 16; r++) {
+                homophonicSbox[r] = new Array(16);
+                for (let c = 0; c < 16; c++) {
+                    homophonicSbox[r][c] = allPossibleBigrams.slice(bigramIndex, bigramIndex + 16);
+                    bigramIndex += 16;
+                    
+                    for (const bigram of homophonicSbox[r][c]) {
+                        const originalByte = (r << 4) | c;
+                        homophonicSboxInverse[bigram] = originalByte;
+                    }
+                }
+            }
+        }
+
+        // PRNG на основе RC4
         class RC4PRNG {
             constructor(seed) {
                 this.s = new Array(256);
                 this.i = 0;
                 this.j = 0;
                 
-                // Инициализация состояния
                 for (let i = 0; i < 256; i++) {
                     this.s[i] = i;
                 }
@@ -308,7 +380,7 @@
             }
         }
 
-        // Функция шифрования байта
+        // Функции базового шифрования
         function encryptByte(byte, dynSbox) {
             const r = (byte >> 4) & 0x0F;
             const c = byte & 0x0F;
@@ -321,16 +393,13 @@
             return dynamicValue;
         }
 
-        // Функция дешифрования байта
         function decryptByte(byte, dynSboxInverse) {
             const dynamicValue = byte;
             const staticValue = dynSboxInverse[dynamicValue];
-            
             const originalByte = staticSboxInverse[staticValue];
             return originalByte;
         }
 
-        // Основная функция шифрования
         function encrypt() {
             const key = document.getElementById('encryptKey').value;
             const text = document.getElementById('plainText').value;
@@ -361,7 +430,6 @@
             }
         }
 
-        // Основная функция дешифрования
         function decrypt() {
             const key = document.getElementById('decryptKey').value;
             const cipherHex = document.getElementById('cipherText').value;
@@ -400,11 +468,87 @@
             }
         }
 
-        // Функция для отображения статуса
+        // Функции омофонического шифрования
+        function encryptHomophonic() {
+            const text = document.getElementById('hPlainText').value;
+            
+            if (!text) {
+                showStatus('hEncryptStatus', 'error', 'Введите текст для шифрования');
+                return;
+            }
+            
+            try {
+                createHomophonicSbox();
+                const encoder = new TextEncoder();
+                const data = encoder.encode(text);
+                let result = '';
+                
+                for (let i = 0; i < data.length; i++) {
+                    const byte = data[i];
+                    const r = (byte >> 4) & 0x0F;
+                    const c = byte & 0x0F;
+                    
+                    const options = homophonicSbox[r][c];
+                    const randomIndex = Math.floor(Math.random() * options.length);
+                    result += options[randomIndex];
+                }
+                
+                document.getElementById('hCipherText').value = result;
+                document.getElementById('hCipherInput').value = result;
+                showStatus('hEncryptStatus', 'success', `Успешно зашифровано ${data.length} байт`);
+            } catch (error) {
+                showStatus('hEncryptStatus', 'error', 'Ошибка при шифровании: ' + error.message);
+            }
+        }
+
+        function decryptHomophonic() {
+            const cipherText = document.getElementById('hCipherInput').value;
+            
+            if (!cipherText) {
+                showStatus('hDecryptStatus', 'error', 'Введите шифротекст');
+                return;
+            }
+            
+            if (cipherText.length % 2 !== 0) {
+                showStatus('hDecryptStatus', 'error', 'Неверная длина шифротекста');
+                return;
+            }
+            
+            try {
+                createHomophonicSbox();
+                const resultBytes = new Uint8Array(cipherText.length / 2);
+                
+                for (let i = 0; i < cipherText.length; i += 2) {
+                    const bigram = cipherText.substr(i, 2);
+                    if (!(bigram in homophonicSboxInverse)) {
+                        throw new Error(`Неизвестная биграмма: ${bigram}`);
+                    }
+                    resultBytes[i/2] = homophonicSboxInverse[bigram];
+                }
+                
+                const decoder = new TextDecoder();
+                const textResult = decoder.decode(resultBytes);
+                document.getElementById('hDecryptedText').textContent = textResult;
+                
+                showStatus('hDecryptStatus', 'success', `Успешно дешифровано ${resultBytes.length} байт`);
+            } catch (error) {
+                showStatus('hDecryptStatus', 'error', 'Ошибка при дешифровании: ' + error.message);
+            }
+        }
+
+        // Вспомогательные функции
         function showStatus(elementId, type, message) {
             const element = document.getElementById(elementId);
             element.textContent = message;
             element.className = 'status ' + type;
+        }
+
+        function switchTab(tabName) {
+            document.getElementById('basicTab').style.display = tabName === 'basic' ? 'flex' : 'none';
+            document.getElementById('homophonicTab').style.display = tabName === 'homophonic' ? 'flex' : 'none';
+            
+            document.querySelectorAll('.tab').forEach(tab => tab.classList.remove('active'));
+            document.querySelector(`.tab:nth-child(${tabName === 'basic' ? 1 : 2})`).classList.add('active');
         }
 
         // Инициализация при загрузке
