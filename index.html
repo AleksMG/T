@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>TriFid - Правильная реализация</title>
+    <title>TriFid - Профессиональная реализация</title>
     <style>
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
@@ -88,10 +88,12 @@
             padding: 15px;
             background: #16213e;
             border-radius: 8px;
+            flex-wrap: wrap;
         }
         .byte-representation {
             text-align: center;
             padding: 10px;
+            min-width: 120px;
         }
         .bits {
             font-family: monospace;
@@ -106,16 +108,29 @@
             font-size: 24px;
             color: #4cc9f0;
             font-weight: bold;
+            margin: 10px;
         }
         .coordinate {
             color: #ff9e64;
             font-weight: bold;
         }
+        .warning {
+            background: #ff9800;
+            color: black;
+            padding: 15px;
+            border-radius: 6px;
+            margin: 20px 0;
+            font-weight: bold;
+        }
     </style>
 </head>
 <body>
-    <h1>TriFid - Правильная реализация</h1>
-    <h2>Шифрование с использованием двух S-боксов</h2>
+    <h1>TriFid - Профессиональная реализация</h1>
+    <h2>Корректный шифр с двумя S-боксами</h2>
+
+    <div class="warning">
+        Внимание: Это учебная реализация. Не используйте для защиты действительно важных данных!
+    </div>
 
     <div class="container">
         <div class="panel">
@@ -138,7 +153,7 @@
     </div>
 
     <div class="explanation">
-        <h2>Правильная логика шифрования</h2>
+        <h2>Исправленная логика шифрования</h2>
         
         <div class="visualization">
             <div class="byte-representation">
@@ -176,105 +191,143 @@
             </div>
         </div>
 
-        <p>Каждый байт однозначно соответствует паре координат (r, c) в S-боксе 16×16, где r - старшие 4 бита, c - младшие 4 бита.</p>
+        <p><strong>Ключевые улучшения:</strong></p>
+        <ul>
+            <li>Статический S-Box теперь является биективной перестановкой (все значения уникальны)</li>
+            <li>Реализованы корректные обратные преобразования для дешифрования</li>
+            <li>Улучшена генерация S-Box на основе ключа</li>
+            <li>Гарантирована точная обратимость: decrypt(encrypt(text)) == text</li>
+        </ul>
     </div>
 
     <script>
-        // Статический S-бокс (прямое преобразование)
-        const staticSbox = (() => {
-            const sbox = new Array(16);
-            for (let i = 0; i < 16; i++) {
-                sbox[i] = new Array(16);
-                for (let j = 0; j < 16; j++) {
-                    // Статическое преобразование - можно использовать любую биективную функцию
-                    sbox[i][j] = (i * 17 + j * 13) % 256;
-                }
-            }
-            return sbox;
-        })();
-
-        // Динамический S-бокс на основе ключа
+        // Глобальные переменные для кэширования S-Box
+        let staticSbox = null;
+        let staticSboxInverse = null;
         let dynamicSbox = null;
+        let dynamicSboxInverse = null;
         let currentKey = "";
 
-        function createDynamicSbox(key) {
-            if (key === currentKey && dynamicSbox !== null) {
-                return dynamicSbox;
-            }
+        // Инициализация статического S-Box (один раз при загрузке)
+        function initStaticSbox() {
+            if (staticSbox !== null) return;
             
-            currentKey = key;
-            const sbox = new Array(16);
+            // Используем детерминированный PRNG на основе RC4 для заполнения
+            const seed = "static_sbox_initialization_seed_constant";
+            const prng = new RC4PRNG(seed);
             
-            // Создаем детерминированный seed из ключа
-            const encoder = new TextEncoder();
-            const keyData = encoder.encode(key);
-            const seed = new Uint8Array(32);
-            
-            for (let i = 0; i < keyData.length; i++) {
-                seed[i % 32] ^= keyData[i];
-            }
-            
-            // Заполняем S-бокс начальными значениями
-            const tempArray = new Array(256);
-            for (let i = 0; i < 256; i++) {
-                tempArray[i] = i;
-            }
-            
-            // Перемешиваем using Fisher-Yates
+            // Создаем массив [0..255] и перемешиваем его
+            const tempArray = Array.from({length: 256}, (_, i) => i);
             for (let i = 255; i > 0; i--) {
-                const j = (seed[i % 32] + seed[(i + 7) % 32] * 256) % (i + 1);
+                const j = prng.next() % (i + 1);
                 [tempArray[i], tempArray[j]] = [tempArray[j], tempArray[i]];
             }
             
-            // Заполняем 16x16 S-бокс
+            // Заполняем S-Box 16x16
+            staticSbox = new Array(16);
+            staticSboxInverse = new Array(256); // Инверсный S-Box для быстрого поиска
+            
             for (let i = 0; i < 16; i++) {
-                sbox[i] = new Array(16);
+                staticSbox[i] = new Array(16);
                 for (let j = 0; j < 16; j++) {
-                    sbox[i][j] = tempArray[i * 16 + j];
+                    const value = tempArray[i * 16 + j];
+                    staticSbox[i][j] = value;
+                    staticSboxInverse[value] = (i << 4) | j; // Сохраняем обратное отображение
+                }
+            }
+        }
+
+        // Генерация динамического S-Box на основе ключа
+        function createDynamicSbox(key) {
+            if (key === currentKey && dynamicSbox !== null) {
+                return {sbox: dynamicSbox, inverse: dynamicSboxInverse};
+            }
+            
+            currentKey = key;
+            const encoder = new TextEncoder();
+            const keyData = encoder.encode(key);
+            
+            // Инициализируем PRNG с ключом
+            const prng = new RC4PRNG(keyData);
+            
+            // Создаем массив [0..255] и тщательно перемешиваем
+            const tempArray = Array.from({length: 256}, (_, i) => i);
+            for (let i = 255; i > 0; i--) {
+                const j = prng.next() % (i + 1);
+                [tempArray[i], tempArray[j]] = [tempArray[j], tempArray[i]];
+            }
+            
+            // Заполняем S-Box 16x16 и инверсный S-Box
+            dynamicSbox = new Array(16);
+            dynamicSboxInverse = new Array(256);
+            
+            for (let i = 0; i < 16; i++) {
+                dynamicSbox[i] = new Array(16);
+                for (let j = 0; j < 16; j++) {
+                    const value = tempArray[i * 16 + j];
+                    dynamicSbox[i][j] = value;
+                    dynamicSboxInverse[value] = (i << 4) | j;
                 }
             }
             
-            dynamicSbox = sbox;
-            return sbox;
+            return {sbox: dynamicSbox, inverse: dynamicSboxInverse};
+        }
+
+        // Простой PRNG на основе алгоритма RC4
+        class RC4PRNG {
+            constructor(seed) {
+                this.s = new Array(256);
+                this.i = 0;
+                this.j = 0;
+                
+                // Инициализация состояния
+                for (let i = 0; i < 256; i++) {
+                    this.s[i] = i;
+                }
+                
+                let keyBytes;
+                if (typeof seed === 'string') {
+                    const encoder = new TextEncoder();
+                    keyBytes = encoder.encode(seed);
+                } else {
+                    keyBytes = seed;
+                }
+                
+                let j = 0;
+                for (let i = 0; i < 256; i++) {
+                    j = (j + this.s[i] + keyBytes[i % keyBytes.length]) % 256;
+                    [this.s[i], this.s[j]] = [this.s[j], this.s[i]];
+                }
+            }
+            
+            next() {
+                this.i = (this.i + 1) % 256;
+                this.j = (this.j + this.s[this.i]) % 256;
+                [this.s[this.i], this.s[this.j]] = [this.s[this.j], this.s[this.i]];
+                return this.s[(this.s[this.i] + this.s[this.j]) % 256];
+            }
         }
 
         // Функция шифрования байта
         function encryptByte(byte, dynSbox) {
-            // Разбиваем байт на полубайты
-            const r = (byte >> 4) & 0x0F; // Старшие 4 бита
-            const c = byte & 0x0F;        // Младшие 4 бита
+            const r = (byte >> 4) & 0x0F;
+            const c = byte & 0x0F;
             
-            // Берем значение из статического S-бокса
             const staticValue = staticSbox[r][c];
-            
-            // Используем динамический S-бокс для определения координат
             const newR = (staticValue >> 4) & 0x0F;
             const newC = staticValue & 0x0F;
             
-            // Формируем зашифрованный байт из координат
-            return (newR << 4) | newC;
+            const dynamicValue = dynSbox[newR][newC];
+            return dynamicValue;
         }
 
         // Функция дешифрования байта
-        function decryptByte(byte, dynSbox) {
-            // Разбиваем зашифрованный байт на полубайты
-            const r = (byte >> 4) & 0x0F; // Старшие 4 бита (координата)
-            const c = byte & 0x0F;        // Младшие 4 бита (координата)
+        function decryptByte(byte, dynSboxInverse) {
+            const dynamicValue = byte;
+            const staticValue = dynSboxInverse[dynamicValue];
             
-            // Восстанавливаем значение из динамического S-бокса
-            const dynamicValue = dynSbox[r][c];
-            
-            // Находим оригинальные координаты в статическом S-боксе
-            for (let origR = 0; origR < 16; origR++) {
-                for (let origC = 0; origC < 16; origC++) {
-                    if (staticSbox[origR][origC] === dynamicValue) {
-                        // Восстанавливаем оригинальный байт
-                        return (origR << 4) | origC;
-                    }
-                }
-            }
-            
-            return 0; // fallback
+            const originalByte = staticSboxInverse[staticValue];
+            return originalByte;
         }
 
         // Основная функция шифрования
@@ -288,7 +341,8 @@
             }
             
             try {
-                const dynSbox = createDynamicSbox(key);
+                initStaticSbox();
+                const {sbox: dynSbox} = createDynamicSbox(key);
                 const encoder = new TextEncoder();
                 const data = encoder.encode(text);
                 const result = new Uint8Array(data.length);
@@ -323,7 +377,8 @@
             }
             
             try {
-                const dynSbox = createDynamicSbox(key);
+                initStaticSbox();
+                const {inverse: dynSboxInverse} = createDynamicSbox(key);
                 const byteArray = [];
                 for (let i = 0; i < cipherHex.length; i += 2) {
                     byteArray.push(parseInt(cipherHex.substr(i, 2), 16));
@@ -332,7 +387,7 @@
                 const result = new Uint8Array(byteArray.length);
                 
                 for (let i = 0; i < byteArray.length; i++) {
-                    result[i] = decryptByte(byteArray[i], dynSbox);
+                    result[i] = decryptByte(byteArray[i], dynSboxInverse);
                 }
                 
                 const decoder = new TextDecoder();
@@ -351,6 +406,9 @@
             element.textContent = message;
             element.className = 'status ' + type;
         }
+
+        // Инициализация при загрузке
+        initStaticSbox();
     </script>
 </body>
 </html>
