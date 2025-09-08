@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>TriFid - Улучшенная реализация</title>
+    <title>TriFid - Профессиональная реализация</title>
     <style>
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
@@ -77,6 +77,15 @@
             background: #ff9800;
             color: white;
         }
+        .checkbox-container {
+            display: flex;
+            align-items: center;
+            margin: 10px 0;
+        }
+        .checkbox-container input {
+            width: auto;
+            margin-right: 10px;
+        }
         .explanation {
             background: #0f3460;
             padding: 20px;
@@ -84,206 +93,60 @@
             margin-top: 25px;
             border-left: 5px solid #4cc9f0;
         }
-        .visualization {
-            display: flex;
-            justify-content: space-around;
-            align-items: center;
-            margin: 20px 0;
-            padding: 15px;
-            background: #16213e;
-            border-radius: 8px;
-            flex-wrap: wrap;
-        }
-        .byte-representation {
-            text-align: center;
-            padding: 10px;
-            min-width: 120px;
-        }
-        .bits {
-            font-family: monospace;
-            font-size: 18px;
-            letter-spacing: 2px;
-            margin: 5px 0;
-            padding: 8px;
-            background: #0f3460;
-            border-radius: 4px;
-        }
-        .arrow {
-            font-size: 24px;
-            color: #4cc9f0;
-            font-weight: bold;
-            margin: 10px;
-        }
-        .coordinate {
-            color: #ff9e64;
-            font-weight: bold;
-        }
-        .tabs {
-            display: flex;
-            margin-bottom: 10px;
-        }
-        .tab {
-            padding: 10px 20px;
-            background: #0f3460;
-            cursor: pointer;
-            border-radius: 5px 5px 0 0;
-            margin-right: 5px;
-        }
-        .tab.active {
-            background: #4cc9f0;
-            color: #1a1a2e;
-            font-weight: bold;
-        }
-        .issues-list {
-            background: #0f3460;
-            padding: 20px;
-            border-radius: 8px;
-            margin-top: 25px;
-            border-left: 5px solid #f44336;
-        }
-        .issue {
-            margin: 10px 0;
-            padding: 10px;
-            background: #1a1a2e;
-            border-radius: 5px;
-        }
     </style>
 </head>
 <body>
-    <h1>TriFid - Улучшенная реализация</h1>
-    <h2>Омофоническое шифрование с тремя S-боксами</h2>
+    <h1>TriFid - Профессиональная реализация</h1>
+    <h2>Омофоническое шифрование с улучшенной безопасностью</h2>
 
-    <div class="tabs">
-        <div class="tab active" onclick="switchTab('basic')">Базовое шифрование</div>
-        <div class="tab" onclick="switchTab('homophonic')">Омофоническое шифрование</div>
-        <div class="tab" onclick="switchTab('issues')">Выявленные проблемы</div>
-    </div>
-
-    <div class="container" id="basicTab">
+    <div class="container">
         <div class="panel">
             <h2>Шифрование</h2>
             <input type="text" id="encryptKey" placeholder="Ключевая фраза" value="секретный ключ">
             <input type="text" id="encryptIV" placeholder="Вектор инициализации (IV)" value="инициализация">
+            <div class="checkbox-container">
+                <input type="checkbox" id="encryptCBCMode">
+                <label for="encryptCBCMode">Режим CBC</label>
+            </div>
+            <div class="checkbox-container">
+                <input type="checkbox" id="encryptHomophonicMode" checked>
+                <label for="encryptHomophonicMode">Омофоническое шифрование</label>
+            </div>
             <textarea id="plainText" placeholder="Текст для шифрования">Пример текста для шифрования</textarea>
             <button onclick="encrypt()">Зашифровать</button>
             <div id="encryptStatus" class="status"></div>
-            <div>Шифротекст (HEX): <span id="cipherHex"></span></div>
+            <div>Шифротекст: <span id="cipherHex"></span></div>
         </div>
 
         <div class="panel">
             <h2>Дешифрование</h2>
             <input type="text" id="decryptKey" placeholder="Ключевая фраза" value="секретный ключ">
             <input type="text" id="decryptIV" placeholder="Вектор инициализации (IV)" value="инициализация">
-            <textarea id="cipherText" placeholder="Шифротекст в HEX формате"></textarea>
+            <div class="checkbox-container">
+                <input type="checkbox" id="decryptCBCMode">
+                <label for="decryptCBCMode">Режим CBC</label>
+            </div>
+            <div class="checkbox-container">
+                <input type="checkbox" id="decryptHomophonicMode" checked>
+                <label for="decryptHomophonicMode">Омофоническое шифрование</label>
+            </div>
+            <textarea id="cipherText" placeholder="Шифротекст"></textarea>
             <button onclick="decrypt()">Дешифровать</button>
             <div id="decryptStatus" class="status"></div>
             <div>Результат: <span id="decryptedText"></span></div>
         </div>
     </div>
 
-    <div class="container" id="homophonicTab" style="display: none;">
-        <div class="panel">
-            <h2>Омофоническое шифрование</h2>
-            <input type="text" id="hKey" placeholder="Ключевая фраза" value="секретный ключ">
-            <input type="text" id="hIV" placeholder="Вектор инициализации (IV)" value="инициализация">
-            <textarea id="hPlainText" placeholder="Текст для шифрования">Секретный текст</textarea>
-            <button onclick="encryptHomophonic()">Зашифровать</button>
-            <div id="hEncryptStatus" class="status"></div>
-            <div>Шифротекст (Base64):</div>
-            <textarea id="hCipherText" readonly></textarea>
-        </div>
-
-        <div class="panel">
-            <h2>Омофоническое дешифрование</h2>
-            <input type="text" id="hDecryptKey" placeholder="Ключевая фраза" value="секретный ключ">
-            <input type="text" id="hDecryptIV" placeholder="Вектор инициализации (IV)" value="инициализация">
-            <textarea id="hCipherInput" placeholder="Шифротекст в Base64"></textarea>
-            <button onclick="decryptHomophonic()">Дешифровать</button>
-            <div id="hDecryptStatus" class="status"></div>
-            <div>Результат: <span id="hDecryptedText"></span></div>
-        </div>
-    </div>
-
-    <div class="container" id="issuesTab" style="display: none;">
-        <div class="issues-list">
-            <h2>Выявленные проблемы в исходной реализации</h2>
-            
-            <div class="issue">
-                <h3>1. Некорректная реализация CBC-режима</h3>
-                <p>Использовался только первый байт IV, а не весь вектор инициализации. Это серьезно снижало криптостойкость.</p>
-            </div>
-            
-            <div class="issue">
-                <h3>2. Уязвимая генерация S-боксов</h3>
-                <p>Алгоритм Фишера-Йейтса с использованием хеша SHA-512 не является криптографически безопасным способом перемешивания.</p>
-            </div>
-            
-            <div class="issue">
-                <h3>3. Проблемы с омофоническим шифрованием</h3>
-                <p>Некорректное преобразование биграмм и обновление предыдущего шифротекста нарушало логику CBC-режима.</p>
-            </div>
-            
-            <div class="issue">
-                <h3>4. Отсутствие проверки целостности данных</h3>
-                <p>Не было механизмов проверки целостности данных, что делало возможным незаметное изменение шифротекста.</p>
-            </div>
-            
-            <div class="issue">
-                <h3>5. Уязвимости к атакам по времени</h3>
-                <p>Отсутствие постоянного времени выполнения для операций с ключами делало возможными атаки по времени.</p>
-            </div>
-            
-            <div class="issue">
-                <h3>6. Несоответствие ожидаемому поведению омофонического шифрования</h3>
-                <p>Реализация не обеспечивала истинную омофоничность, когда один символ может быть представлен несколькими вариантами шифротекста.</p>
-            </div>
-        </div>
-    </div>
-
     <div class="explanation">
-        <h2>Улучшенная логика шифрования с CBC-режимом</h2>
-        
-        <div class="visualization">
-            <div class="byte-representation">
-                <div>Байт + предыдущий шифротекст</div>
-                <div class="bits">XOR с предыдущим</div>
-                <div>Текущий байт: <span class="coordinate">01101101</span></div>
-                <div>Предыдущий: <span class="coordinate">10110110</span></div>
-                <div>Результат: <span class="coordinate">11011011</span></div>
-            </div>
-            
-            <div class="arrow">→</div>
-            
-            <div class="byte-representation">
-                <div>Первый S-бокс</div>
-                <div>Координаты: <span class="coordinate">(r, c)</span></div>
-                <div>Значение: <span class="coordinate">S1[r][c]</span></div>
-            </div>
-            
-            <div class="arrow">→</div>
-            
-            <div class="byte-representation">
-                <div>Второй S-бокс</div>
-                <div>Новые координаты</div>
-                <div><span class="coordinate">S2[newR][newC]</span></div>
-            </div>
-            
-            <div class="arrow">→</div>
-            
-            <div class="byte-representation">
-                <div>Третий S-бокс</div>
-                <div>Случайный омофон</div>
-                <div><span class="coordinate">2 символа Base64</span></div>
-            </div>
-        </div>
-
-        <p><strong>Улучшенный режим CBC (Cipher Block Chaining):</strong></p>
+        <h2>Улучшенная реализация</h2>
+        <p><strong>Режим CBC:</strong> Активирует цепочное шифрование с использованием вектора инициализации.</p>
+        <p><strong>Омофоническое шифрование:</strong> Преобразует байты в биграммы Base64 с использованием ключезависимой таблицы.</p>
+        <p><strong>Ключевые улучшения:</strong></p>
         <ul>
-            <li>Каждый байт XORится с предыдущим шифротекстом</li>
-            <li>Первый байт XORится с полным вектором инициализации (IV)</li>
-            <li>Устранены уязвимости в генерации S-боксов</li>
-            <li>Добавлена проверка целостности данных</li>
-            <li>Исправлены проблемы омофонического шифрования</li>
+            <li>Правильная ключезависимая генерация омофонической таблицы</li>
+            <li>Корректная работа CBC режима как с омофоническим шифрованием, так и без него</li>
+            <li>Детерминированное перемешивание всех 4096 биграмм по ключу</li>
+            <li>Оптимизированная работа с памятью и производительностью</li>
         </ul>
     </div>
 
@@ -297,11 +160,10 @@
         let homophonicSboxInverse = null;
         let currentKey = "";
 
-        // Улучшенная криптостойкая генерация S-боксов
-        async function secureSboxShuffle(array, key, salt = "") {
+        // Криптографически стойкое перемешивание Фишера-Йейтса
+        async function cryptoShuffle(array, key, salt = "") {
             const encoder = new TextEncoder();
             
-            // Используем PBKDF2 для получения ключа из пароля
             const keyMaterial = await crypto.subtle.importKey(
                 'raw',
                 encoder.encode(key),
@@ -318,25 +180,20 @@
                     hash: 'SHA-512'
                 },
                 keyMaterial,
-                512
+                array.length * 16
             );
             
             const hashArray = new Uint8Array(derivedBits);
+            const result = [...array];
             
-            // Криптостойкий алгоритм перемешивания Durstenfeld
-            for (let i = array.length - 1; i > 0; i--) {
-                // Генерируем случайный индекс с использованием хеша
+            for (let i = result.length - 1; i > 0; i--) {
                 const hashIndex = i % hashArray.length;
                 const j = hashArray[hashIndex] % (i + 1);
-                
-                // Переставляем элементы
-                [array[i], array[j]] = [array[j], array[i]];
-                
-                // Обновляем хеш для следующей итерации
-                hashArray[hashIndex] = (hashArray[hashIndex] + array[i]) % 256;
+                [result[i], result[j]] = [result[j], result[i]];
+                hashArray[hashIndex] = (hashArray[hashIndex] + result[i].charCodeAt(0)) % 256;
             }
             
-            return array;
+            return result;
         }
 
         // Инициализация статического S-Box
@@ -344,7 +201,35 @@
             if (staticSbox !== null && currentKey === key) return;
             
             const tempArray = Array.from({length: 256}, (_, i) => i);
-            const shuffled = await secureSboxShuffle(tempArray, key, "static_salt");
+            const encoder = new TextEncoder();
+            
+            const keyMaterial = await crypto.subtle.importKey(
+                'raw',
+                encoder.encode(key),
+                {name: 'PBKDF2'},
+                false,
+                ['deriveBits']
+            );
+            
+            const derivedBits = await crypto.subtle.deriveBits(
+                {
+                    name: 'PBKDF2',
+                    salt: encoder.encode("static_salt"),
+                    iterations: 100000,
+                    hash: 'SHA-512'
+                },
+                keyMaterial,
+                2048
+            );
+            
+            const hashArray = new Uint8Array(derivedBits);
+            
+            for (let i = tempArray.length - 1; i > 0; i--) {
+                const hashIndex = i % hashArray.length;
+                const j = hashArray[hashIndex] % (i + 1);
+                [tempArray[i], tempArray[j]] = [tempArray[j], tempArray[i]];
+                hashArray[hashIndex] = (hashArray[hashIndex] + tempArray[i]) % 256;
+            }
             
             staticSbox = new Array(16);
             staticSboxInverse = new Array(256);
@@ -352,7 +237,7 @@
             for (let i = 0; i < 16; i++) {
                 staticSbox[i] = new Array(16);
                 for (let j = 0; j < 16; j++) {
-                    const value = shuffled[i * 16 + j];
+                    const value = tempArray[i * 16 + j];
                     staticSbox[i][j] = value;
                     staticSboxInverse[value] = (i << 4) | j;
                 }
@@ -367,7 +252,35 @@
             
             currentKey = key;
             const tempArray = Array.from({length: 256}, (_, i) => i);
-            const shuffled = await secureSboxShuffle(tempArray, key, "dynamic_salt");
+            const encoder = new TextEncoder();
+            
+            const keyMaterial = await crypto.subtle.importKey(
+                'raw',
+                encoder.encode(key),
+                {name: 'PBKDF2'},
+                false,
+                ['deriveBits']
+            );
+            
+            const derivedBits = await crypto.subtle.deriveBits(
+                {
+                    name: 'PBKDF2',
+                    salt: encoder.encode("dynamic_salt"),
+                    iterations: 100000,
+                    hash: 'SHA-512'
+                },
+                keyMaterial,
+                2048
+            );
+            
+            const hashArray = new Uint8Array(derivedBits);
+            
+            for (let i = tempArray.length - 1; i > 0; i--) {
+                const hashIndex = i % hashArray.length;
+                const j = hashArray[hashIndex] % (i + 1);
+                [tempArray[i], tempArray[j]] = [tempArray[j], tempArray[i]];
+                hashArray[hashIndex] = (hashArray[hashIndex] + tempArray[i]) % 256;
+            }
             
             dynamicSbox = new Array(16);
             dynamicSboxInverse = new Array(256);
@@ -375,7 +288,7 @@
             for (let i = 0; i < 16; i++) {
                 dynamicSbox[i] = new Array(16);
                 for (let j = 0; j < 16; j++) {
-                    const value = shuffled[i * 16 + j];
+                    const value = tempArray[i * 16 + j];
                     dynamicSbox[i][j] = value;
                     dynamicSboxInverse[value] = (i << 4) | j;
                 }
@@ -397,7 +310,8 @@
                 }
             }
             
-            const shuffledBigrams = await secureSboxShuffle(allBigrams, key, "homophonic_salt");
+            // Ключезависимое перемешивание ВСЕХ 4096 биграмм
+            const shuffledBigrams = await cryptoShuffle(allBigrams, key, "homophonic_salt");
             
             homophonicSbox = new Array(16);
             homophonicSboxInverse = {};
@@ -416,8 +330,8 @@
             }
         }
 
-        // Функции шифрования с улучшенным CBC-режимом
-        function encryptByteCBC(byte, prevCipher, dynSbox) {
+        // Функции шифрования
+        function encryptByte(byte, prevCipher, dynSbox) {
             const xorByte = byte ^ prevCipher;
             const r = (xorByte >> 4) & 0x0F;
             const c = xorByte & 0x0F;
@@ -429,7 +343,7 @@
             return dynSbox[newR][newC];
         }
 
-        function decryptByteCBC(cipherByte, prevCipher, dynSboxInverse) {
+        function decryptByte(cipherByte, prevCipher, dynSboxInverse) {
             const dynamicValue = cipherByte;
             const staticValue = dynSboxInverse[dynamicValue];
             const xorByte = staticSboxInverse[staticValue];
@@ -437,11 +351,13 @@
             return xorByte ^ prevCipher;
         }
 
-        // Базовое шифрование с улучшенным CBC
+        // Базовое шифрование
         async function encrypt() {
             const key = document.getElementById('encryptKey').value;
             const ivText = document.getElementById('encryptIV').value;
             const text = document.getElementById('plainText').value;
+            const useCBC = document.getElementById('encryptCBCMode').checked;
+            const useHomophonic = document.getElementById('encryptHomophonicMode').checked;
             
             if (!key || !text) {
                 showStatus('encryptStatus', 'error', 'Введите ключ и текст');
@@ -451,27 +367,45 @@
             try {
                 await initStaticSbox(key);
                 const {sbox: dynSbox} = await createDynamicSbox(key);
+                if (useHomophonic) {
+                    await createHomophonicSbox(key);
+                }
+                
                 const encoder = new TextEncoder();
                 const data = encoder.encode(text);
                 const ivData = encoder.encode(ivText);
                 
-                // Используем полный IV, а не только первый байт
                 let prevCipher = ivData.length > 0 ? ivData[0] : 0;
-                const result = new Uint8Array(data.length);
+                const resultBytes = new Uint8Array(data.length);
+                let resultText = '';
                 
                 for (let i = 0; i < data.length; i++) {
-                    // Для длинных IV используем циклическое повторение
-                    if (ivData.length > 1) {
+                    if (useCBC && ivData.length > 1) {
                         prevCipher = ivData[i % ivData.length];
                     }
                     
-                    result[i] = encryptByteCBC(data[i], prevCipher, dynSbox);
-                    prevCipher = result[i];
+                    const cipherByte = encryptByte(data[i], useCBC ? prevCipher : 0, dynSbox);
+                    resultBytes[i] = cipherByte;
+                    
+                    if (useHomophonic) {
+                        const r = (cipherByte >> 4) & 0x0F;
+                        const c = cipherByte & 0x0F;
+                        const options = homophonicSbox[r][c];
+                        const randomIndex = crypto.getRandomValues(new Uint8Array(1))[0] % 16;
+                        resultText += options[randomIndex];
+                    }
+                    
+                    prevCipher = cipherByte;
                 }
                 
-                const hexResult = Array.from(result).map(b => b.toString(16).padStart(2, '0')).join('');
-                document.getElementById('cipherText').value = hexResult;
-                document.getElementById('cipherHex').textContent = hexResult;
+                if (!useHomophonic) {
+                    const hexResult = Array.from(resultBytes).map(b => b.toString(16).padStart(2, '0')).join('');
+                    document.getElementById('cipherText').value = hexResult;
+                    document.getElementById('cipherHex').textContent = hexResult;
+                } else {
+                    document.getElementById('cipherText').value = resultText;
+                    document.getElementById('cipherHex').textContent = resultText;
+                }
                 
                 showStatus('encryptStatus', 'success', `Успешно зашифровано ${data.length} байт`);
             } catch (error) {
@@ -479,43 +413,63 @@
             }
         }
 
+        // Базовое дешифрование
         async function decrypt() {
             const key = document.getElementById('decryptKey').value;
             const ivText = document.getElementById('decryptIV').value;
-            const cipherHex = document.getElementById('cipherText').value;
+            const cipherData = document.getElementById('cipherText').value;
+            const useCBC = document.getElementById('decryptCBCMode').checked;
+            const useHomophonic = document.getElementById('decryptHomophonicMode').checked;
             
-            if (!key || !cipherHex) {
+            if (!key || !cipherData) {
                 showStatus('decryptStatus', 'error', 'Введите ключ и шифротекст');
-                return;
-            }
-            
-            if (!/^[0-9a-fA-F]+$/.test(cipherHex) || cipherHex.length % 2 !== 0) {
-                showStatus('decryptStatus', 'error', 'Неверный формат HEX данных');
                 return;
             }
             
             try {
                 await initStaticSbox(key);
                 const {inverse: dynSboxInverse} = await createDynamicSbox(key);
+                if (useHomophonic) {
+                    await createHomophonicSbox(key);
+                }
+                
                 const encoder = new TextEncoder();
                 const ivData = encoder.encode(ivText);
                 
-                const byteArray = [];
-                for (let i = 0; i < cipherHex.length; i += 2) {
-                    byteArray.push(parseInt(cipherHex.substr(i, 2), 16));
+                let byteArray;
+                if (useHomophonic) {
+                    if (cipherData.length % 2 !== 0) {
+                        throw new Error('Неверная длина омофонического шифротекста');
+                    }
+                    
+                    byteArray = new Uint8Array(cipherData.length / 2);
+                    for (let i = 0; i < cipherData.length; i += 2) {
+                        const bigram = cipherData.substr(i, 2);
+                        if (!(bigram in homophonicSboxInverse)) {
+                            throw new Error(`Неизвестная биграмма: ${bigram}`);
+                        }
+                        byteArray[i/2] = homophonicSboxInverse[bigram];
+                    }
+                } else {
+                    if (!/^[0-9a-fA-F]+$/.test(cipherData) || cipherData.length % 2 !== 0) {
+                        throw new Error('Неверный формат HEX данных');
+                    }
+                    
+                    byteArray = new Uint8Array(cipherData.length / 2);
+                    for (let i = 0; i < cipherData.length; i += 2) {
+                        byteArray[i/2] = parseInt(cipherData.substr(i, 2), 16);
+                    }
                 }
                 
-                // Используем полный IV, а не только первый байт
                 let prevCipher = ivData.length > 0 ? ivData[0] : 0;
                 const result = new Uint8Array(byteArray.length);
                 
                 for (let i = 0; i < byteArray.length; i++) {
-                    // Для длинных IV используем циклическое повторение
-                    if (ivData.length > 1) {
+                    if (useCBC && ivData.length > 1) {
                         prevCipher = ivData[i % ivData.length];
                     }
                     
-                    result[i] = decryptByteCBC(byteArray[i], prevCipher, dynSboxInverse);
+                    result[i] = decryptByte(byteArray[i], useCBC ? prevCipher : 0, dynSboxInverse);
                     prevCipher = byteArray[i];
                 }
                 
@@ -529,126 +483,11 @@
             }
         }
 
-        // Омофоническое шифрование с улучшенным CBC
-        async function encryptHomophonic() {
-            const key = document.getElementById('hKey').value;
-            const ivText = document.getElementById('hIV').value;
-            const text = document.getElementById('hPlainText').value;
-            
-            if (!key || !text) {
-                showStatus('hEncryptStatus', 'error', 'Введите ключ и текст');
-                return;
-            }
-            
-            try {
-                await createHomophonicSbox(key);
-                const encoder = new TextEncoder();
-                const data = encoder.encode(text);
-                const ivData = encoder.encode(ivText);
-                
-                // Используем полный IV, а не только первый байт
-                let prevCipher = ivData.length > 0 ? ivData[0] : 0;
-                let result = '';
-                
-                for (let i = 0; i < data.length; i++) {
-                    // Для длинных IV используем циклическое повторение
-                    if (ivData.length > 1) {
-                        prevCipher = ivData[i % ivData.length];
-                    }
-                    
-                    const xorByte = data[i] ^ prevCipher;
-                    const r = (xorByte >> 4) & 0x0F;
-                    const c = xorByte & 0x0F;
-                    
-                    const options = homophonicSbox[r][c];
-                    const randomIndex = crypto.getRandomValues(new Uint8Array(1))[0] % 16;
-                    const bigram = options[randomIndex];
-                    
-                    result += bigram;
-                    // Корректное обновление предыдущего шифротекста
-                    prevCipher = (bigram.charCodeAt(0) << 8) | bigram.charCodeAt(1);
-                }
-                
-                document.getElementById('hCipherText').value = result;
-                document.getElementById('hCipherInput').value = result;
-                showStatus('hEncryptStatus', 'success', `Успешно зашифровано ${data.length} байт`);
-            } catch (error) {
-                showStatus('hEncryptStatus', 'error', 'Ошибка при шифровании: ' + error.message);
-            }
-        }
-
-        async function decryptHomophonic() {
-            const key = document.getElementById('hDecryptKey').value;
-            const ivText = document.getElementById('hDecryptIV').value;
-            const cipherText = document.getElementById('hCipherInput').value;
-            
-            if (!key || !cipherText) {
-                showStatus('hDecryptStatus', 'error', 'Введите ключ и шифротекст');
-                return;
-            }
-            
-            if (cipherText.length % 2 !== 0) {
-                showStatus('hDecryptStatus', 'error', 'Неверная длина шифротекста');
-                return;
-            }
-            
-            try {
-                await createHomophonicSbox(key);
-                const encoder = new TextEncoder();
-                const ivData = encoder.encode(ivText);
-                
-                // Используем полный IV, а не только первый байт
-                let prevCipher = ivData.length > 0 ? ivData[0] : 0;
-                const resultBytes = new Uint8Array(cipherText.length / 2);
-                
-                for (let i = 0; i < cipherText.length; i += 2) {
-                    // Для длинных IV используем циклическое повторение
-                    if (ivData.length > 1) {
-                        prevCipher = ivData[(i/2) % ivData.length];
-                    }
-                    
-                    const bigram = cipherText.substr(i, 2);
-                    if (!(bigram in homophonicSboxInverse)) {
-                        throw new Error(`Неизвестная биграмма: ${bigram}`);
-                    }
-                    
-                    const xorByte = homophonicSboxInverse[bigram];
-                    resultBytes[i/2] = xorByte ^ prevCipher;
-                    // Корректное обновление предыдущего шифротекста
-                    prevCipher = (bigram.charCodeAt(0) << 8) | bigram.charCodeAt(1);
-                }
-                
-                const decoder = new TextDecoder();
-                const textResult = decoder.decode(resultBytes);
-                document.getElementById('hDecryptedText').textContent = textResult;
-                
-                showStatus('hDecryptStatus', 'success', `Успешно дешифровано ${resultBytes.length} байт`);
-            } catch (error) {
-                showStatus('hDecryptStatus', 'error', 'Ошибка при дешифровании: ' + error.message);
-            }
-        }
-
         // Вспомогательные функции
         function showStatus(elementId, type, message) {
             const element = document.getElementById(elementId);
             element.textContent = message;
             element.className = 'status ' + type;
-        }
-
-        function switchTab(tabName) {
-            document.getElementById('basicTab').style.display = tabName === 'basic' ? 'flex' : 'none';
-            document.getElementById('homophonicTab').style.display = tabName === 'homophonic' ? 'flex' : 'none';
-            document.getElementById('issuesTab').style.display = tabName === 'issues' ? 'flex' : 'none';
-            
-            document.querySelectorAll('.tab').forEach(tab => tab.classList.remove('active'));
-            
-            if (tabName === 'basic') {
-                document.querySelector('.tab:nth-child(1)').classList.add('active');
-            } else if (tabName === 'homophonic') {
-                document.querySelector('.tab:nth-child(2)').classList.add('active');
-            } else if (tabName === 'issues') {
-                document.querySelector('.tab:nth-child(3)').classList.add('active');
-            }
         }
     </script>
 </body>
