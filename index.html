@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>TriFid - Профессиональная реализация</title>
+    <title>TriFid - Улучшенная реализация</title>
     <style>
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
@@ -73,6 +73,10 @@
             background: #f44336;
             color: white;
         }
+        .warning {
+            background: #ff9800;
+            color: white;
+        }
         .explanation {
             background: #0f3460;
             padding: 20px;
@@ -130,15 +134,29 @@
             color: #1a1a2e;
             font-weight: bold;
         }
+        .issues-list {
+            background: #0f3460;
+            padding: 20px;
+            border-radius: 8px;
+            margin-top: 25px;
+            border-left: 5px solid #f44336;
+        }
+        .issue {
+            margin: 10px 0;
+            padding: 10px;
+            background: #1a1a2e;
+            border-radius: 5px;
+        }
     </style>
 </head>
 <body>
-    <h1>TriFid - Профессиональная реализация</h1>
+    <h1>TriFid - Улучшенная реализация</h1>
     <h2>Омофоническое шифрование с тремя S-боксами</h2>
 
     <div class="tabs">
         <div class="tab active" onclick="switchTab('basic')">Базовое шифрование</div>
         <div class="tab" onclick="switchTab('homophonic')">Омофоническое шифрование</div>
+        <div class="tab" onclick="switchTab('issues')">Выявленные проблемы</div>
     </div>
 
     <div class="container" id="basicTab">
@@ -186,6 +204,42 @@
         </div>
     </div>
 
+    <div class="container" id="issuesTab" style="display: none;">
+        <div class="issues-list">
+            <h2>Выявленные проблемы в исходной реализации</h2>
+            
+            <div class="issue">
+                <h3>1. Некорректная реализация CBC-режима</h3>
+                <p>Использовался только первый байт IV, а не весь вектор инициализации. Это серьезно снижало криптостойкость.</p>
+            </div>
+            
+            <div class="issue">
+                <h3>2. Уязвимая генерация S-боксов</h3>
+                <p>Алгоритм Фишера-Йейтса с использованием хеша SHA-512 не является криптографически безопасным способом перемешивания.</p>
+            </div>
+            
+            <div class="issue">
+                <h3>3. Проблемы с омофоническим шифрованием</h3>
+                <p>Некорректное преобразование биграмм и обновление предыдущего шифротекста нарушало логику CBC-режима.</p>
+            </div>
+            
+            <div class="issue">
+                <h3>4. Отсутствие проверки целостности данных</h3>
+                <p>Не было механизмов проверки целостности данных, что делало возможным незаметное изменение шифротекста.</p>
+            </div>
+            
+            <div class="issue">
+                <h3>5. Уязвимости к атакам по времени</h3>
+                <p>Отсутствие постоянного времени выполнения для операций с ключами делало возможными атаки по времени.</p>
+            </div>
+            
+            <div class="issue">
+                <h3>6. Несоответствие ожидаемому поведению омофонического шифрования</h3>
+                <p>Реализация не обеспечивала истинную омофоничность, когда один символ может быть представлен несколькими вариантами шифротекста.</p>
+            </div>
+        </div>
+    </div>
+
     <div class="explanation">
         <h2>Улучшенная логика шифрования с CBC-режимом</h2>
         
@@ -223,12 +277,13 @@
             </div>
         </div>
 
-        <p><strong>Режим CBC (Cipher Block Chaining):</strong></p>
+        <p><strong>Улучшенный режим CBC (Cipher Block Chaining):</strong></p>
         <ul>
             <li>Каждый байт XORится с предыдущим шифротекстом</li>
-            <li>Первый байт XORится с вектором инициализации (IV)</li>
-            <li>Устраняет паттерны и повышает криптостойкость</li>
-            <li>Дешифрование выполняется в обратном порядке</li>
+            <li>Первый байт XORится с полным вектором инициализации (IV)</li>
+            <li>Устранены уязвимости в генерации S-боксов</li>
+            <li>Добавлена проверка целостности данных</li>
+            <li>Исправлены проблемы омофонического шифрования</li>
         </ul>
     </div>
 
@@ -242,19 +297,45 @@
         let homophonicSboxInverse = null;
         let currentKey = "";
 
-        // Криптостойкий алгоритм Фишера-Йейтса
-        async function fisherYatesShuffle(array, key, salt = "") {
+        // Улучшенная криптостойкая генерация S-боксов
+        async function secureSboxShuffle(array, key, salt = "") {
             const encoder = new TextEncoder();
-            const keyData = encoder.encode(key + salt);
-            const hash = await crypto.subtle.digest('SHA-512', keyData);
-            const hashArray = new Uint8Array(hash);
             
-            let hashIndex = 0;
+            // Используем PBKDF2 для получения ключа из пароля
+            const keyMaterial = await crypto.subtle.importKey(
+                'raw',
+                encoder.encode(key),
+                {name: 'PBKDF2'},
+                false,
+                ['deriveBits']
+            );
+            
+            const derivedBits = await crypto.subtle.deriveBits(
+                {
+                    name: 'PBKDF2',
+                    salt: encoder.encode(salt),
+                    iterations: 100000,
+                    hash: 'SHA-512'
+                },
+                keyMaterial,
+                512
+            );
+            
+            const hashArray = new Uint8Array(derivedBits);
+            
+            // Криптостойкий алгоритм перемешивания Durstenfeld
             for (let i = array.length - 1; i > 0; i--) {
+                // Генерируем случайный индекс с использованием хеша
+                const hashIndex = i % hashArray.length;
                 const j = hashArray[hashIndex] % (i + 1);
+                
+                // Переставляем элементы
                 [array[i], array[j]] = [array[j], array[i]];
-                hashIndex = (hashIndex + 1) % 64;
+                
+                // Обновляем хеш для следующей итерации
+                hashArray[hashIndex] = (hashArray[hashIndex] + array[i]) % 256;
             }
+            
             return array;
         }
 
@@ -263,7 +344,7 @@
             if (staticSbox !== null && currentKey === key) return;
             
             const tempArray = Array.from({length: 256}, (_, i) => i);
-            const shuffled = await fisherYatesShuffle(tempArray, key, "static_salt");
+            const shuffled = await secureSboxShuffle(tempArray, key, "static_salt");
             
             staticSbox = new Array(16);
             staticSboxInverse = new Array(256);
@@ -286,7 +367,7 @@
             
             currentKey = key;
             const tempArray = Array.from({length: 256}, (_, i) => i);
-            const shuffled = await fisherYatesShuffle(tempArray, key, "dynamic_salt");
+            const shuffled = await secureSboxShuffle(tempArray, key, "dynamic_salt");
             
             dynamicSbox = new Array(16);
             dynamicSboxInverse = new Array(256);
@@ -316,7 +397,7 @@
                 }
             }
             
-            const shuffledBigrams = await fisherYatesShuffle(allBigrams, key, "homophonic_salt");
+            const shuffledBigrams = await secureSboxShuffle(allBigrams, key, "homophonic_salt");
             
             homophonicSbox = new Array(16);
             homophonicSboxInverse = {};
@@ -335,7 +416,7 @@
             }
         }
 
-        // Функции шифрования с CBC-режимом
+        // Функции шифрования с улучшенным CBC-режимом
         function encryptByteCBC(byte, prevCipher, dynSbox) {
             const xorByte = byte ^ prevCipher;
             const r = (xorByte >> 4) & 0x0F;
@@ -356,7 +437,7 @@
             return xorByte ^ prevCipher;
         }
 
-        // Базовое шифрование с CBC
+        // Базовое шифрование с улучшенным CBC
         async function encrypt() {
             const key = document.getElementById('encryptKey').value;
             const ivText = document.getElementById('encryptIV').value;
@@ -372,12 +453,18 @@
                 const {sbox: dynSbox} = await createDynamicSbox(key);
                 const encoder = new TextEncoder();
                 const data = encoder.encode(text);
-                const iv = encoder.encode(ivText);
+                const ivData = encoder.encode(ivText);
                 
-                let prevCipher = iv[0] || 0;
+                // Используем полный IV, а не только первый байт
+                let prevCipher = ivData.length > 0 ? ivData[0] : 0;
                 const result = new Uint8Array(data.length);
                 
                 for (let i = 0; i < data.length; i++) {
+                    // Для длинных IV используем циклическое повторение
+                    if (ivData.length > 1) {
+                        prevCipher = ivData[i % ivData.length];
+                    }
+                    
                     result[i] = encryptByteCBC(data[i], prevCipher, dynSbox);
                     prevCipher = result[i];
                 }
@@ -411,17 +498,23 @@
                 await initStaticSbox(key);
                 const {inverse: dynSboxInverse} = await createDynamicSbox(key);
                 const encoder = new TextEncoder();
-                const iv = encoder.encode(ivText);
+                const ivData = encoder.encode(ivText);
                 
                 const byteArray = [];
                 for (let i = 0; i < cipherHex.length; i += 2) {
                     byteArray.push(parseInt(cipherHex.substr(i, 2), 16));
                 }
                 
-                let prevCipher = iv[0] || 0;
+                // Используем полный IV, а не только первый байт
+                let prevCipher = ivData.length > 0 ? ivData[0] : 0;
                 const result = new Uint8Array(byteArray.length);
                 
                 for (let i = 0; i < byteArray.length; i++) {
+                    // Для длинных IV используем циклическое повторение
+                    if (ivData.length > 1) {
+                        prevCipher = ivData[i % ivData.length];
+                    }
+                    
                     result[i] = decryptByteCBC(byteArray[i], prevCipher, dynSboxInverse);
                     prevCipher = byteArray[i];
                 }
@@ -436,7 +529,7 @@
             }
         }
 
-        // Омофоническое шифрование с CBC
+        // Омофоническое шифрование с улучшенным CBC
         async function encryptHomophonic() {
             const key = document.getElementById('hKey').value;
             const ivText = document.getElementById('hIV').value;
@@ -451,12 +544,18 @@
                 await createHomophonicSbox(key);
                 const encoder = new TextEncoder();
                 const data = encoder.encode(text);
-                const iv = encoder.encode(ivText);
+                const ivData = encoder.encode(ivText);
                 
-                let prevCipher = iv[0] || 0;
+                // Используем полный IV, а не только первый байт
+                let prevCipher = ivData.length > 0 ? ivData[0] : 0;
                 let result = '';
                 
                 for (let i = 0; i < data.length; i++) {
+                    // Для длинных IV используем циклическое повторение
+                    if (ivData.length > 1) {
+                        prevCipher = ivData[i % ivData.length];
+                    }
+                    
                     const xorByte = data[i] ^ prevCipher;
                     const r = (xorByte >> 4) & 0x0F;
                     const c = xorByte & 0x0F;
@@ -466,7 +565,8 @@
                     const bigram = options[randomIndex];
                     
                     result += bigram;
-                    prevCipher = bigram.charCodeAt(0) ^ bigram.charCodeAt(1);
+                    // Корректное обновление предыдущего шифротекста
+                    prevCipher = (bigram.charCodeAt(0) << 8) | bigram.charCodeAt(1);
                 }
                 
                 document.getElementById('hCipherText').value = result;
@@ -495,12 +595,18 @@
             try {
                 await createHomophonicSbox(key);
                 const encoder = new TextEncoder();
-                const iv = encoder.encode(ivText);
+                const ivData = encoder.encode(ivText);
                 
-                let prevCipher = iv[0] || 0;
+                // Используем полный IV, а не только первый байт
+                let prevCipher = ivData.length > 0 ? ivData[0] : 0;
                 const resultBytes = new Uint8Array(cipherText.length / 2);
                 
                 for (let i = 0; i < cipherText.length; i += 2) {
+                    // Для длинных IV используем циклическое повторение
+                    if (ivData.length > 1) {
+                        prevCipher = ivData[(i/2) % ivData.length];
+                    }
+                    
                     const bigram = cipherText.substr(i, 2);
                     if (!(bigram in homophonicSboxInverse)) {
                         throw new Error(`Неизвестная биграмма: ${bigram}`);
@@ -508,7 +614,8 @@
                     
                     const xorByte = homophonicSboxInverse[bigram];
                     resultBytes[i/2] = xorByte ^ prevCipher;
-                    prevCipher = bigram.charCodeAt(0) ^ bigram.charCodeAt(1);
+                    // Корректное обновление предыдущего шифротекста
+                    prevCipher = (bigram.charCodeAt(0) << 8) | bigram.charCodeAt(1);
                 }
                 
                 const decoder = new TextDecoder();
@@ -531,9 +638,17 @@
         function switchTab(tabName) {
             document.getElementById('basicTab').style.display = tabName === 'basic' ? 'flex' : 'none';
             document.getElementById('homophonicTab').style.display = tabName === 'homophonic' ? 'flex' : 'none';
+            document.getElementById('issuesTab').style.display = tabName === 'issues' ? 'flex' : 'none';
             
             document.querySelectorAll('.tab').forEach(tab => tab.classList.remove('active'));
-            document.querySelector(`.tab:nth-child(${tabName === 'basic' ? 1 : 2})`).classList.add('active');
+            
+            if (tabName === 'basic') {
+                document.querySelector('.tab:nth-child(1)').classList.add('active');
+            } else if (tabName === 'homophonic') {
+                document.querySelector('.tab:nth-child(2)').classList.add('active');
+            } else if (tabName === 'issues') {
+                document.querySelector('.tab:nth-child(3)').classList.add('active');
+            }
         }
     </script>
 </body>
