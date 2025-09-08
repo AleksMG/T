@@ -96,7 +96,7 @@
     </style>
 </head>
 <body>
-    <h1>TriFid - Профессиональная реализация</h1>
+    <h1>TriFid - Профессиональная реалиacja</h1>
     <h2>Омофоническое шифрование с улучшенной безопасностью</h2>
 
     <div class="container">
@@ -135,19 +135,6 @@
             <div id="decryptStatus" class="status"></div>
             <div>Результат: <span id="decryptedText"></span></div>
         </div>
-    </div>
-
-    <div class="explanation">
-        <h2>Улучшенная реализация</h2>
-        <p><strong>Режим CBC:</strong> Активирует цепочное шифрование с использованием вектора инициализации.</p>
-        <p><strong>Омофоническое шифрование:</strong> Преобразует байты в биграммы Base64 с использованием ключезависимой таблицы.</p>
-        <p><strong>Ключевые улучшения:</strong></p>
-        <ul>
-            <li>Правильная ключезависимая генерация омофонической таблицы</li>
-            <li>Корректная работа CBC режима как с омофоническим шифрованием, так и без него</li>
-            <li>Детерминированное перемешивание всех 4096 биграмм по ключу</li>
-            <li>Оптимизированная работа с памятью и производительностью</li>
-        </ul>
     </div>
 
     <script>
@@ -375,16 +362,18 @@
                 const data = encoder.encode(text);
                 const ivData = encoder.encode(ivText);
                 
-                let prevCipher = ivData.length > 0 ? ivData[0] : 0;
+                let prevCipher = 0;
                 const resultBytes = new Uint8Array(data.length);
                 let resultText = '';
                 
                 for (let i = 0; i < data.length; i++) {
-                    if (useCBC && ivData.length > 1) {
-                        prevCipher = ivData[i % ivData.length];
-                    }
+                    // ПРАВИЛЬНАЯ РЕАЛИЗАЦИЯ CBC:
+                    // Для первого байта используем первый байт IV, для остальных - предыдущий зашифрованный байт
+                    const currentXorValue = useCBC ? 
+                        (i === 0 ? (ivData[0] || 0) : prevCipher) : 
+                        0;
                     
-                    const cipherByte = encryptByte(data[i], useCBC ? prevCipher : 0, dynSbox);
+                    const cipherByte = encryptByte(data[i], currentXorValue, dynSbox);
                     resultBytes[i] = cipherByte;
                     
                     if (useHomophonic) {
@@ -395,7 +384,7 @@
                         resultText += options[randomIndex];
                     }
                     
-                    prevCipher = cipherByte;
+                    prevCipher = cipherByte;  // Сохраняем для следующей итерации CBC
                 }
                 
                 if (!useHomophonic) {
@@ -461,16 +450,16 @@
                     }
                 }
                 
-                let prevCipher = ivData.length > 0 ? ivData[0] : 0;
                 const result = new Uint8Array(byteArray.length);
                 
                 for (let i = 0; i < byteArray.length; i++) {
-                    if (useCBC && ivData.length > 1) {
-                        prevCipher = ivData[i % ivData.length];
-                    }
+                    // ПРАВИЛЬНАЯ РЕАЛИЗАЦИЯ CBC для дешифрования:
+                    // Для первого байта используем первый байт IV, для остальных - предыдущий байт шифротекста
+                    const currentXorValue = useCBC ? 
+                        (i === 0 ? (ivData[0] || 0) : byteArray[i-1]) : 
+                        0;
                     
-                    result[i] = decryptByte(byteArray[i], useCBC ? prevCipher : 0, dynSboxInverse);
-                    prevCipher = byteArray[i];
+                    result[i] = decryptByte(byteArray[i], currentXorValue, dynSboxInverse);
                 }
                 
                 const decoder = new TextDecoder();
