@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>TriBox - Advanced Homophonic Encryption</title>
+    <title>TriBox - Enhanced with Dynamic Affine Transformation</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         :root {
@@ -525,8 +525,8 @@
 <body>
     <div class="app-container">
         <header>
-            <h1>TriBox Encryption Suite</h1>
-            <h2>Advanced Homophonic Cipher with Affine Transformation</h2>
+            <h1>TriBox Enhanced</h1>
+            <h2>Dynamic Affine Transformation with Position & Previous Byte Dependency</h2>
         </header>
 
         <div class="panels-container">
@@ -537,14 +537,12 @@
                     </div>
                     <div>
                         <div class="panel-title">Encryption</div>
-                        <div class="panel-subtitle">Secure your data with homophonic cipher</div>
+                        <div class="panel-subtitle">Secure your data with dynamic affine transformation</div>
                     </div>
                 </div>
                 
                 <div class="input-group">
-                    <label for="encryptKey">Passphrase <span class="tooltip"><i class="fas fa-question-circle"></i>
-                        <span class="tooltiptext">Key used to generate encryption S-boxes</span>
-                    </span></label>
+                    <label for="encryptKey">Passphrase</label>
                     <input type="text" id="encryptKey" placeholder="Enter your passphrase" value="secret key">
                 </div>
                 
@@ -604,8 +602,8 @@
 
                 <div class="debug-info">
                     <h3><i class="fas fa-code"></i> Technical Details</h3>
-                    <div>Formula: combinedByte = (byte + prevEncryptedByte) % 256</div>
-                    <div>Affine transformation: y = (11 * x + 19) % 256</div>
+                    <div>Dynamic Affine: y = (a + prev) * x + (b + pos) mod 256</div>
+                    <div>Reverse: x = a_inv * (y - (b + pos)) mod 256</div>
                 </div>
             </div>
 
@@ -681,8 +679,8 @@
 
                 <div class="debug-info">
                     <h3><i class="fas fa-code"></i> Technical Details</h3>
-                    <div>Reverse transformation: byte = combinedByte - prevEncryptedByte</div>
-                    <div>Reverse affine: x = (163 * (y - 19)) % 256</div>
+                    <div>Dynamic Affine: y = (a + prev) * x + (b + pos) mod 256</div>
+                    <div>Reverse: x = a_inv * (y - (b + pos)) mod 256</div>
                 </div>
             </div>
         </div>
@@ -695,12 +693,12 @@
                     <div class="info-value">combinedByte = (byte + prevEncryptedByte) % 256</div>
                 </div>
                 <div class="info-item">
-                    <div class="info-label"><i class="fas fa-project-diagram"></i> Affine Transformation</div>
-                    <div class="info-value">y = (11 * x + 19) % 256</div>
+                    <div class="info-label"><i class="fas fa-project-diagram"></i> Dynamic Affine Transformation</div>
+                    <div class="info-value">y = (a + prev) * x + (b + pos) % 256</div>
                 </div>
                 <div class="info-item">
                     <div class="info-label"><i class="fas fa-undo"></i> Reverse Affine</div>
-                    <div class="info-value">x = (163 * (y - 19)) % 256</div>
+                    <div class="info-value">x = a_inv * (y - (b + pos)) % 256</div>
                 </div>
                 <div class="info-item">
                     <div class="info-label"><i class="fas fa-random"></i> IV Generation</div>
@@ -710,7 +708,7 @@
         </div>
 
         <footer>
-            <div>TriBox &copy; 2025 - Enhanced Version | Advanced Homophonic Encryption</div>
+            <div>TriBox Enhanced &copy; 2025 | Dynamic Affine Transformation</div>
         </footer>
     </div>
 
@@ -726,15 +724,28 @@
         let lastEncryptedData = null;
         let lastEncryptedFormat = null;
 
-        // Affine transformation: y = (a * x + b) mod m
-        function affineTransform(x, a = 11, b = 19, m = 256) {
-            return (a * x + b) % m;
+        // Dynamic affine transformation: y = (a + prev) * x + (b + pos) mod m
+        function dynamicAffineTransform(x, prevEncryptedByte, position, a = 11, b = 19, m = 256) {
+            const dynamicA = (a + prevEncryptedByte) % m;
+            const dynamicB = (b + position) % m;
+            return (dynamicA * x + dynamicB) % m;
         }
 
-        // Inverse affine transformation: x = a_inv * (y - b) mod m
-        function inverseAffineTransform(y, a = 11, b = 19, m = 256) {
-            const a_inv = 163;
-            let result = a_inv * (y - b);
+        // Inverse dynamic affine transformation: x = a_inv * (y - (b + pos)) mod m
+        function inverseDynamicAffineTransform(y, prevEncryptedByte, position, a = 11, b = 19, m = 256) {
+            const dynamicA = (a + prevEncryptedByte) % m;
+            const dynamicB = (b + position) % m;
+            
+            // Find modular inverse of dynamicA
+            let dynamicA_inv = 1;
+            for (let i = 1; i < m; i++) {
+                if ((dynamicA * i) % m === 1) {
+                    dynamicA_inv = i;
+                    break;
+                }
+            }
+            
+            let result = dynamicA_inv * (y - dynamicB);
             while (result < 0) result += m;
             return result % m;
         }
@@ -930,9 +941,8 @@
             }
         }
 
-        // Encryption functions with affine transformation
-        function encryptByte(byte, prevEncryptedByte, dynSbox) {
-            // combinedByte = (original byte + previous encrypted byte)
+        // Encryption functions with dynamic affine transformation
+        function encryptByte(byte, prevEncryptedByte, position, dynSbox) {
             const combinedByte = (byte + prevEncryptedByte) % 256;
             
             // Static S-Box
@@ -940,8 +950,8 @@
             const c = combinedByte & 0x0F;
             const staticValue = staticSbox[r][c];
             
-            // Affine transformation
-            const affineValue = affineTransform(staticValue);
+            // Dynamic affine transformation
+            const affineValue = dynamicAffineTransform(staticValue, prevEncryptedByte, position);
             
             // Dynamic S-Box
             const newR = (affineValue >> 4) & 0x0F;
@@ -950,13 +960,13 @@
             return dynSbox[newR][newC];
         }
 
-        function decryptByte(cipherByte, prevEncryptedByte, dynSboxInverse) {
+        function decryptByte(cipherByte, prevEncryptedByte, position, dynSboxInverse) {
             // Dynamic S-Box (inverse)
             const dynamicValue = cipherByte;
             const staticValue = dynSboxInverse[dynamicValue];
             
-            // Inverse affine transformation
-            const affineValue = inverseAffineTransform(staticValue);
+            // Inverse dynamic affine transformation
+            const affineValue = inverseDynamicAffineTransform(staticValue, prevEncryptedByte, position);
             
             // Static S-Box (inverse)
             const combinedByte = staticSboxInverse[affineValue];
@@ -1001,7 +1011,7 @@
                         (i < iv.length ? iv[i] : resultBytes[i - iv.length]) : 
                         0;
                     
-                    const cipherByte = encryptByte(data[i], currentXorValue, dynSbox);
+                    const cipherByte = encryptByte(data[i], currentXorValue, i, dynSbox);
                     resultBytes[i] = cipherByte;
                     
                     if (useHomophonic) {
@@ -1088,7 +1098,7 @@
                         (i < iv.length ? iv[i] : byteArray[i - iv.length]) : 
                         0;
                     
-                    result[i] = decryptByte(byteArray[i], currentXorValue, dynSboxInverse);
+                    result[i] = decryptByte(byteArray[i], currentXorValue, i, dynSboxInverse);
                 }
                 
                 const decoder = new TextDecoder();
