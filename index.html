@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>TriBox Enhanced - Complete Fixed Version</title>
+    <title>TriBox Enhanced - Fixed Nibble Processing</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         :root {
@@ -608,8 +608,8 @@
 <body>
     <div class="app-container">
         <header>
-            <h1>TriBox Enhanced - Complete Fixed</h1>
-            <h2>Full 256-byte S-Box Implementation with Proper Nibble Processing</h2>
+            <h1>TriBox Enhanced - Fixed Nibble Processing</h1>
+            <h2>Different affine transformations for upper and lower nibbles</h2>
         </header>
 
         <div class="panels-container">
@@ -690,9 +690,8 @@
 
                 <div class="debug-info">
                     <h3><i class="fas fa-code"></i> Technical Details</h3>
-                    <div>1. Static S-Box: combinedByte → staticValue</div>
-                    <div>2. Affine: staticValue → affineValue (nibble-based)</div>
-                    <div>3. Dynamic S-Box: affineValue → finalValue</div>
+                    <div>Upper nibble: y = (11 * x + pos) % 16</div>
+                    <div>Lower nibble: y = (7 * x + pos * 3) % 16</div>
                 </div>
             </div>
 
@@ -773,9 +772,8 @@
 
                 <div class="debug-info">
                     <h3><i class="fas fa-code"></i> Technical Details</h3>
-                    <div>1. Inverse Dynamic S-Box: finalValue → affineValue</div>
-                    <div>2. Inverse affine: affineValue → staticValue (nibble-based)</div>
-                    <div>3. Inverse Static S-Box: staticValue → combinedByte</div>
+                    <div>Upper nibble: x = (3 * (y - pos)) % 16</div>
+                    <div>Lower nibble: x = (7 * (y - pos * 3)) % 16</div>
                 </div>
             </div>
         </div>
@@ -786,26 +784,26 @@
             <h3><i class="fas fa-info-circle"></i> Technical Information</h3>
             <div class="info-grid">
                 <div class="info-item">
-                    <div class="info-label"><i class="fas fa-calculator"></i> Nibble Combination</div>
-                    <div class="info-value">combinedByte = (byte + prevEncryptedByte) % 256</div>
+                    <div class="info-label"><i class="fas fa-calculator"></i> Upper Nibble Transform</div>
+                    <div class="info-value">y = (11 * x + pos) % 16<br>x = (3 * (y - pos)) % 16</div>
                 </div>
                 <div class="info-item">
-                    <div class="info-label"><i class="fas fa-project-diagram"></i> Nibble Affine Transformation</div>
-                    <div class="info-value">highNibble = (11 * highNibble + pos) % 16<br>lowNibble = (11 * lowNibble + pos) % 16</div>
+                    <div class="info-label"><i class="fas fa-project-diagram"></i> Lower Nibble Transform</div>
+                    <div class="info-value">y = (7 * x + pos * 3) % 16<br>x = (7 * (y - pos * 3)) % 16</div>
                 </div>
                 <div class="info-item">
-                    <div class="info-label"><i class="fas fa-undo"></i> Reverse Nibble Affine</div>
-                    <div class="info-value">highNibble = (3 * (highNibble - pos)) % 16<br>lowNibble = (3 * (lowNibble - pos)) % 16</div>
+                    <div class="info-label"><i class="fas fa-key"></i> Multiplicative Inverses</div>
+                    <div class="info-value">11⁻¹ ≡ 3 mod 16<br>7⁻¹ ≡ 7 mod 16</div>
                 </div>
                 <div class="info-item">
-                    <div class="info-label"><i class="fas fa-random"></i> IV Generation</div>
-                    <div class="info-value">HMAC-SHA256 from key</div>
+                    <div class="info-label"><i class="fas fa-random"></i> Entropy Preservation</div>
+                    <div class="info-value">Different formulas ensure full 8-bit entropy</div>
                 </div>
             </div>
         </div>
 
         <footer>
-            <div>TriBox Enhanced &copy; 2023 | Complete Fixed Implementation</div>
+            <div>TriBox Enhanced &copy; 2023 | Fixed Nibble Processing</div>
         </footer>
     </div>
 
@@ -821,14 +819,14 @@
         let lastEncryptedData = null;
         let lastEncryptedFormat = null;
 
-        // Nibble-based affine transformation
+        // Nibble-based affine transformation with DIFFERENT formulas
         function nibbleAffineTransform(byte, position) {
             let upperNibble = (byte >> 4) & 0x0F;
             let lowerNibble = byte & 0x0F;
             
-            // Transform each nibble separately
+            // DIFFERENT formulas for upper and lower nibbles
             upperNibble = (11 * upperNibble + position) % 16;
-            lowerNibble = (11 * lowerNibble + position) % 16;
+            lowerNibble = (7 * lowerNibble + position * 3) % 16;
             
             // Recombine nibbles
             return (upperNibble << 4) | lowerNibble;
@@ -839,10 +837,11 @@
             let upperNibble = (byte >> 4) & 0x0F;
             let lowerNibble = byte & 0x0F;
             
-            // Inverse transformation for each nibble
+            // DIFFERENT inverse formulas
             // Multiplicative inverse of 11 mod 16 is 3
             upperNibble = (3 * (upperNibble - position + 16)) % 16;
-            lowerNibble = (3 * (lowerNibble - position + 16)) % 16;
+            // Multiplicative inverse of 7 mod 16 is 7
+            lowerNibble = (7 * (lowerNibble - position * 3 + 48)) % 16;
             
             // Recombine nibbles
             return (upperNibble << 4) | lowerNibble;
@@ -1206,7 +1205,7 @@
                     
                     byteArray = new Uint8Array(cipherData.length / 2);
                     for (let i = 0; i < cipherData.length; i += 2) {
-                        byteArray[i/2] = parseInt(cipherData.substr(i, 2), 16);
+                        byteArray[i/2] = parseInt(cipherData.substr(i, 2), 16;
                     }
                 }
                 
