@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>TriBox Enhanced - Fixed Encryption/Decryption</title>
+    <title>TriBox Enhanced - Nibble Affine Transformation</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         :root {
@@ -361,6 +361,7 @@
 
         .entropy-visual {
             margin-top: 16px;
+            display: none;
         }
 
         .entropy-bar {
@@ -521,13 +522,95 @@
         .copy-btn:hover {
             color: var(--accent-light);
         }
+
+        .process-visualization {
+            margin-top: 20px;
+            padding: 20px;
+            background-color: rgba(13, 17, 23, 0.5);
+            border-radius: 12px;
+            border: 1px solid var(--card-border);
+            font-size: 0.9rem;
+        }
+
+        .process-visualization h3 {
+            color: var(--text-secondary);
+            margin-bottom: 12px;
+            font-size: 1rem;
+            display: flex;
+            align-items: center;
+        }
+
+        .process-visualization h3 i {
+            margin-right: 10px;
+        }
+
+        .process-steps {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-top: 15px;
+        }
+
+        .process-step {
+            padding: 15px;
+            background-color: rgba(0, 0, 0, 0.2);
+            border-radius: 8px;
+            text-align: center;
+        }
+
+        .process-step .step-title {
+            font-weight: bold;
+            color: var(--accent-light);
+            margin-bottom: 8px;
+        }
+
+        .process-step .step-value {
+            font-family: 'SF Mono', monospace;
+            font-size: 0.9rem;
+        }
+
+        .nibble-visualization {
+            display: flex;
+            justify-content: center;
+            margin-top: 10px;
+            gap: 5px;
+        }
+
+        .nibble {
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 6px;
+            background-color: var(--accent-dark);
+            font-family: 'SF Mono', monospace;
+            font-weight: bold;
+        }
+
+        .nibble-high {
+            background-color: #3fb950;
+        }
+
+        .nibble-low {
+            background-color: #58a6ff;
+        }
+
+        .fix-all-btn {
+            background: linear-gradient(135deg, #d29922 0%, #bb8009 100%);
+            margin-top: 20px;
+        }
+
+        .fix-all-btn:hover {
+            background: linear-gradient(135deg, #bb8009 0%, #a06c07 100%);
+        }
     </style>
 </head>
 <body>
     <div class="app-container">
         <header>
-            <h1>TriBox Enhanced - Fixed</h1>
-            <h2>Proper S-Box Usage with Dynamic Affine Transformation</h2>
+            <h1>TriBox Enhanced - Nibble Affine</h1>
+            <h2>Proper S-Box Usage with Nibble-based Affine Transformation</h2>
         </header>
 
         <div class="panels-container">
@@ -538,7 +621,7 @@
                     </div>
                     <div>
                         <div class="panel-title">Encryption</div>
-                        <div class="panel-subtitle">Both S-Boxes now work correctly</div>
+                        <div class="panel-subtitle">Nibble-based affine transformation</div>
                     </div>
                 </div>
                 
@@ -561,7 +644,7 @@
                 
                 <div class="input-group">
                     <label for="plainText">Text to Encrypt</label>
-                    <textarea id="plainText" placeholder="Enter text to encrypt">Test message 123</textarea>
+                    <textarea id="plainText" placeholder="Enter text to encrypt">Test message</textarea>
                 </div>
                 
                 <button class="btn" onclick="encrypt()"><i class="fas fa-shield-alt"></i> Encrypt</button>
@@ -574,6 +657,11 @@
                         <button class="copy-btn" onclick="copyToClipboard('cipherHex')"><i class="fas fa-copy"></i></button>
                     </div>
                     <div id="cipherHex" class="result-content"></div>
+                </div>
+                
+                <div class="process-visualization" id="encryptProcess" style="display: none;">
+                    <h3><i class="fas fa-code"></i> Encryption Process</h3>
+                    <div class="process-steps" id="encryptSteps"></div>
                 </div>
                 
                 <button class="btn btn-secondary" onclick="analyzeEntropy('encrypt')"><i class="fas fa-chart-bar"></i> Analyze Entropy</button>
@@ -593,19 +681,6 @@
                             <span id="entropyMaxLabel">8</span>
                         </div>
                     </div>
-                </div>
-                
-                <div class="iv-generation">
-                    <h3><i class="fas fa-key"></i> IV Generation</h3>
-                    <div>IV is automatically generated from key using HMAC-SHA256</div>
-                    <div id="encryptIVValue" class="result-content" style="margin-top: 12px; font-size: 0.85rem;"></div>
-                </div>
-
-                <div class="debug-info">
-                    <h3><i class="fas fa-code"></i> Technical Details</h3>
-                    <div>1. Static S-Box: combinedByte → staticValue</div>
-                    <div>2. Affine: staticValue → affineValue</div>
-                    <div>3. Dynamic S-Box: affineValue → finalValue</div>
                 </div>
             </div>
 
@@ -654,6 +729,11 @@
                     <div id="decryptedText" class="result-content"></div>
                 </div>
                 
+                <div class="process-visualization" id="decryptProcess" style="display: none;">
+                    <h3><i class="fas fa-code"></i> Decryption Process</h3>
+                    <div class="process-steps" id="decryptSteps"></div>
+                </div>
+                
                 <button class="btn btn-secondary" onclick="analyzeEntropy('decrypt')"><i class="fas fa-chart-bar"></i> Analyze Entropy</button>
                 
                 <div class="entropy-analysis" id="decryptEntropy" style="display: none;">
@@ -672,36 +752,25 @@
                         </div>
                     </div>
                 </div>
-                
-                <div class="iv-generation">
-                    <h3><i class="fas fa-key"></i> IV Generation</h3>
-                    <div>IV is automatically generated from key using HMAC-SHA256</div>
-                    <div id="decryptIVValue" class="result-content" style="margin-top: 12px; font-size: 0.85rem;"></div>
-                </div>
-
-                <div class="debug-info">
-                    <h3><i class="fas fa-code"></i> Technical Details</h3>
-                    <div>1. Inverse Dynamic S-Box: finalValue → affineValue</div>
-                    <div>2. Inverse affine: affineValue → staticValue</div>
-                    <div>3. Inverse Static S-Box: staticValue → combinedByte</div>
-                </div>
             </div>
         </div>
+
+        <button class="btn fix-all-btn" onclick="fixAll()"><i class="fas fa-tools"></i> Fix All & Reset</button>
 
         <div class="technical-info">
             <h3><i class="fas fa-info-circle"></i> Technical Information</h3>
             <div class="info-grid">
                 <div class="info-item">
-                    <div class="info-label"><i class="fas fa-calculator"></i> Combination Formula</div>
+                    <div class="info-label"><i class="fas fa-calculator"></i> Nibble Combination</div>
                     <div class="info-value">combinedByte = (byte + prevEncryptedByte) % 256</div>
                 </div>
                 <div class="info-item">
-                    <div class="info-label"><i class="fas fa-project-diagram"></i> Affine Transformation</div>
-                    <div class="info-value">y = (11 * x + 19 + prev + pos) % 256</div>
+                    <div class="info-label"><i class="fas fa-project-diagram"></i> Nibble Affine Transformation</div>
+                    <div class="info-value">highNibble = (11 * highNibble + pos) % 16<br>lowNibble = (11 * lowNibble + pos) % 16</div>
                 </div>
                 <div class="info-item">
-                    <div class="info-label"><i class="fas fa-undo"></i> Reverse Affine</div>
-                    <div class="info-value">x = (163 * (y - 19 - prev - pos)) % 256</div>
+                    <div class="info-label"><i class="fas fa-undo"></i> Reverse Nibble Affine</div>
+                    <div class="info-value">highNibble = (3 * (highNibble - pos)) % 16<br>lowNibble = (3 * (lowNibble - pos)) % 16</div>
                 </div>
                 <div class="info-item">
                     <div class="info-label"><i class="fas fa-random"></i> IV Generation</div>
@@ -711,7 +780,7 @@
         </div>
 
         <footer>
-            <div>TriBox Enhanced &copy; 2025 | Fixed S-Box Implementation</div>
+            <div>TriBox Enhanced &copy; 2025 | Nibble-based Affine Transformation</div>
         </footer>
     </div>
 
@@ -724,21 +793,37 @@
         let homophonicSbox = null;
         let homophonicSboxInverse = null;
         let currentKey = "";
-        let lastEncryptedData = null;
-        let lastEncryptedFormat = null;
 
-        // Dynamic affine transformation: y = (a * x + b + prev + pos) mod m
-        function dynamicAffineTransform(x, prevEncryptedByte, position, a = 11, b = 19, m = 256) {
-            return (a * x + b + prevEncryptedByte + position) % m;
+        // Nibble-based affine transformation
+        function nibbleAffineTransform(byte, position) {
+            // Extract nibbles
+            let highNibble = (byte >> 4) & 0x0F;
+            let lowNibble = byte & 0x0F;
+            
+            // Apply affine transformation to each nibble
+            highNibble = (11 * highNibble + position) % 16;
+            lowNibble = (11 * lowNibble + position) % 16;
+            
+            // Recombine nibbles
+            return (highNibble << 4) | lowNibble;
         }
 
-        // Inverse dynamic affine transformation: x = a_inv * (y - b - prev - pos) mod m
-        function inverseDynamicAffineTransform(y, prevEncryptedByte, position, a = 11, b = 19, m = 256) {
-            const a_inv = 163; // Modular inverse of 11 mod 256
+        // Inverse nibble-based affine transformation
+        function inverseNibbleAffineTransform(byte, position) {
+            // Extract nibbles
+            let highNibble = (byte >> 4) & 0x0F;
+            let lowNibble = byte & 0x0F;
             
-            let result = a_inv * (y - b - prevEncryptedByte - position);
-            while (result < 0) result += m;
-            return result % m;
+            // Apply inverse affine transformation to each nibble
+            // The multiplicative inverse of 11 mod 16 is 3 since (11 * 3) % 16 = 1
+            highNibble = (3 * (highNibble - position)) % 16;
+            if (highNibble < 0) highNibble += 16;
+            
+            lowNibble = (3 * (lowNibble - position)) % 16;
+            if (lowNibble < 0) lowNibble += 16;
+            
+            // Recombine nibbles
+            return (highNibble << 4) | lowNibble;
         }
 
         // Generate IV from key using HMAC-SHA256
@@ -763,42 +848,6 @@
             return new Uint8Array(iv).slice(0, 16);
         }
 
-        // Cryptographically secure Fisher-Yates shuffle
-        async function cryptoShuffle(array, key, salt = "") {
-            const encoder = new TextEncoder();
-            
-            const keyMaterial = await crypto.subtle.importKey(
-                'raw',
-                encoder.encode(key),
-                {name: 'PBKDF2'},
-                false,
-                ['deriveBits']
-            );
-            
-            const derivedBits = await crypto.subtle.deriveBits(
-                {
-                    name: 'PBKDF2',
-                    salt: encoder.encode(salt),
-                    iterations: 100000,
-                    hash: 'SHA-512'
-                },
-                keyMaterial,
-                array.length * 16
-            );
-            
-            const hashArray = new Uint8Array(derivedBits);
-            const result = [...array];
-            
-            for (let i = result.length - 1; i > 0; i--) {
-                const hashIndex = i % hashArray.length;
-                const j = hashArray[hashIndex] % (i + 1);
-                [result[i], result[j]] = [result[j], result[i]];
-                hashArray[hashIndex] = (hashArray[hashIndex] + result[i].charCodeAt(0)) % 256;
-            }
-            
-            return result;
-        }
-
         // Initialize static S-Box
         async function initStaticSbox(key) {
             if (staticSbox !== null && currentKey === key) return;
@@ -818,8 +867,8 @@
                 {
                     name: 'PBKDF2',
                     salt: encoder.encode("static_salt"),
-                    iterations: 100000,
-                    hash: 'SHA-512'
+                    iterations: 1000,
+                    hash: 'SHA-256'
                 },
                 keyMaterial,
                 2048
@@ -869,8 +918,8 @@
                 {
                     name: 'PBKDF2',
                     salt: encoder.encode("dynamic_salt"),
-                    iterations: 100000,
-                    hash: 'SHA-512'
+                    iterations: 1000,
+                    hash: 'SHA-256'
                 },
                 keyMaterial,
                 2048
@@ -913,7 +962,12 @@
                 }
             }
             
-            const shuffledBigrams = await cryptoShuffle(allBigrams, key, "homophonic_salt");
+            // Simple shuffle for demonstration
+            const shuffledBigrams = [...allBigrams];
+            for (let i = shuffledBigrams.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [shuffledBigrams[i], shuffledBigrams[j]] = [shuffledBigrams[j], shuffledBigrams[i]];
+            }
             
             homophonicSbox = new Array(16);
             homophonicSboxInverse = {};
@@ -922,8 +976,8 @@
             for (let r = 0; r < 16; r++) {
                 homophonicSbox[r] = new Array(16);
                 for (let c = 0; c < 16; c++) {
-                    homophonicSbox[r][c] = shuffledBigrams.slice(bigramIndex, bigramIndex + 16);
-                    bigramIndex += 16;
+                    homophonicSbox[r][c] = shuffledBigrams.slice(bigramIndex, bigramIndex + 4);
+                    bigramIndex += 4;
                     
                     for (const bigram of homophonicSbox[r][c]) {
                         homophonicSboxInverse[bigram] = (r << 4) | c;
@@ -941,8 +995,8 @@
             const c_static = combinedByte & 0x0F;
             const staticValue = staticSbox[r_static][c_static];
             
-            // 2. Dynamic affine transformation: staticValue -> affineValue
-            const affineValue = dynamicAffineTransform(staticValue, prevEncryptedByte, position);
+            // 2. Nibble-based affine transformation: staticValue -> affineValue
+            const affineValue = nibbleAffineTransform(staticValue, position);
             
             // 3. Dynamic S-Box: affineValue -> finalValue
             const r_dynamic = (affineValue >> 4) & 0x0F;
@@ -955,8 +1009,8 @@
             const dynamicValue = cipherByte;
             const affineValue = dynSboxInverse[dynamicValue];
             
-            // 2. Inverse affine transformation: affineValue -> staticValue
-            let staticValue = inverseDynamicAffineTransform(affineValue, prevEncryptedByte, position);
+            // 2. Inverse nibble-based affine transformation: affineValue -> staticValue
+            let staticValue = inverseNibbleAffineTransform(affineValue, position);
             
             // 3. Inverse Static S-Box: staticValue -> combinedByte
             const combinedByte = staticSboxInverse[staticValue];
@@ -986,9 +1040,6 @@
                     await createHomophonicSbox(key);
                 }
                 
-                const iv = await generateIVFromKey(key);
-                document.getElementById('encryptIVValue').textContent = Array.from(iv).map(b => b.toString(16).padStart(2, '0')).join('');
-                
                 const encoder = new TextEncoder();
                 const data = encoder.encode(text);
                 
@@ -996,10 +1047,13 @@
                 const resultBytes = new Uint8Array(data.length);
                 let resultText = '';
                 
+                // Show process visualization
+                document.getElementById('encryptProcess').style.display = 'block';
+                const encryptSteps = document.getElementById('encryptSteps');
+                encryptSteps.innerHTML = '';
+                
                 for (let i = 0; i < data.length; i++) {
-                    const currentXorValue = useCBC ? 
-                        (i < iv.length ? iv[i] : resultBytes[i - iv.length]) : 
-                        0;
+                    const currentXorValue = useCBC ? prevEncryptedByte : 0;
                     
                     const cipherByte = encryptByte(data[i], currentXorValue, i, dynSbox);
                     resultBytes[i] = cipherByte;
@@ -1008,8 +1062,55 @@
                         const r = (cipherByte >> 4) & 0x0F;
                         const c = cipherByte & 0x0F;
                         const options = homophonicSbox[r][c];
-                        const randomIndex = crypto.getRandomValues(new Uint8Array(1))[0] % 16;
+                        const randomIndex = Math.floor(Math.random() * 4);
                         resultText += options[randomIndex];
+                    }
+                    
+                    // Add visualization for first byte
+                    if (i === 0) {
+                        const combinedByte = (data[i] + currentXorValue) % 256;
+                        const r_static = (combinedByte >> 4) & 0x0F;
+                        const c_static = combinedByte & 0x0F;
+                        const staticValue = staticSbox[r_static][c_static];
+                        const affineValue = nibbleAffineTransform(staticValue, i);
+                        const r_dynamic = (affineValue >> 4) & 0x0F;
+                        const c_dynamic = affineValue & 0x0F;
+                        const finalValue = dynSbox[r_dynamic][c_dynamic];
+                        
+                        encryptSteps.innerHTML = `
+                            <div class="process-step">
+                                <div class="step-title">Original Byte</div>
+                                <div class="step-value">${data[i].toString(16).padStart(2, '0')}</div>
+                                <div class="nibble-visualization">
+                                    <div class="nibble nibble-high">${(data[i] >> 4).toString(16)}</div>
+                                    <div class="nibble nibble-low">${(data[i] & 0x0F).toString(16)}</div>
+                                </div>
+                            </div>
+                            <div class="process-step">
+                                <div class="step-title">After Static S-Box</div>
+                                <div class="step-value">${staticValue.toString(16).padStart(2, '0')}</div>
+                                <div class="nibble-visualization">
+                                    <div class="nibble nibble-high">${r_static.toString(16)}</div>
+                                    <div class="nibble nibble-low">${c_static.toString(16)}</div>
+                                </div>
+                            </div>
+                            <div class="process-step">
+                                <div class="step-title">After Affine Transform</div>
+                                <div class="step-value">${affineValue.toString(16).padStart(2, '0')}</div>
+                                <div class="nibble-visualization">
+                                    <div class="nibble nibble-high">${r_dynamic.toString(16)}</div>
+                                    <div class="nibble nibble-low">${c_dynamic.toString(16)}</div>
+                                </div>
+                            </div>
+                            <div class="process-step">
+                                <div class="step-title">Final Cipher Byte</div>
+                                <div class="step-value">${finalValue.toString(16).padStart(2, '0')}</div>
+                                <div class="nibble-visualization">
+                                    <div class="nibble nibble-high">${r_dynamic.toString(16)}</div>
+                                    <div class="nibble nibble-low">${c_dynamic.toString(16)}</div>
+                                </div>
+                            </div>
+                        `;
                     }
                     
                     prevEncryptedByte = cipherByte;
@@ -1019,13 +1120,9 @@
                     const hexResult = Array.from(resultBytes).map(b => b.toString(16).padStart(2, '0')).join('');
                     document.getElementById('cipherText').value = hexResult;
                     document.getElementById('cipherHex').textContent = hexResult;
-                    lastEncryptedData = resultBytes;
-                    lastEncryptedFormat = 'hex';
                 } else {
                     document.getElementById('cipherText').value = resultText;
                     document.getElementById('cipherHex').textContent = resultText;
-                    lastEncryptedData = resultText;
-                    lastEncryptedFormat = 'homophonic';
                 }
                 
                 showStatus('encryptStatus', 'success', `Successfully encrypted ${data.length} bytes`);
@@ -1053,9 +1150,6 @@
                     await createHomophonicSbox(key);
                 }
                 
-                const iv = await generateIVFromKey(key);
-                document.getElementById('decryptIVValue').textContent = Array.from(iv).map(b => b.toString(16).padStart(2, '0')).join('');
-                
                 let byteArray;
                 if (useHomophonic) {
                     if (cipherData.length % 2 !== 0) {
@@ -1082,13 +1176,63 @@
                 }
                 
                 const result = new Uint8Array(byteArray.length);
+                let prevEncryptedByte = 0;
+                
+                // Show process visualization
+                document.getElementById('decryptProcess').style.display = 'block';
+                const decryptSteps = document.getElementById('decryptSteps');
+                decryptSteps.innerHTML = '';
                 
                 for (let i = 0; i < byteArray.length; i++) {
-                    const currentXorValue = useCBC ? 
-                        (i < iv.length ? iv[i] : byteArray[i - iv.length]) : 
-                        0;
+                    const currentXorValue = useCBC ? prevEncryptedByte : 0;
                     
                     result[i] = decryptByte(byteArray[i], currentXorValue, i, dynSboxInverse);
+                    
+                    // Add visualization for first byte
+                    if (i === 0) {
+                        const cipherByte = byteArray[i];
+                        const affineValue = dynSboxInverse[cipherByte];
+                        const staticValue = inverseNibbleAffineTransform(affineValue, i);
+                        const combinedByte = staticSboxInverse[staticValue];
+                        const originalByte = (combinedByte - currentXorValue + 256) % 256;
+                        
+                        decryptSteps.innerHTML = `
+                            <div class="process-step">
+                                <div class="step-title">Cipher Byte</div>
+                                <div class="step-value">${cipherByte.toString(16).padStart(2, '0')}</div>
+                                <div class="nibble-visualization">
+                                    <div class="nibble nibble-high">${(cipherByte >> 4).toString(16)}</div>
+                                    <div class="nibble nibble-low">${(cipherByte & 0x0F).toString(16)}</div>
+                                </div>
+                            </div>
+                            <div class="process-step">
+                                <div class="step-title">After Dynamic S-Box</div>
+                                <div class="step-value">${affineValue.toString(16).padStart(2, '0')}</div>
+                                <div class="nibble-visualization">
+                                    <div class="nibble nibble-high">${(affineValue >> 4).toString(16)}</div>
+                                    <div class="nibble nibble-low">${(affineValue & 0x0F).toString(16)}</div>
+                                </div>
+                            </div>
+                            <div class="process-step">
+                                <div class="step-title">After Inverse Affine</div>
+                                <div class="step-value">${staticValue.toString(16).padStart(2, '0')}</div>
+                                <div class="nibble-visualization">
+                                    <div class="nibble nibble-high">${(staticValue >> 4).toString(16)}</div>
+                                    <div class="nibble nibble-low">${(staticValue & 0x0F).toString(16)}</div>
+                                </div>
+                            </div>
+                            <div class="process-step">
+                                <div class="step-title">Final Plain Byte</div>
+                                <div class="step-value">${originalByte.toString(16).padStart(2, '0')}</div>
+                                <div class="nibble-visualization">
+                                    <div class="nibble nibble-high">${(originalByte >> 4).toString(16)}</div>
+                                    <div class="nibble nibble-low">${(originalByte & 0x0F).toString(16)}</div>
+                                </div>
+                            </div>
+                        `;
+                    }
+                    
+                    prevEncryptedByte = byteArray[i];
                 }
                 
                 const decoder = new TextDecoder();
@@ -1165,6 +1309,9 @@
                 barElement.style.width = percentage + '%';
                 containerElement.style.display = 'block';
                 
+                // Show entropy visual
+                containerElement.querySelector('.entropy-visual').style.display = 'block';
+                
                 if (mode === 'encrypt') {
                     document.getElementById('entropyMaxLabel').textContent = maxEntropy.toString();
                 }
@@ -1207,7 +1354,7 @@
             // Reset all inputs to default values
             document.getElementById('encryptKey').value = 'secret key';
             document.getElementById('decryptKey').value = 'secret key';
-            document.getElementById('plainText').value = 'Test message 123';
+            document.getElementById('plainText').value = 'Test message';
             document.getElementById('cipherText').value = '';
             
             // Reset checkboxes
@@ -1219,10 +1366,10 @@
             // Clear results
             document.getElementById('cipherHex').textContent = '';
             document.getElementById('decryptedText').textContent = '';
-            document.getElementById('encryptIVValue').textContent = '';
-            document.getElementById('decryptIVValue').textContent = '';
             
-            // Hide entropy analysis
+            // Hide visualizations
+            document.getElementById('encryptProcess').style.display = 'none';
+            document.getElementById('decryptProcess').style.display = 'none';
             document.getElementById('encryptEntropy').style.display = 'none';
             document.getElementById('decryptEntropy').style.display = 'none';
             
@@ -1234,4 +1381,4 @@
         }
     </script>
 </body>
-    </html>
+</html>
