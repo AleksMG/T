@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>TriBox - Enhanced with Dynamic Affine Transformation</title>
+    <title>TriBox Enhanced - Dynamic Affine Transformation</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         :root {
@@ -241,6 +241,7 @@
 
         .btn-secondary {
             background: var(--secondary-dark);
+            margin-top: 15px;
         }
 
         .btn-secondary:hover {
@@ -602,8 +603,8 @@
 
                 <div class="debug-info">
                     <h3><i class="fas fa-code"></i> Technical Details</h3>
-                    <div>Dynamic Affine: y = (a + prev) * x + (b + pos) mod 256</div>
-                    <div>Reverse: x = a_inv * (y - (b + pos)) mod 256</div>
+                    <div>Dynamic Affine: y = (11 * x + 19 + prev + pos) % 256</div>
+                    <div>Reverse: x = (163 * (y - 19 - prev - pos)) % 256</div>
                 </div>
             </div>
 
@@ -679,8 +680,8 @@
 
                 <div class="debug-info">
                     <h3><i class="fas fa-code"></i> Technical Details</h3>
-                    <div>Dynamic Affine: y = (a + prev) * x + (b + pos) mod 256</div>
-                    <div>Reverse: x = a_inv * (y - (b + pos)) mod 256</div>
+                    <div>Dynamic Affine: y = (11 * x + 19 + prev + pos) % 256</div>
+                    <div>Reverse: x = (163 * (y - 19 - prev - pos)) % 256</div>
                 </div>
             </div>
         </div>
@@ -694,11 +695,11 @@
                 </div>
                 <div class="info-item">
                     <div class="info-label"><i class="fas fa-project-diagram"></i> Dynamic Affine Transformation</div>
-                    <div class="info-value">y = (a + prev) * x + (b + pos) % 256</div>
+                    <div class="info-value">y = (11 * x + 19 + prev + pos) % 256</div>
                 </div>
                 <div class="info-item">
                     <div class="info-label"><i class="fas fa-undo"></i> Reverse Affine</div>
-                    <div class="info-value">x = a_inv * (y - (b + pos)) % 256</div>
+                    <div class="info-value">x = (163 * (y - 19 - prev - pos)) % 256</div>
                 </div>
                 <div class="info-item">
                     <div class="info-label"><i class="fas fa-random"></i> IV Generation</div>
@@ -724,28 +725,16 @@
         let lastEncryptedData = null;
         let lastEncryptedFormat = null;
 
-        // Dynamic affine transformation: y = (a + prev) * x + (b + pos) mod m
+        // Dynamic affine transformation: y = (a * x + b + prev + pos) mod m
         function dynamicAffineTransform(x, prevEncryptedByte, position, a = 11, b = 19, m = 256) {
-            const dynamicA = (a + prevEncryptedByte) % m;
-            const dynamicB = (b + position) % m;
-            return (dynamicA * x + dynamicB) % m;
+            return (a * x + b + prevEncryptedByte + position) % m;
         }
 
-        // Inverse dynamic affine transformation: x = a_inv * (y - (b + pos)) mod m
+        // Inverse dynamic affine transformation: x = a_inv * (y - b - prev - pos) mod m
         function inverseDynamicAffineTransform(y, prevEncryptedByte, position, a = 11, b = 19, m = 256) {
-            const dynamicA = (a + prevEncryptedByte) % m;
-            const dynamicB = (b + position) % m;
+            const a_inv = 163; // Modular inverse of 11 mod 256
             
-            // Find modular inverse of dynamicA
-            let dynamicA_inv = 1;
-            for (let i = 1; i < m; i++) {
-                if ((dynamicA * i) % m === 1) {
-                    dynamicA_inv = i;
-                    break;
-                }
-            }
-            
-            let result = dynamicA_inv * (y - dynamicB);
+            let result = a_inv * (y - b - prevEncryptedByte - position);
             while (result < 0) result += m;
             return result % m;
         }
