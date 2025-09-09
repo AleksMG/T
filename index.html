@@ -1,445 +1,721 @@
 <!DOCTYPE html>
-<html lang="ru">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>CryptoBox | Афинное шифрование</title>
+    <title>TriBox - Advanced Homophonic Encryption</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
+        :root {
+            --primary-dark: #0d1117;
+            --secondary-dark: #161b22;
+            --accent-dark: #1f6feb;
+            --accent-light: #58a6ff;
+            --text-primary: #e6edf3;
+            --text-secondary: #7d8590;
+            --success: #3fb950;
+            --error: #f85149;
+            --warning: #d29922;
+            --card-bg: #161b22;
+            --card-border: #30363d;
+            --input-bg: #0d1117;
+            --transition: all 0.3s ease;
         }
 
-        :root {
-            --primary-bg: #0f0f23;
-            --secondary-bg: #1a1a2e;
-            --accent: #6e44ff;
-            --accent-hover: #5a36cc;
-            --text-primary: #ffffff;
-            --text-secondary: #a0a0c0;
-            --success: #00cc88;
-            --error: #ff6b6b;
-            --warning: #ffd166;
-            --card-bg: rgba(255, 255, 255, 0.05);
-            --border: rgba(255, 255, 255, 0.1);
-            --shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
         }
 
         body {
-            font-family: 'Inter', 'Segoe UI', system-ui, sans-serif;
-            background: linear-gradient(135deg, var(--primary-bg) 0%, var(--secondary-bg) 100%);
+            font-family: 'Segoe UI', 'SF Pro Display', -apple-system, BlinkMacSystemFont, sans-serif;
+            background-color: var(--primary-dark);
             color: var(--text-primary);
-            min-height: 100vh;
             line-height: 1.6;
+            min-height: 100vh;
+            padding: 0;
+            margin: 0;
         }
 
-        .container {
+        .app-container {
             max-width: 1400px;
             margin: 0 auto;
-            padding: 2rem;
+            padding: 20px;
         }
 
         header {
             text-align: center;
-            margin-bottom: 3rem;
-            padding: 2rem 0;
+            margin-bottom: 40px;
+            padding: 30px 20px;
+            background: linear-gradient(135deg, var(--secondary-dark) 0%, var(--primary-dark) 100%);
+            border-radius: 16px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+            position: relative;
+            overflow: hidden;
         }
 
-        .logo {
-            font-size: 3rem;
-            font-weight: 800;
-            background: linear-gradient(135deg, var(--accent), #ff6b6b);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            margin-bottom: 0.5rem;
+        header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, var(--accent-dark), var(--accent-light));
         }
 
-        .subtitle {
+        h1 {
+            color: var(--accent-light);
+            font-size: 2.8rem;
+            margin-bottom: 12px;
+            font-weight: 700;
+            letter-spacing: -0.5px;
+        }
+
+        h2 {
             color: var(--text-secondary);
-            font-size: 1.2rem;
-            font-weight: 300;
+            font-size: 1.4rem;
+            font-weight: 400;
+            max-width: 700px;
+            margin: 0 auto;
         }
 
-        .grid {
+        .panels-container {
             display: grid;
             grid-template-columns: 1fr 1fr;
-            gap: 2rem;
-            margin-bottom: 3rem;
+            gap: 24px;
+            margin-bottom: 40px;
         }
 
-        @media (max-width: 968px) {
-            .grid {
+        @media (max-width: 1000px) {
+            .panels-container {
                 grid-template-columns: 1fr;
             }
         }
 
-        .card {
+        .panel {
             background: var(--card-bg);
-            backdrop-filter: blur(10px);
-            border: 1px solid var(--border);
-            border-radius: 20px;
-            padding: 2rem;
-            box-shadow: var(--shadow);
+            border-radius: 16px;
+            padding: 28px;
+            border: 1px solid var(--card-border);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+            transition: var(--transition);
         }
 
-        .card-header {
+        .panel:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.2);
+        }
+
+        .panel-header {
             display: flex;
             align-items: center;
-            gap: 1rem;
-            margin-bottom: 2rem;
-            padding-bottom: 1rem;
-            border-bottom: 1px solid var(--border);
+            margin-bottom: 24px;
+            padding-bottom: 16px;
+            border-bottom: 1px solid var(--card-border);
         }
 
-        .card-icon {
-            width: 32px;
-            height: 32px;
-            background: var(--accent);
-            border-radius: 10px;
+        .panel-icon {
+            background: var(--accent-dark);
+            width: 48px;
+            height: 48px;
+            border-radius: 12px;
             display: flex;
             align-items: center;
             justify-content: center;
+            margin-right: 16px;
+            box-shadow: 0 4px 12px rgba(31, 111, 235, 0.3);
         }
 
-        .card-title {
+        .panel-title {
             font-size: 1.5rem;
             font-weight: 600;
+            color: var(--accent-light);
         }
 
-        .form-group {
-            margin-bottom: 1.5rem;
+        .panel-subtitle {
+            font-size: 0.95rem;
+            color: var(--text-secondary);
+            margin-top: 4px;
+        }
+
+        .input-group {
+            margin-bottom: 20px;
         }
 
         label {
             display: block;
-            margin-bottom: 0.5rem;
-            color: var(--text-secondary);
+            margin-bottom: 8px;
             font-weight: 500;
-            font-size: 0.9rem;
+            color: var(--text-secondary);
+            font-size: 0.95rem;
         }
 
         input, textarea {
             width: 100%;
-            padding: 1rem;
-            background: rgba(0, 0, 0, 0.2);
-            border: 1px solid var(--border);
-            border-radius: 12px;
+            padding: 14px 16px;
+            background-color: var(--input-bg);
+            border: 1px solid var(--card-border);
+            border-radius: 8px;
             color: var(--text-primary);
             font-family: inherit;
             font-size: 1rem;
-            transition: all 0.3s ease;
+            transition: var(--transition);
         }
 
         input:focus, textarea:focus {
             outline: none;
-            border-color: var(--accent);
-            box-shadow: 0 0 0 3px rgba(110, 68, 255, 0.1);
+            border-color: var(--accent-dark);
+            box-shadow: 0 0 0 3px rgba(31, 111, 235, 0.2);
         }
 
         textarea {
-            min-height: 120px;
+            min-height: 140px;
             resize: vertical;
-            font-family: 'Fira Code', 'Cascadia Code', monospace;
         }
 
-        .checkbox-group {
+        .options-group {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 16px;
+            margin: 20px 0;
+        }
+
+        @media (max-width: 600px) {
+            .options-group {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .checkbox-container {
             display: flex;
             align-items: center;
-            gap: 0.75rem;
-            margin: 1.5rem 0;
+            background: var(--input-bg);
+            padding: 12px 16px;
+            border-radius: 8px;
+            border: 1px solid var(--card-border);
+            transition: var(--transition);
         }
 
-        .checkbox {
-            width: 20px;
-            height: 20px;
-            accent-color: var(--accent);
+        .checkbox-container:hover {
+            border-color: var(--accent-dark);
+        }
+
+        .checkbox-container input {
+            width: auto;
+            margin-right: 12px;
         }
 
         .btn {
+            display: flex;
+            align-items: center;
+            justify-content: center;
             width: 100%;
-            padding: 1rem 2rem;
-            background: var(--accent);
+            padding: 16px;
+            background: linear-gradient(135deg, var(--accent-dark) 0%, #2c67d1 100%);
             color: white;
             border: none;
-            border-radius: 12px;
-            font-size: 1rem;
+            border-radius: 10px;
+            font-family: inherit;
             font-weight: 600;
+            font-size: 1.05rem;
             cursor: pointer;
-            transition: all 0.3s ease;
-            margin-top: 1rem;
+            transition: var(--transition);
+            margin-top: 10px;
         }
 
         .btn:hover {
-            background: var(--accent-hover);
+            background: linear-gradient(135deg, #2c67d1 0%, #255cbc 100%);
             transform: translateY(-2px);
+            box-shadow: 0 6px 16px rgba(31, 111, 235, 0.3);
         }
 
         .btn:active {
             transform: translateY(0);
         }
 
+        .btn i {
+            margin-right: 10px;
+        }
+
         .btn-secondary {
-            background: transparent;
-            border: 2px solid var(--accent);
-            color: var(--accent);
+            background: var(--secondary-dark);
         }
 
         .btn-secondary:hover {
-            background: rgba(110, 68, 255, 0.1);
+            background: #21262d;
+            box-shadow: 0 6px 16px rgba(0, 0, 0, 0.2);
         }
 
         .status {
-            padding: 1rem;
-            border-radius: 12px;
-            margin: 1.5rem 0;
+            padding: 14px 16px;
+            border-radius: 10px;
+            margin: 20px 0;
+            font-size: 0.95rem;
             display: none;
-            animation: slideIn 0.3s ease;
+            align-items: center;
         }
 
         .status.visible {
-            display: block;
+            display: flex;
+        }
+
+        .status i {
+            margin-right: 12px;
+            font-size: 1.2rem;
         }
 
         .status.success {
-            background: rgba(0, 204, 136, 0.1);
-            border: 1px solid rgba(0, 204, 136, 0.3);
+            background-color: rgba(63, 185, 80, 0.15);
+            border: 1px solid rgba(63, 185, 80, 0.4);
             color: var(--success);
         }
 
         .status.error {
-            background: rgba(255, 107, 107, 0.1);
-            border: 1px solid rgba(255, 107, 107, 0.3);
+            background-color: rgba(248, 81, 73, 0.15);
+            border: 1px solid rgba(248, 81, 73, 0.4);
             color: var(--error);
         }
 
         .result-container {
-            margin-top: 2rem;
-            padding: 1.5rem;
-            background: rgba(0, 0, 0, 0.2);
+            margin-top: 24px;
+            padding: 20px;
+            background-color: rgba(13, 17, 23, 0.5);
             border-radius: 12px;
-            border: 1px solid var(--border);
+            border: 1px solid var(--card-border);
         }
 
         .result-label {
+            font-size: 0.95rem;
             color: var(--text-secondary);
-            margin-bottom: 1rem;
-            font-size: 0.9rem;
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+        }
+
+        .result-label i {
+            margin-right: 10px;
         }
 
         .result-content {
-            font-family: 'Fira Code', 'Cascadia Code', monospace;
+            font-family: 'SF Mono', 'Monaco', 'Consolas', monospace;
             word-break: break-all;
-            padding: 1rem;
-            background: rgba(0, 0, 0, 0.3);
+            padding: 16px;
+            background-color: rgba(0, 0, 0, 0.2);
             border-radius: 8px;
             max-height: 200px;
             overflow-y: auto;
+            line-height: 1.5;
+        }
+
+        .iv-generation {
+            margin-top: 20px;
+            padding: 20px;
+            background-color: rgba(13, 17, 23, 0.5);
+            border-radius: 12px;
+            border: 1px solid var(--card-border);
             font-size: 0.9rem;
         }
 
-        .info-section {
-            margin-top: 2rem;
-            padding: 1.5rem;
-            background: var(--card-bg);
-            border-radius: 12px;
-            border: 1px solid var(--border);
+        .iv-generation h3 {
+            color: var(--text-secondary);
+            margin-bottom: 12px;
+            font-size: 1rem;
+            display: flex;
+            align-items: center;
         }
 
-        .info-title {
+        .iv-generation h3 i {
+            margin-right: 10px;
+        }
+
+        .entropy-analysis {
+            margin-top: 24px;
+            padding: 20px;
+            background-color: rgba(13, 17, 23, 0.5);
+            border-radius: 12px;
+            border: 1px solid var(--card-border);
+        }
+
+        .entropy-analysis h3 {
             color: var(--text-secondary);
-            margin-bottom: 1rem;
-            font-size: 1.1rem;
+            margin-bottom: 16px;
+            font-size: 1rem;
+            display: flex;
+            align-items: center;
+        }
+
+        .entropy-analysis h3 i {
+            margin-right: 10px;
+        }
+
+        .entropy-result {
+            font-family: 'SF Mono', monospace;
+            padding: 16px;
+            background-color: rgba(0, 0, 0, 0.2);
+            border-radius: 8px;
+            margin-bottom: 16px;
+        }
+
+        .entropy-visual {
+            margin-top: 16px;
+        }
+
+        .entropy-bar {
+            height: 24px;
+            background: linear-gradient(90deg, #f85149 0%, #d29922 50%, #3fb950 100%);
+            border-radius: 6px;
+            margin-top: 12px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .entropy-value {
+            position: absolute;
+            height: 100%;
+            background-color: rgba(31, 111, 235, 0.8);
+            border-radius: 6px;
+            transition: width 1s ease;
+        }
+
+        .entropy-labels {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 8px;
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+        }
+
+        .technical-info {
+            margin-top: 40px;
+            padding: 28px;
+            background-color: var(--card-bg);
+            border-radius: 16px;
+            border: 1px solid var(--card-border);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+        }
+
+        .technical-info h3 {
+            color: var(--accent-light);
+            margin-bottom: 20px;
+            font-size: 1.4rem;
+            display: flex;
+            align-items: center;
+        }
+
+        .technical-info h3 i {
+            margin-right: 12px;
         }
 
         .info-grid {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-            gap: 1rem;
+            gap: 20px;
         }
 
         .info-item {
-            padding: 1rem;
-            background: rgba(0, 0, 0, 0.2);
-            border-radius: 8px;
+            padding: 20px;
+            background-color: rgba(13, 17, 23, 0.5);
+            border-radius: 10px;
+            border: 1px solid var(--card-border);
+            transition: var(--transition);
+        }
+
+        .info-item:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 16px rgba(0, 0, 0, 0.15);
         }
 
         .info-label {
             color: var(--text-secondary);
-            font-size: 0.8rem;
-            margin-bottom: 0.5rem;
+            font-size: 0.9rem;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+        }
+
+        .info-label i {
+            margin-right: 8px;
+            font-size: 0.9rem;
         }
 
         .info-value {
-            font-family: 'Fira Code', monospace;
-            font-size: 0.9rem;
+            font-family: 'SF Mono', monospace;
+            word-break: break-all;
+            color: var(--accent-light);
+            font-size: 0.95rem;
         }
 
         footer {
             text-align: center;
-            margin-top: 4rem;
-            padding-top: 2rem;
-            border-top: 1px solid var(--border);
+            margin-top: 60px;
+            padding: 30px 20px;
+            border-top: 1px solid var(--card-border);
             color: var(--text-secondary);
+            font-size: 0.95rem;
         }
 
-        @keyframes slideIn {
-            from {
-                opacity: 0;
-                transform: translateY(-10px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
+        .debug-info {
+            margin-top: 20px;
+            padding: 20px;
+            background-color: rgba(13, 17, 23, 0.5);
+            border-radius: 12px;
+            border: 1px solid var(--card-border);
+            font-size: 0.9rem;
         }
 
-        .loader {
+        .debug-info h3 {
+            color: var(--text-secondary);
+            margin-bottom: 12px;
+            font-size: 1rem;
+            display: flex;
+            align-items: center;
+        }
+
+        .debug-info h3 i {
+            margin-right: 10px;
+        }
+
+        .tooltip {
+            position: relative;
             display: inline-block;
-            width: 20px;
-            height: 20px;
-            border: 2px solid var(--text-secondary);
-            border-radius: 50%;
-            border-top-color: var(--accent);
-            animation: spin 1s ease-in-out infinite;
+            margin-left: 8px;
+            color: var(--accent-light);
         }
 
-        @keyframes spin {
-            to { transform: rotate(360deg); }
+        .tooltip .tooltiptext {
+            visibility: hidden;
+            width: 220px;
+            background-color: var(--secondary-dark);
+            color: var(--text-primary);
+            text-align: center;
+            border-radius: 6px;
+            padding: 8px;
+            position: absolute;
+            z-index: 1;
+            bottom: 125%;
+            left: 50%;
+            margin-left: -110px;
+            opacity: 0;
+            transition: opacity 0.3s;
+            font-size: 0.85rem;
+            border: 1px solid var(--card-border);
+        }
+
+        .tooltip:hover .tooltiptext {
+            visibility: visible;
+            opacity: 1;
+        }
+
+        .copy-btn {
+            background: transparent;
+            border: none;
+            color: var(--text-secondary);
+            cursor: pointer;
+            margin-left: 10px;
+            transition: var(--transition);
+        }
+
+        .copy-btn:hover {
+            color: var(--accent-light);
         }
     </style>
 </head>
 <body>
-    <div class="container">
+    <div class="app-container">
         <header>
-            <div class="logo">CryptoBox</div>
-            <div class="subtitle">Афинное шифрование с омофонической заменой</div>
+            <h1>TriBox Encryption Suite</h1>
+            <h2>Advanced Homophonic Cipher with Affine Transformation</h2>
         </header>
 
-        <div class="grid">
-            <!-- Панель шифрования -->
-            <div class="card">
-                <div class="card-header">
-                    <div class="card-icon">🔒</div>
-                    <div class="card-title">Шифрование</div>
+        <div class="panels-container">
+            <div class="panel">
+                <div class="panel-header">
+                    <div class="panel-icon">
+                        <i class="fas fa-lock"></i>
+                    </div>
+                    <div>
+                        <div class="panel-title">Encryption</div>
+                        <div class="panel-subtitle">Secure your data with homophonic cipher</div>
+                    </div>
                 </div>
                 
-                <div class="form-group">
-                    <label for="encryptKey">Ключевая фраза</label>
-                    <input type="text" id="encryptKey" placeholder="Введите ключевую фразу" value="секретный ключ">
+                <div class="input-group">
+                    <label for="encryptKey">Passphrase <span class="tooltip"><i class="fas fa-question-circle"></i>
+                        <span class="tooltiptext">Key used to generate encryption S-boxes</span>
+                    </span></label>
+                    <input type="text" id="encryptKey" placeholder="Enter your passphrase" value="secret key">
                 </div>
                 
-                <div class="checkbox-group">
-                    <input type="checkbox" id="encryptCBCMode" class="checkbox">
-                    <label for="encryptCBCMode">Режим CBC</label>
+                <div class="options-group">
+                    <div class="checkbox-container">
+                        <input type="checkbox" id="encryptCBCMode">
+                        <label for="encryptCBCMode">CBC Mode</label>
+                    </div>
+                    
+                    <div class="checkbox-container">
+                        <input type="checkbox" id="encryptHomophonicMode" checked>
+                        <label for="encryptHomophonicMode">Homophonic Encryption</label>
+                    </div>
                 </div>
                 
-                <div class="checkbox-group">
-                    <input type="checkbox" id="encryptHomophonicMode" class="checkbox" checked>
-                    <label for="encryptHomophonicMode">Омофоническое шифрование</label>
+                <div class="input-group">
+                    <label for="plainText">Text to Encrypt</label>
+                    <textarea id="plainText" placeholder="Enter text to encrypt">11111111</textarea>
                 </div>
                 
-                <div class="form-group">
-                    <label for="plainText">Текст для шифрования</label>
-                    <textarea id="plainText" placeholder="Введите текст для шифрования">11111111</textarea>
-                </div>
-                
-                <button class="btn" onclick="encrypt()">Зашифровать</button>
+                <button class="btn" onclick="encrypt()"><i class="fas fa-shield-alt"></i> Encrypt</button>
                 
                 <div id="encryptStatus" class="status"></div>
                 
                 <div class="result-container">
-                    <div class="result-label">Шифротекст:</div>
+                    <div class="result-label">
+                        <i class="fas fa-lock"></i> Ciphertext:
+                        <button class="copy-btn" onclick="copyToClipboard('cipherHex')"><i class="fas fa-copy"></i></button>
+                    </div>
                     <div id="cipherHex" class="result-content"></div>
                 </div>
                 
-                <button class="btn btn-secondary" onclick="analyzeEntropy('encrypt')">Анализ энтропии</button>
+                <button class="btn btn-secondary" onclick="analyzeEntropy('encrypt')"><i class="fas fa-chart-bar"></i> Analyze Entropy</button>
                 
-                <div class="info-section">
-                    <div class="info-title">Генерация IV</div>
-                    <div class="info-value" id="encryptIVValue">Нажмите "Зашифровать" для генерации</div>
+                <div class="entropy-analysis" id="encryptEntropy" style="display: none;">
+                    <h3><i class="fas fa-wave-square"></i> Ciphertext Entropy Analysis</h3>
+                    <div class="entropy-result" id="encryptEntropyResult"></div>
+                    <div class="entropy-visual">
+                        <div class="entropy-bar">
+                            <div class="entropy-value" id="encryptEntropyBar"></div>
+                        </div>
+                        <div class="entropy-labels">
+                            <span>0</span>
+                            <span>2</span>
+                            <span>4</span>
+                            <span>6</span>
+                            <span id="entropyMaxLabel">8</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="iv-generation">
+                    <h3><i class="fas fa-key"></i> IV Generation</h3>
+                    <div>IV is automatically generated from key using HMAC-SHA256</div>
+                    <div id="encryptIVValue" class="result-content" style="margin-top: 12px; font-size: 0.85rem;"></div>
+                </div>
+
+                <div class="debug-info">
+                    <h3><i class="fas fa-code"></i> Technical Details</h3>
+                    <div>Formula: combinedByte = (byte + prevEncryptedByte) % 256</div>
+                    <div>Affine transformation: y = (11 * x + 19) % 256</div>
                 </div>
             </div>
 
-            <!-- Панель дешифрования -->
-            <div class="card">
-                <div class="card-header">
-                    <div class="card-icon">🔓</div>
-                    <div class="card-title">Дешифрование</div>
+            <div class="panel">
+                <div class="panel-header">
+                    <div class="panel-icon">
+                        <i class="fas fa-lock-open"></i>
+                    </div>
+                    <div>
+                        <div class="panel-title">Decryption</div>
+                        <div class="panel-subtitle">Decrypt your protected data</div>
+                    </div>
                 </div>
                 
-                <div class="form-group">
-                    <label for="decryptKey">Ключевая фраза</label>
-                    <input type="text" id="decryptKey" placeholder="Введите ключевую фразу" value="секретный ключ">
+                <div class="input-group">
+                    <label for="decryptKey">Passphrase</label>
+                    <input type="text" id="decryptKey" placeholder="Enter your passphrase" value="secret key">
                 </div>
                 
-                <div class="checkbox-group">
-                    <input type="checkbox" id="decryptCBCMode" class="checkbox">
-                    <label for="decryptCBCMode">Режим CBC</label>
+                <div class="options-group">
+                    <div class="checkbox-container">
+                        <input type="checkbox" id="decryptCBCMode">
+                        <label for="decryptCBCMode">CBC Mode</label>
+                    </div>
+                    
+                    <div class="checkbox-container">
+                        <input type="checkbox" id="decryptHomophonicMode" checked>
+                        <label for="decryptHomophonicMode">Homophonic Encryption</label>
+                    </div>
                 </div>
                 
-                <div class="checkbox-group">
-                    <input type="checkbox" id="decryptHomophonicMode" class="checkbox" checked>
-                    <label for="decryptHomophonicMode">Омофоническое шифрование</label>
+                <div class="input-group">
+                    <label for="cipherText">Ciphertext</label>
+                    <textarea id="cipherText" placeholder="Enter ciphertext to decrypt"></textarea>
                 </div>
                 
-                <div class="form-group">
-                    <label for="cipherText">Шифротекст</label>
-                    <textarea id="cipherText" placeholder="Введите шифротекст для дешифрования"></textarea>
-                </div>
-                
-                <button class="btn" onclick="decrypt()">Дешифровать</button>
+                <button class="btn" onclick="decrypt()"><i class="fas fa-unlock"></i> Decrypt</button>
                 
                 <div id="decryptStatus" class="status"></div>
                 
                 <div class="result-container">
-                    <div class="result-label">Результат:</div>
+                    <div class="result-label">
+                        <i class="fas fa-check-circle"></i> Result:
+                        <button class="copy-btn" onclick="copyToClipboard('decryptedText')"><i class="fas fa-copy"></i></button>
+                    </div>
                     <div id="decryptedText" class="result-content"></div>
                 </div>
                 
-                <button class="btn btn-secondary" onclick="analyzeEntropy('decrypt')">Анализ энтропии</button>
+                <button class="btn btn-secondary" onclick="analyzeEntropy('decrypt')"><i class="fas fa-chart-bar"></i> Analyze Entropy</button>
                 
-                <div class="info-section">
-                    <div class="info-title">Генерация IV</div>
-                    <div class="info-value" id="decryptIVValue">Нажмите "Дешифровать" для генерации</div>
+                <div class="entropy-analysis" id="decryptEntropy" style="display: none;">
+                    <h3><i class="fas fa-wave-square"></i> Ciphertext Entropy Analysis</h3>
+                    <div class="entropy-result" id="decryptEntropyResult"></div>
+                    <div class="entropy-visual">
+                        <div class="entropy-bar">
+                            <div class="entropy-value" id="decryptEntropyBar"></div>
+                        </div>
+                        <div class="entropy-labels">
+                            <span>0</span>
+                            <span>2</span>
+                            <span>4</span>
+                            <span>6</span>
+                            <span>8</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="iv-generation">
+                    <h3><i class="fas fa-key"></i> IV Generation</h3>
+                    <div>IV is automatically generated from key using HMAC-SHA256</div>
+                    <div id="decryptIVValue" class="result-content" style="margin-top: 12px; font-size: 0.85rem;"></div>
+                </div>
+
+                <div class="debug-info">
+                    <h3><i class="fas fa-code"></i> Technical Details</h3>
+                    <div>Reverse transformation: byte = combinedByte - prevEncryptedByte</div>
+                    <div>Reverse affine: x = (163 * (y - 19)) % 256</div>
                 </div>
             </div>
         </div>
 
-        <!-- Техническая информация -->
-        <div class="card">
-            <div class="card-header">
-                <div class="card-icon">⚙️</div>
-                <div class="card-title">Техническая информация</div>
-            </div>
-            
+        <div class="technical-info">
+            <h3><i class="fas fa-info-circle"></i> Technical Information</h3>
             <div class="info-grid">
                 <div class="info-item">
-                    <div class="info-label">Афинное преобразование</div>
-                    <div class="info-value">y_i = (11 * x_i + 19 + y_{i-1}) % 256</div>
+                    <div class="info-label"><i class="fas fa-calculator"></i> Combination Formula</div>
+                    <div class="info-value">combinedByte = (byte + prevEncryptedByte) % 256</div>
                 </div>
                 <div class="info-item">
-                    <div class="info-label">Обратное преобразование</div>
-                    <div class="info-value">x_i = (163 * (y_i - 19 - y_{i-1})) % 256</div>
+                    <div class="info-label"><i class="fas fa-project-diagram"></i> Affine Transformation</div>
+                    <div class="info-value">y = (11 * x + 19) % 256</div>
                 </div>
                 <div class="info-item">
-                    <div class="info-label">Генерация S-Box</div>
-                    <div class="info-value">PBKDF2 с SHA-512, 100000 итераций</div>
+                    <div class="info-label"><i class="fas fa-undo"></i> Reverse Affine</div>
+                    <div class="info-value">x = (163 * (y - 19)) % 256</div>
                 </div>
                 <div class="info-item">
-                    <div class="info-label">Генерация IV</div>
-                    <div class="info-value">HMAC-SHA256 от ключа</div>
+                    <div class="info-label"><i class="fas fa-random"></i> IV Generation</div>
+                    <div class="info-value">HMAC-SHA256 from key</div>
                 </div>
             </div>
         </div>
 
         <footer>
-            <div>CryptoBox &copy; 2025 | Современное афинное шифрование</div>
+            <div>TriBox &copy; 2025 - Enhanced Version | Advanced Homophonic Encryption</div>
         </footer>
     </div>
 
     <script>
-        // Глобальные переменные
+        // Global variables
         let staticSbox = null;
         let staticSboxInverse = null;
         let dynamicSbox = null;
@@ -447,34 +723,81 @@
         let homophonicSbox = null;
         let homophonicSboxInverse = null;
         let currentKey = "";
+        let lastEncryptedData = null;
+        let lastEncryptedFormat = null;
 
-        // Афинное преобразование
-        function affineTransform(x, prevEncryptedByte, a = 11, b = 19, m = 256) {
-            return (a * x + b + prevEncryptedByte) % m;
+        // Affine transformation: y = (a * x + b) mod m
+        function affineTransform(x, a = 11, b = 19, m = 256) {
+            return (a * x + b) % m;
         }
 
-        // Обратное афинное преобразование
-        function inverseAffineTransform(y, prevEncryptedByte, a = 11, b = 19, m = 256) {
+        // Inverse affine transformation: x = a_inv * (y - b) mod m
+        function inverseAffineTransform(y, a = 11, b = 19, m = 256) {
             const a_inv = 163;
-            let result = a_inv * (y - b - prevEncryptedByte);
+            let result = a_inv * (y - b);
             while (result < 0) result += m;
             return result % m;
         }
 
-        // Генерация IV из ключа
+        // Generate IV from key using HMAC-SHA256
         async function generateIVFromKey(key) {
             const encoder = new TextEncoder();
             const keyData = encoder.encode(key);
             
             const cryptoKey = await crypto.subtle.importKey(
-                'raw', keyData, { name: 'HMAC', hash: 'SHA-256' }, false, ['sign']
+                'raw',
+                keyData,
+                { name: 'HMAC', hash: 'SHA-256' },
+                false,
+                ['sign']
             );
             
-            const iv = await crypto.subtle.sign('HMAC', cryptoKey, encoder.encode('IV_GENERATION'));
+            const iv = await crypto.subtle.sign(
+                'HMAC',
+                cryptoKey,
+                encoder.encode('IV_GENERATION')
+            );
+            
             return new Uint8Array(iv).slice(0, 16);
         }
 
-        // Инициализация статического S-Box
+        // Cryptographically secure Fisher-Yates shuffle
+        async function cryptoShuffle(array, key, salt = "") {
+            const encoder = new TextEncoder();
+            
+            const keyMaterial = await crypto.subtle.importKey(
+                'raw',
+                encoder.encode(key),
+                {name: 'PBKDF2'},
+                false,
+                ['deriveBits']
+            );
+            
+            const derivedBits = await crypto.subtle.deriveBits(
+                {
+                    name: 'PBKDF2',
+                    salt: encoder.encode(salt),
+                    iterations: 100000,
+                    hash: 'SHA-512'
+                },
+                keyMaterial,
+                array.length * 16
+            );
+            
+            const hashArray = new Uint8Array(derivedBits);
+            const result = [...array];
+            
+            for (let i = result.length - 1; i > 0; i--) {
+                const hashIndex = i % hashArray.length;
+                const j = hashArray[hashIndex] % (i + 1);
+                [result[i], result[j]] = [result[j], result[i]];
+                hashArray[hashIndex] = (hashArray[hashIndex] + result[i].charCodeAt(0)) % 256;
+            }
+            
+            return result;
+        }
+
+        // Initialize static S-Box
         async function initStaticSbox(key) {
             if (staticSbox !== null && currentKey === key) return;
             
@@ -482,12 +805,22 @@
             const encoder = new TextEncoder();
             
             const keyMaterial = await crypto.subtle.importKey(
-                'raw', encoder.encode(key), {name: 'PBKDF2'}, false, ['deriveBits']
+                'raw',
+                encoder.encode(key),
+                {name: 'PBKDF2'},
+                false,
+                ['deriveBits']
             );
             
             const derivedBits = await crypto.subtle.deriveBits(
-                { name: 'PBKDF2', salt: encoder.encode("static_salt"), iterations: 100000, hash: 'SHA-512' },
-                keyMaterial, 2048
+                {
+                    name: 'PBKDF2',
+                    salt: encoder.encode("static_salt"),
+                    iterations: 100000,
+                    hash: 'SHA-512'
+                },
+                keyMaterial,
+                2048
             );
             
             const hashArray = new Uint8Array(derivedBits);
@@ -496,6 +829,7 @@
                 const hashIndex = i % hashArray.length;
                 const j = hashArray[hashIndex] % (i + 1);
                 [tempArray[i], tempArray[j]] = [tempArray[j], tempArray[i]];
+                hashArray[hashIndex] = (hashArray[hashIndex] + tempArray[i]) % 256;
             }
             
             staticSbox = new Array(16);
@@ -511,7 +845,7 @@
             }
         }
 
-        // Генерация динамического S-Box
+        // Generate dynamic S-Box
         async function createDynamicSbox(key) {
             if (key === currentKey && dynamicSbox !== null) {
                 return {sbox: dynamicSbox, inverse: dynamicSboxInverse};
@@ -522,12 +856,22 @@
             const encoder = new TextEncoder();
             
             const keyMaterial = await crypto.subtle.importKey(
-                'raw', encoder.encode(key), {name: 'PBKDF2'}, false, ['deriveBits']
+                'raw',
+                encoder.encode(key),
+                {name: 'PBKDF2'},
+                false,
+                ['deriveBits']
             );
             
             const derivedBits = await crypto.subtle.deriveBits(
-                { name: 'PBKDF2', salt: encoder.encode("dynamic_salt"), iterations: 100000, hash: 'SHA-512' },
-                keyMaterial, 2048
+                {
+                    name: 'PBKDF2',
+                    salt: encoder.encode("dynamic_salt"),
+                    iterations: 100000,
+                    hash: 'SHA-512'
+                },
+                keyMaterial,
+                2048
             );
             
             const hashArray = new Uint8Array(derivedBits);
@@ -536,6 +880,7 @@
                 const hashIndex = i % hashArray.length;
                 const j = hashArray[hashIndex] % (i + 1);
                 [tempArray[i], tempArray[j]] = [tempArray[j], tempArray[i]];
+                hashArray[hashIndex] = (hashArray[hashIndex] + tempArray[i]) % 256;
             }
             
             dynamicSbox = new Array(16);
@@ -553,15 +898,52 @@
             return {sbox: dynamicSbox, inverse: dynamicSboxInverse};
         }
 
-        // Функции шифрования/дешифрования
+        // Generate homophonic S-Box
+        async function createHomophonicSbox(key) {
+            if (homophonicSbox !== null && currentKey === key) return;
+            
+            const base64Chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/';
+            const allBigrams = [];
+            
+            for (let i = 0; i < 64; i++) {
+                for (let j = 0; j < 64; j++) {
+                    allBigrams.push(base64Chars[i] + base64Chars[j]);
+                }
+            }
+            
+            const shuffledBigrams = await cryptoShuffle(allBigrams, key, "homophonic_salt");
+            
+            homophonicSbox = new Array(16);
+            homophonicSboxInverse = {};
+            let bigramIndex = 0;
+            
+            for (let r = 0; r < 16; r++) {
+                homophonicSbox[r] = new Array(16);
+                for (let c = 0; c < 16; c++) {
+                    homophonicSbox[r][c] = shuffledBigrams.slice(bigramIndex, bigramIndex + 16);
+                    bigramIndex += 16;
+                    
+                    for (const bigram of homophonicSbox[r][c]) {
+                        homophonicSboxInverse[bigram] = (r << 4) | c;
+                    }
+                }
+            }
+        }
+
+        // Encryption functions with affine transformation
         function encryptByte(byte, prevEncryptedByte, dynSbox) {
-            const xorByte = byte ^ prevEncryptedByte;
-            const r = (xorByte >> 4) & 0x0F;
-            const c = xorByte & 0x0F;
+            // combinedByte = (original byte + previous encrypted byte)
+            const combinedByte = (byte + prevEncryptedByte) % 256;
             
+            // Static S-Box
+            const r = (combinedByte >> 4) & 0x0F;
+            const c = combinedByte & 0x0F;
             const staticValue = staticSbox[r][c];
-            const affineValue = affineTransform(staticValue, prevEncryptedByte);
             
+            // Affine transformation
+            const affineValue = affineTransform(staticValue);
+            
+            // Dynamic S-Box
             const newR = (affineValue >> 4) & 0x0F;
             const newC = affineValue & 0x0F;
             
@@ -569,16 +951,23 @@
         }
 
         function decryptByte(cipherByte, prevEncryptedByte, dynSboxInverse) {
+            // Dynamic S-Box (inverse)
             const dynamicValue = cipherByte;
             const staticValue = dynSboxInverse[dynamicValue];
             
-            const affineValue = inverseAffineTransform(staticValue, prevEncryptedByte);
-            const xorByte = staticSboxInverse[affineValue];
+            // Inverse affine transformation
+            const affineValue = inverseAffineTransform(staticValue);
             
-            return xorByte ^ prevEncryptedByte;
+            // Static S-Box (inverse)
+            const combinedByte = staticSboxInverse[affineValue];
+            
+            // Restore original byte: byte = combinedByte - prevEncryptedByte
+            let originalByte = combinedByte - prevEncryptedByte;
+            while (originalByte < 0) originalByte += 256;
+            return originalByte % 256;
         }
 
-        // Основные функции
+        // Base encryption
         async function encrypt() {
             const key = document.getElementById('encryptKey').value;
             const text = document.getElementById('plainText').value;
@@ -586,15 +975,16 @@
             const useHomophonic = document.getElementById('encryptHomophonicMode').checked;
             
             if (!key || !text) {
-                showStatus('encryptStatus', 'error', 'Введите ключ и текст');
+                showStatus('encryptStatus', 'error', 'Please enter both key and text');
                 return;
             }
             
             try {
-                showStatus('encryptStatus', 'success', 'Шифрование...');
-                
                 await initStaticSbox(key);
                 const {sbox: dynSbox} = await createDynamicSbox(key);
+                if (useHomophonic) {
+                    await createHomophonicSbox(key);
+                }
                 
                 const iv = await generateIVFromKey(key);
                 document.getElementById('encryptIVValue').textContent = Array.from(iv).map(b => b.toString(16).padStart(2, '0')).join('');
@@ -604,58 +994,100 @@
                 
                 let prevEncryptedByte = 0;
                 const resultBytes = new Uint8Array(data.length);
+                let resultText = '';
                 
                 for (let i = 0; i < data.length; i++) {
-                    const currentXorValue = useCBC ? (i < iv.length ? iv[i] : resultBytes[i - iv.length]) : 0;
+                    const currentXorValue = useCBC ? 
+                        (i < iv.length ? iv[i] : resultBytes[i - iv.length]) : 
+                        0;
+                    
                     const cipherByte = encryptByte(data[i], currentXorValue, dynSbox);
                     resultBytes[i] = cipherByte;
+                    
+                    if (useHomophonic) {
+                        const r = (cipherByte >> 4) & 0x0F;
+                        const c = cipherByte & 0x0F;
+                        const options = homophonicSbox[r][c];
+                        const randomIndex = crypto.getRandomValues(new Uint8Array(1))[0] % 16;
+                        resultText += options[randomIndex];
+                    }
+                    
                     prevEncryptedByte = cipherByte;
                 }
                 
-                const hexResult = Array.from(resultBytes).map(b => b.toString(16).padStart(2, '0')).join('');
-                document.getElementById('cipherText').value = hexResult;
-                document.getElementById('cipherHex').textContent = hexResult;
+                if (!useHomophonic) {
+                    const hexResult = Array.from(resultBytes).map(b => b.toString(16).padStart(2, '0')).join('');
+                    document.getElementById('cipherText').value = hexResult;
+                    document.getElementById('cipherHex').textContent = hexResult;
+                    lastEncryptedData = resultBytes;
+                    lastEncryptedFormat = 'hex';
+                } else {
+                    document.getElementById('cipherText').value = resultText;
+                    document.getElementById('cipherHex').textContent = resultText;
+                    lastEncryptedData = resultText;
+                    lastEncryptedFormat = 'homophonic';
+                }
                 
-                showStatus('encryptStatus', 'success', `Успешно зашифровано ${data.length} байт`);
-                
+                showStatus('encryptStatus', 'success', `Successfully encrypted ${data.length} bytes`);
             } catch (error) {
-                showStatus('encryptStatus', 'error', 'Ошибка при шифровании: ' + error.message);
-                console.error(error);
+                showStatus('encryptStatus', 'error', 'Encryption error: ' + error.message);
             }
         }
 
+        // Base decryption
         async function decrypt() {
             const key = document.getElementById('decryptKey').value;
             const cipherData = document.getElementById('cipherText').value;
             const useCBC = document.getElementById('decryptCBCMode').checked;
+            const useHomophonic = document.getElementById('decryptHomophonicMode').checked;
             
             if (!key || !cipherData) {
-                showStatus('decryptStatus', 'error', 'Введите ключ и шифротекст');
+                showStatus('decryptStatus', 'error', 'Please enter both key and ciphertext');
                 return;
             }
             
             try {
-                showStatus('decryptStatus', 'success', 'Дешифрование...');
-                
                 await initStaticSbox(key);
                 const {inverse: dynSboxInverse} = await createDynamicSbox(key);
+                if (useHomophonic) {
+                    await createHomophonicSbox(key);
+                }
                 
                 const iv = await generateIVFromKey(key);
                 document.getElementById('decryptIVValue').textContent = Array.from(iv).map(b => b.toString(16).padStart(2, '0')).join('');
                 
-                if (!/^[0-9a-fA-F]+$/.test(cipherData) || cipherData.length % 2 !== 0) {
-                    throw new Error('Неверный формат HEX данных');
-                }
-                
-                const byteArray = new Uint8Array(cipherData.length / 2);
-                for (let i = 0; i < cipherData.length; i += 2) {
-                    byteArray[i/2] = parseInt(cipherData.substr(i, 2), 16);
+                let byteArray;
+                if (useHomophonic) {
+                    if (cipherData.length % 2 !== 0) {
+                        throw new Error('Invalid homophonic ciphertext length');
+                    }
+                    
+                    byteArray = new Uint8Array(cipherData.length / 2);
+                    for (let i = 0; i < cipherData.length; i += 2) {
+                        const bigram = cipherData.substr(i, 2);
+                        if (!(bigram in homophonicSboxInverse)) {
+                            throw new Error(`Unknown bigram: ${bigram}`);
+                        }
+                        byteArray[i/2] = homophonicSboxInverse[bigram];
+                    }
+                } else {
+                    if (!/^[0-9a-fA-F]+$/.test(cipherData) || cipherData.length % 2 !== 0) {
+                        throw new Error('Invalid HEX format');
+                    }
+                    
+                    byteArray = new Uint8Array(cipherData.length / 2);
+                    for (let i = 0; i < cipherData.length; i += 2) {
+                        byteArray[i/2] = parseInt(cipherData.substr(i, 2), 16);
+                    }
                 }
                 
                 const result = new Uint8Array(byteArray.length);
                 
                 for (let i = 0; i < byteArray.length; i++) {
-                    const currentXorValue = useCBC ? (i < iv.length ? iv[i] : byteArray[i - iv.length]) : 0;
+                    const currentXorValue = useCBC ? 
+                        (i < iv.length ? iv[i] : byteArray[i - iv.length]) : 
+                        0;
+                    
                     result[i] = decryptByte(byteArray[i], currentXorValue, dynSboxInverse);
                 }
                 
@@ -663,15 +1095,86 @@
                 const textResult = decoder.decode(result);
                 document.getElementById('decryptedText').textContent = textResult;
                 
-                showStatus('decryptStatus', 'success', `Успешно дешифровано ${byteArray.length} байт`);
-                
+                showStatus('decryptStatus', 'success', `Successfully decrypted ${byteArray.length} bytes`);
             } catch (error) {
-                showStatus('decryptStatus', 'error', 'Ошибка при дешифровании: ' + error.message);
-                console.error(error);
+                showStatus('decryptStatus', 'error', 'Decryption error: ' + error.message);
             }
         }
 
-        // Вспомогательные функции
+        // Shannon entropy calculation
+        function calculateShannonEntropy(data, isHex = false) {
+            let byteData;
+            
+            if (isHex) {
+                byteData = new Uint8Array(data.length / 2);
+                for (let i = 0; i < data.length; i += 2) {
+                    byteData[i/2] = parseInt(data.substr(i, 2), 16);
+                }
+            } else {
+                const encoder = new TextEncoder();
+                byteData = encoder.encode(data);
+            }
+            
+            const frequency = new Array(256).fill(0);
+            for (let i = 0; i < byteData.length; i++) {
+                frequency[byteData[i]]++;
+            }
+            
+            let entropy = 0;
+            for (let i = 0; i < 256; i++) {
+                if (frequency[i] > 0) {
+                    const p = frequency[i] / byteData.length;
+                    entropy -= p * Math.log2(p);
+                }
+            }
+            
+            return entropy;
+        }
+
+        // Entropy analysis
+        function analyzeEntropy(mode) {
+            const useHomophonic = mode === 'encrypt' ? 
+                document.getElementById('encryptHomophonicMode').checked : 
+                document.getElementById('decryptHomophonicMode').checked;
+            
+            let data, isHex;
+            
+            if (mode === 'encrypt') {
+                data = document.getElementById('cipherHex').textContent;
+                isHex = !useHomophonic;
+            } else {
+                data = document.getElementById('cipherText').value;
+                isHex = !document.getElementById('decryptHomophonicMode').checked;
+            }
+            
+            if (!data) {
+                showStatus(mode + 'Status', 'error', 'No data available for entropy analysis');
+                return;
+            }
+            
+            try {
+                const entropy = calculateShannonEntropy(data, isHex);
+                const maxEntropy = isHex ? 8 : 6;
+                const percentage = (entropy / maxEntropy) * 100;
+                
+                const resultElement = document.getElementById(mode + 'EntropyResult');
+                const barElement = document.getElementById(mode + 'EntropyBar');
+                const containerElement = document.getElementById(mode + 'Entropy');
+                
+                resultElement.textContent = `Shannon Entropy: ${entropy.toFixed(4)} bits/byte (${percentage.toFixed(1)}% of maximum ${maxEntropy})`;
+                barElement.style.width = percentage + '%';
+                containerElement.style.display = 'block';
+                
+                if (mode === 'encrypt') {
+                    document.getElementById('entropyMaxLabel').textContent = maxEntropy.toString();
+                }
+                
+            } catch (error) {
+                showStatus(mode + 'Status', 'error', 'Entropy analysis error: ' + error.message);
+            }
+        }
+
+        // Helper functions
         function showStatus(elementId, type, message) {
             const element = document.getElementById(elementId);
             element.textContent = message;
@@ -682,8 +1185,21 @@
             }, 5000);
         }
 
-        function analyzeEntropy(mode) {
-            showStatus(mode + 'Status', 'success', 'Анализ энтропии временно недоступен');
+        // Copy to clipboard function
+        function copyToClipboard(elementId) {
+            const element = document.getElementById(elementId);
+            const text = element.textContent;
+            
+            navigator.clipboard.writeText(text).then(() => {
+                const originalText = element.textContent;
+                element.textContent = 'Copied to clipboard!';
+                
+                setTimeout(() => {
+                    element.textContent = originalText;
+                }, 2000);
+            }).catch(err => {
+                console.error('Failed to copy: ', err);
+            });
         }
     </script>
 </body>
