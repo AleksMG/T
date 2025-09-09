@@ -215,7 +215,7 @@
         }
 
         .iv-generation h3 {
-            color: var (--text-secondary);
+            color: var(--text-secondary);
             margin-bottom: 10px;
             font-size: 1rem;
         }
@@ -338,7 +338,7 @@
             
             <div class="checkbox-group">
                 <input type="checkbox" id="encryptHomophonicMode" checked>
-                <label for 'encryptHomophonicMode'>Омофоническое шифрование</label>
+                <label for="encryptHomophonicMode">Омофоническое шифрование</label>
             </div>
             
             <div class="input-group">
@@ -390,7 +390,7 @@
             
             <div class="input-group">
                 <label for="decryptKey">Ключевая фраза</label>
-                <input type="text" id="decryptKey" placeholder="Введите ключевую фразу" value="секретный ключ">
+                <input type="text" id="decryptKey" placeholder="Введите ключевую фрузу" value="секретный ключ">
             </div>
             
             <div class="checkbox-group">
@@ -447,11 +447,11 @@
         <div class="info-grid">
             <div class="info-item">
                 <div class="info-label">Афинное преобразование</div>
-                <div class="info-value">y = (11 * x + 19 + prevCipher) mod 256</div>
+                <div class="info-value">y = (11 * x + 19 + prevEncryptedByte) mod 256</div>
             </div>
             <div class="info-item">
                 <div class="info-label">Обратное преобразование</div>
-                <div class="info-value">x = (163 * (y - 19 - prevCipher)) mod 256</div>
+                <div class="info-value">x = (163 * (y - 19 - prevEncryptedByte)) mod 256</div>
             </div>
             <div class="info-item">
                 <div class="info-label">Генерация S-Box</div>
@@ -480,15 +480,15 @@
         let lastEncryptedData = null;
         let lastEncryptedFormat = null;
 
-        // Афинное преобразование: y = (a * x + b + prevCipher) mod m
-        function affineTransform(x, prevCipher, a = 11, b = 19, m = 256) {
-            return (a * x + b + prevCipher) % m;
+        // Афинное преобразование: y = (a * x + b + prevEncryptedByte) mod m
+        function affineTransform(x, prevEncryptedByte, a = 11, b = 19, m = 256) {
+            return (a * x + b + prevEncryptedByte) % m;
         }
 
-        // Обратное афинное преобразование: x = a_inv * (y - b - prevCipher) mod m
-        function inverseAffineTransform(y, prevCipher, a = 11, b = 19, m = 256) {
+        // Обратное афинное преобразование: x = a_inv * (y - b - prevEncryptedByte) mod m
+        function inverseAffineTransform(y, prevEncryptedByte, a = 11, b = 19, m = 256) {
             const a_inv = 163;
-            let result = a_inv * (y - b - prevCipher);
+            let result = a_inv * (y - b - prevEncryptedByte);
             
             while (result < 0) result += m;
             return result % m;
@@ -688,16 +688,16 @@
         }
 
         // Функции шифрования с афинным преобразованием
-        function encryptByte(byte, prevCipher, dynSbox) {
-            const xorByte = byte ^ prevCipher;
+        function encryptByte(byte, prevEncryptedByte, dynSbox) {
+            const xorByte = byte ^ prevEncryptedByte;
             const r = (xorByte >> 4) & 0x0F;
             const c = xorByte & 0x0F;
             
             // Static S-Box
             const staticValue = staticSbox[r][c];
             
-            // Афинное преобразование между S-Box'ами
-            const affineValue = affineTransform(staticValue, prevCipher);
+            // Афинное преобразование между S-Box'ами с учетом предыдущего ЗАШИФРОВАННОГО байта
+            const affineValue = affineTransform(staticValue, prevEncryptedByte);
             
             // Dynamic S-Box
             const newR = (affineValue >> 4) & 0x0F;
@@ -706,18 +706,18 @@
             return dynSbox[newR][newC];
         }
 
-        function decryptByte(cipherByte, prevCipher, dynSboxInverse) {
+        function decryptByte(cipherByte, prevEncryptedByte, dynSboxInverse) {
             // Dynamic S-Box (обратный)
             const dynamicValue = cipherByte;
             const staticValue = dynSboxInverse[dynamicValue];
             
-            // Обратное афинное преобразование
-            const affineValue = inverseAffineTransform(staticValue, prevCipher);
+            // Обратное афинное преобразование с учетом предыдущего ЗАШИФРОВАННОГО байта
+            const affineValue = inverseAffineTransform(staticValue, prevEncryptedByte);
             
             // Static S-Box (обратный)
             const xorByte = staticSboxInverse[affineValue];
             
-            return xorByte ^ prevCipher;
+            return xorByte ^ prevEncryptedByte;
         }
 
         // Базовое шифрование
@@ -746,7 +746,7 @@
                 const encoder = new TextEncoder();
                 const data = encoder.encode(text);
                 
-                let prevCipher = 0;
+                let prevEncryptedByte = 0;
                 const resultBytes = new Uint8Array(data.length);
                 let resultText = '';
                 
@@ -767,7 +767,7 @@
                         resultText += options[randomIndex];
                     }
                     
-                    prevCipher = cipherByte;
+                    prevEncryptedByte = cipherByte;
                 }
                 
                 if (!useHomophonic) {
@@ -880,7 +880,7 @@
                 frequency[byteData[i]]++;
             }
             
-            // Вычисляем энтропии
+            // Вычисляем энтропию
             let entropy = 0;
             for (let i = 0; i < 256; i++) {
                 if (frequency[i] > 0) {
