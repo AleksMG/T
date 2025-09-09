@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>TriBox Enhanced - Nibble Affine Transformation</title>
+    <title>TriBox Enhanced - Fixed Encryption</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         :root {
@@ -29,66 +29,48 @@
         }
 
         body {
-            font-family: 'Segoe UI', 'SF Pro Display', -apple-system, BlinkMacSystemFont, sans-serif;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             background-color: var(--primary-dark);
             color: var(--text-primary);
             line-height: 1.6;
             min-height: 100vh;
-            padding: 0;
-            margin: 0;
+            padding: 20px;
         }
 
         .app-container {
-            max-width: 1400px;
+            max-width: 1200px;
             margin: 0 auto;
-            padding: 20px;
         }
 
         header {
             text-align: center;
-            margin-bottom: 40px;
-            padding: 30px 20px;
-            background: linear-gradient(135deg, var(--secondary-dark) 0%, var(--primary-dark) 100%);
-            border-radius: 16px;
-            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
-            position: relative;
-            overflow: hidden;
-        }
-
-        header::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            height: 4px;
-            background: linear-gradient(90deg, var(--accent-dark), var(--accent-light));
+            margin-bottom: 30px;
+            padding: 20px;
+            background: var(--secondary-dark);
+            border-radius: 12px;
+            border: 1px solid var(--card-border);
         }
 
         h1 {
             color: var(--accent-light);
-            font-size: 2.8rem;
-            margin-bottom: 12px;
-            font-weight: 700;
-            letter-spacing: -0.5px;
+            font-size: 2.2rem;
+            margin-bottom: 10px;
         }
 
         h2 {
             color: var(--text-secondary);
-            font-size: 1.4rem;
+            font-size: 1.2rem;
             font-weight: 400;
-            max-width: 700px;
-            margin: 0 auto;
         }
 
         .panels-container {
             display: grid;
             grid-template-columns: 1fr 1fr;
-            gap: 24px;
-            margin-bottom: 40px;
+            gap: 20px;
+            margin-bottom: 30px;
         }
 
-        @media (max-width: 1000px) {
+        @media (max-width: 900px) {
             .panels-container {
                 grid-template-columns: 1fr;
             }
@@ -96,52 +78,43 @@
 
         .panel {
             background: var(--card-bg);
-            border-radius: 16px;
-            padding: 28px;
+            border-radius: 12px;
+            padding: 20px;
             border: 1px solid var(--card-border);
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
-            transition: var(--transition);
-        }
-
-        .panel:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.2);
         }
 
         .panel-header {
             display: flex;
             align-items: center;
-            margin-bottom: 24px;
-            padding-bottom: 16px;
+            margin-bottom: 20px;
+            padding-bottom: 15px;
             border-bottom: 1px solid var(--card-border);
         }
 
         .panel-icon {
             background: var(--accent-dark);
-            width: 48px;
-            height: 48px;
-            border-radius: 12px;
+            width: 40px;
+            height: 40px;
+            border-radius: 10px;
             display: flex;
             align-items: center;
             justify-content: center;
-            margin-right: 16px;
-            box-shadow: 0 4px 12px rgba(31, 111, 235, 0.3);
+            margin-right: 15px;
         }
 
         .panel-title {
-            font-size: 1.5rem;
+            font-size: 1.3rem;
             font-weight: 600;
             color: var(--accent-light);
         }
 
         .panel-subtitle {
-            font-size: 0.95rem;
+            font-size: 0.9rem;
             color: var(--text-secondary);
-            margin-top: 4px;
         }
 
         .input-group {
-            margin-bottom: 20px;
+            margin-bottom: 15px;
         }
 
         label {
@@ -149,122 +122,64 @@
             margin-bottom: 8px;
             font-weight: 500;
             color: var(--text-secondary);
-            font-size: 0.95rem;
         }
 
-        input, textarea {
+        input, textarea, select {
             width: 100%;
-            padding: 14px 16px;
+            padding: 12px;
             background-color: var(--input-bg);
             border: 1px solid var(--card-border);
             border-radius: 8px;
             color: var(--text-primary);
             font-family: inherit;
-            font-size: 1rem;
-            transition: var(--transition);
-        }
-
-        input:focus, textarea:focus {
-            outline: none;
-            border-color: var(--accent-dark);
-            box-shadow: 0 0 0 3px rgba(31, 111, 235, 0.2);
         }
 
         textarea {
-            min-height: 140px;
+            min-height: 100px;
             resize: vertical;
         }
 
-        .options-group {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 16px;
-            margin: 20px 0;
-        }
-
-        @media (max-width: 600px) {
-            .options-group {
-                grid-template-columns: 1fr;
-            }
-        }
-
-        .checkbox-container {
-            display: flex;
-            align-items: center;
-            background: var(--input-bg);
-            padding: 12px 16px;
-            border-radius: 8px;
-            border: 1px solid var(--card-border);
-            transition: var(--transition);
-        }
-
-        .checkbox-container:hover {
-            border-color: var(--accent-dark);
-        }
-
-        .checkbox-container input {
-            width: auto;
-            margin-right: 12px;
-        }
-
         .btn {
-            display: flex;
-            align-items: center;
-            justify-content: center;
             width: 100%;
-            padding: 16px;
-            background: linear-gradient(135deg, var(--accent-dark) 0%, #2c67d1 100%);
+            padding: 14px;
+            background: var(--accent-dark);
             color: white;
             border: none;
-            border-radius: 10px;
+            border-radius: 8px;
             font-family: inherit;
             font-weight: 600;
-            font-size: 1.05rem;
             cursor: pointer;
             transition: var(--transition);
             margin-top: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
         }
 
         .btn:hover {
-            background: linear-gradient(135deg, #2c67d1 0%, #255cbc 100%);
-            transform: translateY(-2px);
-            box-shadow: 0 6px 16px rgba(31, 111, 235, 0.3);
-        }
-
-        .btn:active {
-            transform: translateY(0);
-        }
-
-        .btn i {
-            margin-right: 10px;
+            background: var(--accent-light);
         }
 
         .btn-secondary {
             background: var(--secondary-dark);
-            margin-top: 15px;
         }
 
         .btn-secondary:hover {
             background: #21262d;
-            box-shadow: 0 6px 16px rgba(0, 0, 0, 0.2);
         }
 
         .status {
-            padding: 14px 16px;
-            border-radius: 10px;
-            margin: 20px 0;
-            font-size: 0.95rem;
+            padding: 12px;
+            border-radius: 8px;
+            margin: 15px 0;
             display: none;
             align-items: center;
+            gap: 10px;
         }
 
         .status.visible {
             display: flex;
-        }
-
-        .status i {
-            margin-right: 12px;
-            font-size: 1.2rem;
         }
 
         .status.success {
@@ -280,95 +195,88 @@
         }
 
         .result-container {
-            margin-top: 24px;
-            padding: 20px;
+            margin-top: 20px;
+            padding: 15px;
             background-color: rgba(13, 17, 23, 0.5);
-            border-radius: 12px;
+            border-radius: 8px;
             border: 1px solid var(--card-border);
         }
 
         .result-label {
-            font-size: 0.95rem;
             color: var(--text-secondary);
-            margin-bottom: 12px;
+            margin-bottom: 10px;
             display: flex;
             align-items: center;
-        }
-
-        .result-label i {
-            margin-right: 10px;
+            gap: 8px;
         }
 
         .result-content {
-            font-family: 'SF Mono', 'Monaco', 'Consolas', monospace;
+            font-family: 'Courier New', monospace;
             word-break: break-all;
-            padding: 16px;
+            padding: 12px;
             background-color: rgba(0, 0, 0, 0.2);
-            border-radius: 8px;
-            max-height: 200px;
+            border-radius: 6px;
+            max-height: 150px;
             overflow-y: auto;
-            line-height: 1.5;
         }
 
-        .iv-generation {
+        .process-info {
             margin-top: 20px;
-            padding: 20px;
+            padding: 15px;
             background-color: rgba(13, 17, 23, 0.5);
-            border-radius: 12px;
+            border-radius: 8px;
             border: 1px solid var(--card-border);
             font-size: 0.9rem;
         }
 
-        .iv-generation h3 {
-            color: var(--text-secondary);
-            margin-bottom: 12px;
-            font-size: 1rem;
-            display: flex;
-            align-items: center;
+        .process-steps {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 10px;
+            margin-top: 10px;
         }
 
-        .iv-generation h3 i {
-            margin-right: 10px;
+        .process-step {
+            padding: 10px;
+            background-color: rgba(0, 0, 0, 0.2);
+            border-radius: 6px;
+            text-align: center;
+        }
+
+        .step-title {
+            font-weight: bold;
+            color: var(--accent-light);
+            margin-bottom: 5px;
+            font-size: 0.8rem;
+        }
+
+        .step-value {
+            font-family: 'Courier New', monospace;
+            font-size: 0.9rem;
         }
 
         .entropy-analysis {
-            margin-top: 24px;
-            padding: 20px;
+            margin-top: 20px;
+            padding: 15px;
             background-color: rgba(13, 17, 23, 0.5);
-            border-radius: 12px;
-            border: 1px solid var(--card-border);
-        }
-
-        .entropy-analysis h3 {
-            color: var(--text-secondary);
-            margin-bottom: 16px;
-            font-size: 1rem;
-            display: flex;
-            align-items: center;
-        }
-
-        .entropy-analysis h3 i {
-            margin-right: 10px;
-        }
-
-        .entropy-result {
-            font-family: 'SF Mono', monospace;
-            padding: 16px;
-            background-color: rgba(0, 0, 0, 0.2);
             border-radius: 8px;
-            margin-bottom: 16px;
-        }
-
-        .entropy-visual {
-            margin-top: 16px;
+            border: 1px solid var(--card-border);
             display: none;
         }
 
-        .entropy-bar {
-            height: 24px;
-            background: linear-gradient(90deg, #f85149 0%, #d29922 50%, #3fb950 100%);
+        .entropy-result {
+            font-family: 'Courier New', monospace;
+            padding: 10px;
+            background-color: rgba(0, 0, 0, 0.2);
             border-radius: 6px;
-            margin-top: 12px;
+            margin-bottom: 10px;
+        }
+
+        .entropy-bar {
+            height: 20px;
+            background: linear-gradient(90deg, #f85149 0%, #d29922 50%, #3fb950 100%);
+            border-radius: 4px;
+            margin-top: 10px;
             position: relative;
             overflow: hidden;
         }
@@ -377,137 +285,61 @@
             position: absolute;
             height: 100%;
             background-color: rgba(31, 111, 235, 0.8);
-            border-radius: 6px;
-            transition: width 1s ease;
+            border-radius: 4px;
+            transition: width 0.5s ease;
         }
 
         .entropy-labels {
             display: flex;
             justify-content: space-between;
-            margin-top: 8px;
-            font-size: 0.85rem;
+            margin-top: 5px;
+            font-size: 0.8rem;
             color: var(--text-secondary);
         }
 
         .technical-info {
-            margin-top: 40px;
-            padding: 28px;
+            margin-top: 30px;
+            padding: 20px;
             background-color: var(--card-bg);
-            border-radius: 16px;
+            border-radius: 12px;
             border: 1px solid var(--card-border);
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
-        }
-
-        .technical-info h3 {
-            color: var(--accent-light);
-            margin-bottom: 20px;
-            font-size: 1.4rem;
-            display: flex;
-            align-items: center;
-        }
-
-        .technical-info h3 i {
-            margin-right: 12px;
         }
 
         .info-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-            gap: 20px;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 15px;
+            margin-top: 15px;
         }
 
         .info-item {
-            padding: 20px;
+            padding: 15px;
             background-color: rgba(13, 17, 23, 0.5);
-            border-radius: 10px;
+            border-radius: 8px;
             border: 1px solid var(--card-border);
-            transition: var(--transition);
-        }
-
-        .info-item:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 6px 16px rgba(0, 0, 0, 0.15);
         }
 
         .info-label {
             color: var(--text-secondary);
-            font-size: 0.9rem;
-            margin-bottom: 10px;
+            margin-bottom: 8px;
             display: flex;
             align-items: center;
-        }
-
-        .info-label i {
-            margin-right: 8px;
+            gap: 6px;
             font-size: 0.9rem;
         }
 
         .info-value {
-            font-family: 'SF Mono', monospace;
-            word-break: break-all;
+            font-family: 'Courier New', monospace;
             color: var(--accent-light);
-            font-size: 0.95rem;
+            font-size: 0.9rem;
         }
 
         footer {
             text-align: center;
-            margin-top: 60px;
-            padding: 30px 20px;
+            margin-top: 40px;
+            padding: 20px;
             border-top: 1px solid var(--card-border);
             color: var(--text-secondary);
-            font-size: 0.95rem;
-        }
-
-        .debug-info {
-            margin-top: 20px;
-            padding: 20px;
-            background-color: rgba(13, 17, 23, 0.5);
-            border-radius: 12px;
-            border: 1px solid var(--card-border);
-            font-size: 0.9rem;
-        }
-
-        .debug-info h3 {
-            color: var(--text-secondary);
-            margin-bottom: 12px;
-            font-size: 1rem;
-            display: flex;
-            align-items: center;
-        }
-
-        .debug-info h3 i {
-            margin-right: 10px;
-        }
-
-        .tooltip {
-            position: relative;
-            display: inline-block;
-            margin-left: 8px;
-            color: var(--accent-light);
-        }
-
-        .tooltip .tooltiptext {
-            visibility: hidden;
-            width: 220px;
-            background-color: var(--secondary-dark);
-            color: var(--text-primary);
-            text-align: center;
-            border-radius: 6px;
-            padding: 8px;
-            position: absolute;
-            z-index: 1;
-            bottom: 125%;
-            left: 50%;
-            margin-left: -110px;
-            opacity: 0;
-            transition: opacity 0.3s;
-            font-size: 0.85rem;
-            border: 1px solid var(--card-border);
-        }
-
-        .tooltip:hover .tooltiptext {
-            visibility: visible;
-            opacity: 1;
         }
 
         .copy-btn {
@@ -516,101 +348,18 @@
             color: var(--text-secondary);
             cursor: pointer;
             margin-left: 10px;
-            transition: var(--transition);
         }
 
         .copy-btn:hover {
             color: var(--accent-light);
-        }
-
-        .process-visualization {
-            margin-top: 20px;
-            padding: 20px;
-            background-color: rgba(13, 17, 23, 0.5);
-            border-radius: 12px;
-            border: 1px solid var(--card-border);
-            font-size: 0.9rem;
-        }
-
-        .process-visualization h3 {
-            color: var(--text-secondary);
-            margin-bottom: 12px;
-            font-size: 1rem;
-            display: flex;
-            align-items: center;
-        }
-
-        .process-visualization h3 i {
-            margin-right: 10px;
-        }
-
-        .process-steps {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 15px;
-            margin-top: 15px;
-        }
-
-        .process-step {
-            padding: 15px;
-            background-color: rgba(0, 0, 0, 0.2);
-            border-radius: 8px;
-            text-align: center;
-        }
-
-        .process-step .step-title {
-            font-weight: bold;
-            color: var(--accent-light);
-            margin-bottom: 8px;
-        }
-
-        .process-step .step-value {
-            font-family: 'SF Mono', monospace;
-            font-size: 0.9rem;
-        }
-
-        .nibble-visualization {
-            display: flex;
-            justify-content: center;
-            margin-top: 10px;
-            gap: 5px;
-        }
-
-        .nibble {
-            width: 40px;
-            height: 40px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            border-radius: 6px;
-            background-color: var(--accent-dark);
-            font-family: 'SF Mono', monospace;
-            font-weight: bold;
-        }
-
-        .nibble-high {
-            background-color: #3fb950;
-        }
-
-        .nibble-low {
-            background-color: #58a6ff;
-        }
-
-        .fix-all-btn {
-            background: linear-gradient(135deg, #d29922 0%, #bb8009 100%);
-            margin-top: 20px;
-        }
-
-        .fix-all-btn:hover {
-            background: linear-gradient(135deg, #bb8009 0%, #a06c07 100%);
         }
     </style>
 </head>
 <body>
     <div class="app-container">
         <header>
-            <h1>TriBox Enhanced - Nibble Affine</h1>
-            <h2>Proper S-Box Usage with Nibble-based Affine Transformation</h2>
+            <h1>TriBox Enhanced - Fixed</h1>
+            <h2>Proper Nibble-based Encryption with Full Entropy</h2>
         </header>
 
         <div class="panels-container">
@@ -621,65 +370,59 @@
                     </div>
                     <div>
                         <div class="panel-title">Encryption</div>
-                        <div class="panel-subtitle">Nibble-based affine transformation</div>
+                        <div class="panel-subtitle">Full 8-bit entropy preservation</div>
                     </div>
                 </div>
                 
                 <div class="input-group">
                     <label for="encryptKey">Passphrase</label>
-                    <input type="text" id="encryptKey" placeholder="Enter your passphrase" value="secret key">
-                </div>
-                
-                <div class="options-group">
-                    <div class="checkbox-container">
-                        <input type="checkbox" id="encryptCBCMode">
-                        <label for="encryptCBCMode">CBC Mode</label>
-                    </div>
-                    
-                    <div class="checkbox-container">
-                        <input type="checkbox" id="encryptHomophonicMode" checked>
-                        <label for="encryptHomophonicMode">Homophonic Encryption</label>
-                    </div>
+                    <input type="text" id="encryptKey" placeholder="Enter encryption key" value="secret key">
                 </div>
                 
                 <div class="input-group">
                     <label for="plainText">Text to Encrypt</label>
-                    <textarea id="plainText" placeholder="Enter text to encrypt">Test message</textarea>
+                    <textarea id="plainText" placeholder="Enter text to encrypt">Sample text for encryption</textarea>
                 </div>
                 
-                <button class="btn" onclick="encrypt()"><i class="fas fa-shield-alt"></i> Encrypt</button>
+                <button class="btn" onclick="encrypt()">
+                    <i class="fas fa-shield-alt"></i> Encrypt
+                </button>
                 
                 <div id="encryptStatus" class="status"></div>
                 
                 <div class="result-container">
                     <div class="result-label">
                         <i class="fas fa-lock"></i> Ciphertext:
-                        <button class="copy-btn" onclick="copyToClipboard('cipherHex')"><i class="fas fa-copy"></i></button>
+                        <button class="copy-btn" onclick="copyToClipboard('cipherText')">
+                            <i class="fas fa-copy"></i>
+                        </button>
                     </div>
-                    <div id="cipherHex" class="result-content"></div>
+                    <div id="cipherText" class="result-content"></div>
                 </div>
                 
-                <div class="process-visualization" id="encryptProcess" style="display: none;">
-                    <h3><i class="fas fa-code"></i> Encryption Process</h3>
+                <div class="process-info" id="encryptProcess">
+                    <div class="result-label">
+                        <i class="fas fa-code"></i> Encryption Process
+                    </div>
                     <div class="process-steps" id="encryptSteps"></div>
                 </div>
                 
-                <button class="btn btn-secondary" onclick="analyzeEntropy('encrypt')"><i class="fas fa-chart-bar"></i> Analyze Entropy</button>
+                <button class="btn btn-secondary" onclick="analyzeEntropy('encrypt')">
+                    <i class="fas fa-chart-bar"></i> Analyze Entropy
+                </button>
                 
-                <div class="entropy-analysis" id="encryptEntropy" style="display: none;">
-                    <h3><i class="fas fa-wave-square"></i> Ciphertext Entropy Analysis</h3>
+                <div class="entropy-analysis" id="encryptEntropy">
+                    <div class="result-label">
+                        <i class="fas fa-wave-square"></i> Entropy Analysis
+                    </div>
                     <div class="entropy-result" id="encryptEntropyResult"></div>
-                    <div class="entropy-visual">
-                        <div class="entropy-bar">
-                            <div class="entropy-value" id="encryptEntropyBar"></div>
-                        </div>
-                        <div class="entropy-labels">
-                            <span>0</span>
-                            <span>2</span>
-                            <span>4</span>
-                            <span>6</span>
-                            <span id="entropyMaxLabel">8</span>
-                        </div>
+                    <div class="entropy-bar">
+                        <div class="entropy-value" id="encryptEntropyBar"></div>
+                    </div>
+                    <div class="entropy-labels">
+                        <span>0</span>
+                        <span>4</span>
+                        <span>8</span>
                     </div>
                 </div>
             </div>
@@ -697,90 +440,82 @@
                 
                 <div class="input-group">
                     <label for="decryptKey">Passphrase</label>
-                    <input type="text" id="decryptKey" placeholder="Enter your passphrase" value="secret key">
-                </div>
-                
-                <div class="options-group">
-                    <div class="checkbox-container">
-                        <input type="checkbox" id="decryptCBCMode">
-                        <label for="decryptCBCMode">CBC Mode</label>
-                    </div>
-                    
-                    <div class="checkbox-container">
-                        <input type="checkbox" id="decryptHomophonicMode" checked>
-                        <label for="decryptHomophonicMode">Homophonic Encryption</label>
-                    </div>
+                    <input type="text" id="decryptKey" placeholder="Enter decryption key" value="secret key">
                 </div>
                 
                 <div class="input-group">
-                    <label for="cipherText">Ciphertext</label>
-                    <textarea id="cipherText" placeholder="Enter ciphertext to decrypt"></textarea>
+                    <label for="cipherTextInput">Ciphertext</label>
+                    <textarea id="cipherTextInput" placeholder="Enter ciphertext to decrypt"></textarea>
                 </div>
                 
-                <button class="btn" onclick="decrypt()"><i class="fas fa-unlock"></i> Decrypt</button>
+                <button class="btn" onclick="decrypt()">
+                    <i class="fas fa-unlock"></i> Decrypt
+                </button>
                 
                 <div id="decryptStatus" class="status"></div>
                 
                 <div class="result-container">
                     <div class="result-label">
-                        <i class="fas fa-check-circle"></i> Result:
-                        <button class="copy-btn" onclick="copyToClipboard('decryptedText')"><i class="fas fa-copy"></i></button>
+                        <i class="fas fa-check-circle"></i> Decrypted Text:
+                        <button class="copy-btn" onclick="copyToClipboard('decryptedText')">
+                            <i class="fas fa-copy"></i>
+                        </button>
                     </div>
                     <div id="decryptedText" class="result-content"></div>
                 </div>
                 
-                <div class="process-visualization" id="decryptProcess" style="display: none;">
-                    <h3><i class="fas fa-code"></i> Decryption Process</h3>
+                <div class="process-info" id="decryptProcess">
+                    <div class="result-label">
+                        <i class="fas fa-code"></i> Decryption Process
+                    </div>
                     <div class="process-steps" id="decryptSteps"></div>
                 </div>
                 
-                <button class="btn btn-secondary" onclick="analyzeEntropy('decrypt')"><i class="fas fa-chart-bar"></i> Analyze Entropy</button>
+                <button class="btn btn-secondary" onclick="analyzeEntropy('decrypt')">
+                    <i class="fas fa-chart-bar"></i> Analyze Entropy
+                </button>
                 
-                <div class="entropy-analysis" id="decryptEntropy" style="display: none;">
-                    <h3><i class="fas fa-wave-square"></i> Ciphertext Entropy Analysis</h3>
+                <div class="entropy-analysis" id="decryptEntropy">
+                    <div class="result-label">
+                        <i class="fas fa-wave-square"></i> Entropy Analysis
+                    </div>
                     <div class="entropy-result" id="decryptEntropyResult"></div>
-                    <div class="entropy-visual">
-                        <div class="entropy-bar">
-                            <div class="entropy-value" id="decryptEntropyBar"></div>
-                        </div>
-                        <div class="entropy-labels">
-                            <span>0</span>
-                            <span>2</span>
-                            <span>4</span>
-                            <span>6</span>
-                            <span>8</span>
-                        </div>
+                    <div class="entropy-bar">
+                        <div class="entropy-value" id="decryptEntropyBar"></div>
+                    </div>
+                    <div class="entropy-labels">
+                        <span>0</span>
+                        <span>4</span>
+                        <span>8</span>
                     </div>
                 </div>
             </div>
         </div>
-
-        <button class="btn fix-all-btn" onclick="fixAll()"><i class="fas fa-tools"></i> Fix All & Reset</button>
 
         <div class="technical-info">
             <h3><i class="fas fa-info-circle"></i> Technical Information</h3>
             <div class="info-grid">
                 <div class="info-item">
-                    <div class="info-label"><i class="fas fa-calculator"></i> Nibble Combination</div>
-                    <div class="info-value">combinedByte = (byte + prevEncryptedByte) % 256</div>
+                    <div class="info-label"><i class="fas fa-calculator"></i> Nibble Processing</div>
+                    <div class="info-value">Each byte processed as two 4-bit nibbles</div>
                 </div>
                 <div class="info-item">
-                    <div class="info-label"><i class="fas fa-project-diagram"></i> Nibble Affine Transformation</div>
-                    <div class="info-value">highNibble = (11 * highNibble + pos) % 16<br>lowNibble = (11 * lowNibble + pos) % 16</div>
+                    <div class="info-label"><i class="fas fa-project-diagram"></i> Affine Transformation</div>
+                    <div class="info-value">y = (11 * x + pos) mod 16 per nibble</div>
                 </div>
                 <div class="info-item">
-                    <div class="info-label"><i class="fas fa-undo"></i> Reverse Nibble Affine</div>
-                    <div class="info-value">highNibble = (3 * (highNibble - pos)) % 16<br>lowNibble = (3 * (lowNibble - pos)) % 16</div>
+                    <div class="info-label"><i class="fas fa-undo"></i> Inverse Transformation</div>
+                    <div class="info-value">x = 3 * (y - pos) mod 16 per nibble</div>
                 </div>
                 <div class="info-item">
-                    <div class="info-label"><i class="fas fa-random"></i> IV Generation</div>
-                    <div class="info-value">HMAC-SHA256 from key</div>
+                    <div class="info-label"><i class="fas fa-database"></i> S-Box Size</div>
+                    <div class="info-value">16×16 = 256 bytes each</div>
                 </div>
             </div>
         </div>
 
         <footer>
-            <div>TriBox Enhanced &copy; 2025 | Nibble-based Affine Transformation</div>
+            <div>TriBox Enhanced &copy; 2023 | Fixed Encryption Implementation</div>
         </footer>
     </div>
 
@@ -790,106 +525,62 @@
         let staticSboxInverse = null;
         let dynamicSbox = null;
         let dynamicSboxInverse = null;
-        let homophonicSbox = null;
-        let homophonicSboxInverse = null;
         let currentKey = "";
 
         // Nibble-based affine transformation
         function nibbleAffineTransform(byte, position) {
-            // Extract nibbles
-            let highNibble = (byte >> 4) & 0x0F;
-            let lowNibble = byte & 0x0F;
+            let upperNibble = (byte >> 4) & 0x0F;
+            let lowerNibble = byte & 0x0F;
             
-            // Apply affine transformation to each nibble
-            highNibble = (11 * highNibble + position) % 16;
-            lowNibble = (11 * lowNibble + position) % 16;
+            // Transform each nibble separately
+            upperNibble = (11 * upperNibble + position) % 16;
+            lowerNibble = (11 * lowerNibble + position) % 16;
             
             // Recombine nibbles
-            return (highNibble << 4) | lowNibble;
+            return (upperNibble << 4) | lowerNibble;
         }
 
         // Inverse nibble-based affine transformation
         function inverseNibbleAffineTransform(byte, position) {
-            // Extract nibbles
-            let highNibble = (byte >> 4) & 0x0F;
-            let lowNibble = byte & 0x0F;
+            let upperNibble = (byte >> 4) & 0x0F;
+            let lowerNibble = byte & 0x0F;
             
-            // Apply inverse affine transformation to each nibble
-            // The multiplicative inverse of 11 mod 16 is 3 since (11 * 3) % 16 = 1
-            highNibble = (3 * (highNibble - position)) % 16;
-            if (highNibble < 0) highNibble += 16;
-            
-            lowNibble = (3 * (lowNibble - position)) % 16;
-            if (lowNibble < 0) lowNibble += 16;
+            // Inverse transformation for each nibble
+            // Multiplicative inverse of 11 mod 16 is 3
+            upperNibble = (3 * (upperNibble - position + 16)) % 16;
+            lowerNibble = (3 * (lowerNibble - position + 16)) % 16;
             
             // Recombine nibbles
-            return (highNibble << 4) | lowNibble;
-        }
-
-        // Generate IV from key using HMAC-SHA256
-        async function generateIVFromKey(key) {
-            const encoder = new TextEncoder();
-            const keyData = encoder.encode(key);
-            
-            const cryptoKey = await crypto.subtle.importKey(
-                'raw',
-                keyData,
-                { name: 'HMAC', hash: 'SHA-256' },
-                false,
-                ['sign']
-            );
-            
-            const iv = await crypto.subtle.sign(
-                'HMAC',
-                cryptoKey,
-                encoder.encode('IV_GENERATION')
-            );
-            
-            return new Uint8Array(iv).slice(0, 16);
+            return (upperNibble << 4) | lowerNibble;
         }
 
         // Initialize static S-Box
         async function initStaticSbox(key) {
             if (staticSbox !== null && currentKey === key) return;
             
-            const tempArray = Array.from({length: 256}, (_, i) => i);
-            const encoder = new TextEncoder();
-            
-            const keyMaterial = await crypto.subtle.importKey(
-                'raw',
-                encoder.encode(key),
-                {name: 'PBKDF2'},
-                false,
-                ['deriveBits']
-            );
-            
-            const derivedBits = await crypto.subtle.deriveBits(
-                {
-                    name: 'PBKDF2',
-                    salt: encoder.encode("static_salt"),
-                    iterations: 1000,
-                    hash: 'SHA-256'
-                },
-                keyMaterial,
-                2048
-            );
-            
-            const hashArray = new Uint8Array(derivedBits);
-            
-            for (let i = tempArray.length - 1; i > 0; i--) {
-                const hashIndex = i % hashArray.length;
-                const j = hashArray[hashIndex] % (i + 1);
-                [tempArray[i], tempArray[j]] = [tempArray[j], tempArray[i]];
-                hashArray[hashIndex] = (hashArray[hashIndex] + tempArray[i]) % 256;
-            }
-            
+            // Create 16x16 S-Box with 256 unique values
             staticSbox = new Array(16);
             staticSboxInverse = new Array(256);
             
+            // Fill with unique values 0-255
+            const values = Array.from({length: 256}, (_, i) => i);
+            
+            // Simple shuffle based on key
+            let seed = 0;
+            for (let i = 0; i < key.length; i++) {
+                seed = (seed + key.charCodeAt(i)) % 256;
+            }
+            
+            for (let i = values.length - 1; i > 0; i--) {
+                const j = (seed + i * 11) % (i + 1);
+                [values[i], values[j]] = [values[j], values[i]];
+            }
+            
+            // Fill the S-Box
             for (let i = 0; i < 16; i++) {
                 staticSbox[i] = new Array(16);
                 for (let j = 0; j < 16; j++) {
-                    const value = tempArray[i * 16 + j];
+                    const value = values[i * 16 + j];
                     staticSbox[i][j] = value;
                     staticSboxInverse[value] = (i << 4) | j;
                 }
@@ -903,44 +594,30 @@
             }
             
             currentKey = key;
-            const tempArray = Array.from({length: 256}, (_, i) => i);
-            const encoder = new TextEncoder();
             
-            const keyMaterial = await crypto.subtle.importKey(
-                'raw',
-                encoder.encode(key),
-                {name: 'PBKDF2'},
-                false,
-                ['deriveBits']
-            );
-            
-            const derivedBits = await crypto.subtle.deriveBits(
-                {
-                    name: 'PBKDF2',
-                    salt: encoder.encode("dynamic_salt"),
-                    iterations: 1000,
-                    hash: 'SHA-256'
-                },
-                keyMaterial,
-                2048
-            );
-            
-            const hashArray = new Uint8Array(derivedBits);
-            
-            for (let i = tempArray.length - 1; i > 0; i--) {
-                const hashIndex = i % hashArray.length;
-                const j = hashArray[hashIndex] % (i + 1);
-                [tempArray[i], tempArray[j]] = [tempArray[j], tempArray[i]];
-                hashArray[hashIndex] = (hashArray[hashIndex] + tempArray[i]) % 256;
-            }
-            
+            // Create 16x16 S-Box with 256 unique values
             dynamicSbox = new Array(16);
             dynamicSboxInverse = new Array(256);
             
+            // Fill with unique values 0-255
+            const values = Array.from({length: 256}, (_, i) => i);
+            
+            // Different shuffle based on key
+            let seed = 0;
+            for (let i = 0; i < key.length; i++) {
+                seed = (seed + key.charCodeAt(i) * 13) % 256;
+            }
+            
+            for (let i = values.length - 1; i > 0; i--) {
+                const j = (seed + i * 17) % (i + 1);
+                [values[i], values[j]] = [values[j], values[i]];
+            }
+            
+            // Fill the S-Box
             for (let i = 0; i < 16; i++) {
                 dynamicSbox[i] = new Array(16);
                 for (let j = 0; j < 16; j++) {
-                    const value = tempArray[i * 16 + j];
+                    const value = values[i * 16 + j];
                     dynamicSbox[i][j] = value;
                     dynamicSboxInverse[value] = (i << 4) | j;
                 }
@@ -949,73 +626,37 @@
             return {sbox: dynamicSbox, inverse: dynamicSboxInverse};
         }
 
-        // Generate homophonic S-Box
-        async function createHomophonicSbox(key) {
-            if (homophonicSbox !== null && currentKey === key) return;
-            
-            const base64Chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/';
-            const allBigrams = [];
-            
-            for (let i = 0; i < 64; i++) {
-                for (let j = 0; j < 64; j++) {
-                    allBigrams.push(base64Chars[i] + base64Chars[j]);
-                }
-            }
-            
-            // Simple shuffle for demonstration
-            const shuffledBigrams = [...allBigrams];
-            for (let i = shuffledBigrams.length - 1; i > 0; i--) {
-                const j = Math.floor(Math.random() * (i + 1));
-                [shuffledBigrams[i], shuffledBigrams[j]] = [shuffledBigrams[j], shuffledBigrams[i]];
-            }
-            
-            homophonicSbox = new Array(16);
-            homophonicSboxInverse = {};
-            let bigramIndex = 0;
-            
-            for (let r = 0; r < 16; r++) {
-                homophonicSbox[r] = new Array(16);
-                for (let c = 0; c < 16; c++) {
-                    homophonicSbox[r][c] = shuffledBigrams.slice(bigramIndex, bigramIndex + 4);
-                    bigramIndex += 4;
-                    
-                    for (const bigram of homophonicSbox[r][c]) {
-                        homophonicSboxInverse[bigram] = (r << 4) | c;
-                    }
-                }
-            }
-        }
-
-        // Encryption functions with proper S-Box usage
+        // Encryption function with proper nibble handling
         function encryptByte(byte, prevEncryptedByte, position, dynSbox) {
+            // Combine with previous byte
             const combinedByte = (byte + prevEncryptedByte) % 256;
             
-            // 1. Static S-Box: combinedByte -> staticValue
-            const r_static = (combinedByte >> 4) & 0x0F;
-            const c_static = combinedByte & 0x0F;
-            const staticValue = staticSbox[r_static][c_static];
+            // Static S-Box: combinedByte -> staticValue
+            const upperStatic = (combinedByte >> 4) & 0x0F;
+            const lowerStatic = combinedByte & 0x0F;
+            const staticValue = staticSbox[upperStatic][lowerStatic];
             
-            // 2. Nibble-based affine transformation: staticValue -> affineValue
+            // Nibble-based affine transformation
             const affineValue = nibbleAffineTransform(staticValue, position);
             
-            // 3. Dynamic S-Box: affineValue -> finalValue
-            const r_dynamic = (affineValue >> 4) & 0x0F;
-            const c_dynamic = affineValue & 0x0F;
-            return dynSbox[r_dynamic][c_dynamic];
+            // Dynamic S-Box: affineValue -> finalValue
+            const upperDynamic = (affineValue >> 4) & 0x0F;
+            const lowerDynamic = affineValue & 0x0F;
+            return dynSbox[upperDynamic][lowerDynamic];
         }
 
+        // Decryption function with proper inverse transformations
         function decryptByte(cipherByte, prevEncryptedByte, position, dynSboxInverse) {
-            // 1. Inverse Dynamic S-Box: finalValue -> affineValue
-            const dynamicValue = cipherByte;
-            const affineValue = dynSboxInverse[dynamicValue];
+            // Inverse Dynamic S-Box: finalValue -> affineValue
+            const dynamicValue = dynSboxInverse[cipherByte];
             
-            // 2. Inverse nibble-based affine transformation: affineValue -> staticValue
-            let staticValue = inverseNibbleAffineTransform(affineValue, position);
+            // Inverse affine transformation
+            const staticValue = inverseNibbleAffineTransform(dynamicValue, position);
             
-            // 3. Inverse Static S-Box: staticValue -> combinedByte
+            // Inverse Static S-Box: staticValue -> combinedByte
             const combinedByte = staticSboxInverse[staticValue];
             
-            // 4. Restore original byte
+            // Restore original byte
             let originalByte = combinedByte - prevEncryptedByte;
             while (originalByte < 0) originalByte += 256;
             return originalByte % 256;
@@ -1025,8 +666,6 @@
         async function encrypt() {
             const key = document.getElementById('encryptKey').value;
             const text = document.getElementById('plainText').value;
-            const useCBC = document.getElementById('encryptCBCMode').checked;
-            const useHomophonic = document.getElementById('encryptHomophonicMode').checked;
             
             if (!key || !text) {
                 showStatus('encryptStatus', 'error', 'Please enter both key and text');
@@ -1036,79 +675,52 @@
             try {
                 await initStaticSbox(key);
                 const {sbox: dynSbox} = await createDynamicSbox(key);
-                if (useHomophonic) {
-                    await createHomophonicSbox(key);
-                }
                 
                 const encoder = new TextEncoder();
                 const data = encoder.encode(text);
                 
                 let prevEncryptedByte = 0;
                 const resultBytes = new Uint8Array(data.length);
-                let resultText = '';
                 
-                // Show process visualization
-                document.getElementById('encryptProcess').style.display = 'block';
+                // Show process steps for first byte
                 const encryptSteps = document.getElementById('encryptSteps');
                 encryptSteps.innerHTML = '';
                 
                 for (let i = 0; i < data.length; i++) {
-                    const currentXorValue = useCBC ? prevEncryptedByte : 0;
-                    
-                    const cipherByte = encryptByte(data[i], currentXorValue, i, dynSbox);
+                    const cipherByte = encryptByte(data[i], prevEncryptedByte, i, dynSbox);
                     resultBytes[i] = cipherByte;
                     
-                    if (useHomophonic) {
-                        const r = (cipherByte >> 4) & 0x0F;
-                        const c = cipherByte & 0x0F;
-                        const options = homophonicSbox[r][c];
-                        const randomIndex = Math.floor(Math.random() * 4);
-                        resultText += options[randomIndex];
-                    }
-                    
-                    // Add visualization for first byte
+                    // Show process for first byte only
                     if (i === 0) {
-                        const combinedByte = (data[i] + currentXorValue) % 256;
-                        const r_static = (combinedByte >> 4) & 0x0F;
-                        const c_static = combinedByte & 0x0F;
-                        const staticValue = staticSbox[r_static][c_static];
+                        const combinedByte = (data[i] + prevEncryptedByte) % 256;
+                        const upperStatic = (combinedByte >> 4) & 0x0F;
+                        const lowerStatic = combinedByte & 0x0F;
+                        const staticValue = staticSbox[upperStatic][lowerStatic];
                         const affineValue = nibbleAffineTransform(staticValue, i);
-                        const r_dynamic = (affineValue >> 4) & 0x0F;
-                        const c_dynamic = affineValue & 0x0F;
-                        const finalValue = dynSbox[r_dynamic][c_dynamic];
+                        const upperDynamic = (affineValue >> 4) & 0x0F;
+                        const lowerDynamic = affineValue & 0x0F;
+                        const finalValue = dynSbox[upperDynamic][lowerDynamic];
                         
                         encryptSteps.innerHTML = `
                             <div class="process-step">
-                                <div class="step-title">Original Byte</div>
+                                <div class="step-title">Original</div>
                                 <div class="step-value">${data[i].toString(16).padStart(2, '0')}</div>
-                                <div class="nibble-visualization">
-                                    <div class="nibble nibble-high">${(data[i] >> 4).toString(16)}</div>
-                                    <div class="nibble nibble-low">${(data[i] & 0x0F).toString(16)}</div>
-                                </div>
                             </div>
                             <div class="process-step">
-                                <div class="step-title">After Static S-Box</div>
+                                <div class="step-title">Combined</div>
+                                <div class="step-value">${combinedByte.toString(16).padStart(2, '0')}</div>
+                            </div>
+                            <div class="process-step">
+                                <div class="step-title">Static S-Box</div>
                                 <div class="step-value">${staticValue.toString(16).padStart(2, '0')}</div>
-                                <div class="nibble-visualization">
-                                    <div class="nibble nibble-high">${r_static.toString(16)}</div>
-                                    <div class="nibble nibble-low">${c_static.toString(16)}</div>
-                                </div>
                             </div>
                             <div class="process-step">
-                                <div class="step-title">After Affine Transform</div>
+                                <div class="step-title">Affine</div>
                                 <div class="step-value">${affineValue.toString(16).padStart(2, '0')}</div>
-                                <div class="nibble-visualization">
-                                    <div class="nibble nibble-high">${r_dynamic.toString(16)}</div>
-                                    <div class="nibble nibble-low">${c_dynamic.toString(16)}</div>
-                                </div>
                             </div>
                             <div class="process-step">
-                                <div class="step-title">Final Cipher Byte</div>
+                                <div class="step-title">Dynamic S-Box</div>
                                 <div class="step-value">${finalValue.toString(16).padStart(2, '0')}</div>
-                                <div class="nibble-visualization">
-                                    <div class="nibble nibble-high">${r_dynamic.toString(16)}</div>
-                                    <div class="nibble nibble-low">${c_dynamic.toString(16)}</div>
-                                </div>
                             </div>
                         `;
                     }
@@ -1116,16 +728,12 @@
                     prevEncryptedByte = cipherByte;
                 }
                 
-                if (!useHomophonic) {
-                    const hexResult = Array.from(resultBytes).map(b => b.toString(16).padStart(2, '0')).join('');
-                    document.getElementById('cipherText').value = hexResult;
-                    document.getElementById('cipherHex').textContent = hexResult;
-                } else {
-                    document.getElementById('cipherText').value = resultText;
-                    document.getElementById('cipherHex').textContent = resultText;
-                }
+                const hexResult = Array.from(resultBytes).map(b => b.toString(16).padStart(2, '0')).join('');
+                document.getElementById('cipherText').textContent = hexResult;
+                document.getElementById('cipherTextInput').value = hexResult;
                 
-                showStatus('encryptStatus', 'success', `Successfully encrypted ${data.length} bytes`);
+                showStatus('encryptStatus', 'success', `Encrypted ${data.length} bytes successfully`);
+                
             } catch (error) {
                 showStatus('encryptStatus', 'error', 'Encryption error: ' + error.message);
             }
@@ -1134,9 +742,7 @@
         // Base decryption
         async function decrypt() {
             const key = document.getElementById('decryptKey').value;
-            const cipherData = document.getElementById('cipherText').value;
-            const useCBC = document.getElementById('decryptCBCMode').checked;
-            const useHomophonic = document.getElementById('decryptHomophonicMode').checked;
+            const cipherData = document.getElementById('cipherTextInput').value;
             
             if (!key || !cipherData) {
                 showStatus('decryptStatus', 'error', 'Please enter both key and ciphertext');
@@ -1146,88 +752,53 @@
             try {
                 await initStaticSbox(key);
                 const {inverse: dynSboxInverse} = await createDynamicSbox(key);
-                if (useHomophonic) {
-                    await createHomophonicSbox(key);
+                
+                if (!/^[0-9a-fA-F]+$/.test(cipherData) || cipherData.length % 2 !== 0) {
+                    throw new Error('Invalid HEX format');
                 }
                 
-                let byteArray;
-                if (useHomophonic) {
-                    if (cipherData.length % 2 !== 0) {
-                        throw new Error('Invalid homophonic ciphertext length');
-                    }
-                    
-                    byteArray = new Uint8Array(cipherData.length / 2);
-                    for (let i = 0; i < cipherData.length; i += 2) {
-                        const bigram = cipherData.substr(i, 2);
-                        if (!(bigram in homophonicSboxInverse)) {
-                            throw new Error(`Unknown bigram: ${bigram}`);
-                        }
-                        byteArray[i/2] = homophonicSboxInverse[bigram];
-                    }
-                } else {
-                    if (!/^[0-9a-fA-F]+$/.test(cipherData) || cipherData.length % 2 !== 0) {
-                        throw new Error('Invalid HEX format');
-                    }
-                    
-                    byteArray = new Uint8Array(cipherData.length / 2);
-                    for (let i = 0; i < cipherData.length; i += 2) {
-                        byteArray[i/2] = parseInt(cipherData.substr(i, 2), 16);
-                    }
+                const byteArray = new Uint8Array(cipherData.length / 2);
+                for (let i = 0; i < cipherData.length; i += 2) {
+                    byteArray[i/2] = parseInt(cipherData.substr(i, 2), 16);
                 }
                 
                 const result = new Uint8Array(byteArray.length);
                 let prevEncryptedByte = 0;
                 
-                // Show process visualization
-                document.getElementById('decryptProcess').style.display = 'block';
+                // Show process steps for first byte
                 const decryptSteps = document.getElementById('decryptSteps');
                 decryptSteps.innerHTML = '';
                 
                 for (let i = 0; i < byteArray.length; i++) {
-                    const currentXorValue = useCBC ? prevEncryptedByte : 0;
+                    result[i] = decryptByte(byteArray[i], prevEncryptedByte, i, dynSboxInverse);
                     
-                    result[i] = decryptByte(byteArray[i], currentXorValue, i, dynSboxInverse);
-                    
-                    // Add visualization for first byte
+                    // Show process for first byte only
                     if (i === 0) {
-                        const cipherByte = byteArray[i];
-                        const affineValue = dynSboxInverse[cipherByte];
-                        const staticValue = inverseNibbleAffineTransform(affineValue, i);
+                        const dynamicValue = dynSboxInverse[byteArray[i]];
+                        const staticValue = inverseNibbleAffineTransform(dynamicValue, i);
                         const combinedByte = staticSboxInverse[staticValue];
-                        const originalByte = (combinedByte - currentXorValue + 256) % 256;
+                        const originalByte = (combinedByte - prevEncryptedByte + 256) % 256;
                         
                         decryptSteps.innerHTML = `
                             <div class="process-step">
-                                <div class="step-title">Cipher Byte</div>
-                                <div class="step-value">${cipherByte.toString(16).padStart(2, '0')}</div>
-                                <div class="nibble-visualization">
-                                    <div class="nibble nibble-high">${(cipherByte >> 4).toString(16)}</div>
-                                    <div class="nibble nibble-low">${(cipherByte & 0x0F).toString(16)}</div>
-                                </div>
+                                <div class="step-title">Cipher</div>
+                                <div class="step-value">${byteArray[i].toString(16).padStart(2, '0')}</div>
                             </div>
                             <div class="process-step">
-                                <div class="step-title">After Dynamic S-Box</div>
-                                <div class="step-value">${affineValue.toString(16).padStart(2, '0')}</div>
-                                <div class="nibble-visualization">
-                                    <div class="nibble nibble-high">${(affineValue >> 4).toString(16)}</div>
-                                    <div class="nibble nibble-low">${(affineValue & 0x0F).toString(16)}</div>
-                                </div>
+                                <div class="step-title">Dynamic S-Box⁻¹</div>
+                                <div class="step-value">${dynamicValue.toString(16).padStart(2, '0')}</div>
                             </div>
                             <div class="process-step">
-                                <div class="step-title">After Inverse Affine</div>
+                                <div class="step-title">Affine⁻¹</div>
                                 <div class="step-value">${staticValue.toString(16).padStart(2, '0')}</div>
-                                <div class="nibble-visualization">
-                                    <div class="nibble nibble-high">${(staticValue >> 4).toString(16)}</div>
-                                    <div class="nibble nibble-low">${(staticValue & 0x0F).toString(16)}</div>
-                                </div>
                             </div>
                             <div class="process-step">
-                                <div class="step-title">Final Plain Byte</div>
+                                <div class="step-title">Static S-Box⁻¹</div>
+                                <div class="step-value">${combinedByte.toString(16).padStart(2, '0')}</div>
+                            </div>
+                            <div class="process-step">
+                                <div class="step-title">Original</div>
                                 <div class="step-value">${originalByte.toString(16).padStart(2, '0')}</div>
-                                <div class="nibble-visualization">
-                                    <div class="nibble nibble-high">${(originalByte >> 4).toString(16)}</div>
-                                    <div class="nibble nibble-low">${(originalByte & 0x0F).toString(16)}</div>
-                                </div>
                             </div>
                         `;
                     }
@@ -1239,24 +810,18 @@
                 const textResult = decoder.decode(result);
                 document.getElementById('decryptedText').textContent = textResult;
                 
-                showStatus('decryptStatus', 'success', `Successfully decrypted ${byteArray.length} bytes`);
+                showStatus('decryptStatus', 'success', `Decrypted ${byteArray.length} bytes successfully`);
+                
             } catch (error) {
                 showStatus('decryptStatus', 'error', 'Decryption error: ' + error.message);
             }
         }
 
         // Shannon entropy calculation
-        function calculateShannonEntropy(data, isHex = false) {
-            let byteData;
-            
-            if (isHex) {
-                byteData = new Uint8Array(data.length / 2);
-                for (let i = 0; i < data.length; i += 2) {
-                    byteData[i/2] = parseInt(data.substr(i, 2), 16);
-                }
-            } else {
-                const encoder = new TextEncoder();
-                byteData = encoder.encode(data);
+        function calculateShannonEntropy(data) {
+            const byteData = new Uint8Array(data.length / 2);
+            for (let i = 0; i < data.length; i += 2) {
+                byteData[i/2] = parseInt(data.substr(i, 2), 16);
             }
             
             const frequency = new Array(256).fill(0);
@@ -1277,18 +842,12 @@
 
         // Entropy analysis
         function analyzeEntropy(mode) {
-            const useHomophonic = mode === 'encrypt' ? 
-                document.getElementById('encryptHomophonicMode').checked : 
-                document.getElementById('decryptHomophonicMode').checked;
-            
-            let data, isHex;
+            let data;
             
             if (mode === 'encrypt') {
-                data = document.getElementById('cipherHex').textContent;
-                isHex = !useHomophonic;
+                data = document.getElementById('cipherText').textContent;
             } else {
-                data = document.getElementById('cipherText').value;
-                isHex = !document.getElementById('decryptHomophonicMode').checked;
+                data = document.getElementById('cipherTextInput').value;
             }
             
             if (!data) {
@@ -1297,24 +856,16 @@
             }
             
             try {
-                const entropy = calculateShannonEntropy(data, isHex);
-                const maxEntropy = isHex ? 8 : 6;
-                const percentage = (entropy / maxEntropy) * 100;
+                const entropy = calculateShannonEntropy(data);
+                const percentage = (entropy / 8) * 100;
                 
                 const resultElement = document.getElementById(mode + 'EntropyResult');
                 const barElement = document.getElementById(mode + 'EntropyBar');
                 const containerElement = document.getElementById(mode + 'Entropy');
                 
-                resultElement.textContent = `Shannon Entropy: ${entropy.toFixed(4)} bits/byte (${percentage.toFixed(1)}% of maximum ${maxEntropy})`;
+                resultElement.textContent = `Shannon Entropy: ${entropy.toFixed(4)} bits/byte (${percentage.toFixed(1)}% of maximum 8)`;
                 barElement.style.width = percentage + '%';
                 containerElement.style.display = 'block';
-                
-                // Show entropy visual
-                containerElement.querySelector('.entropy-visual').style.display = 'block';
-                
-                if (mode === 'encrypt') {
-                    document.getElementById('entropyMaxLabel').textContent = maxEntropy.toString();
-                }
                 
             } catch (error) {
                 showStatus(mode + 'Status', 'error', 'Entropy analysis error: ' + error.message);
@@ -1332,7 +883,6 @@
             }, 5000);
         }
 
-        // Copy to clipboard function
         function copyToClipboard(elementId) {
             const element = document.getElementById(elementId);
             const text = element.textContent;
@@ -1347,37 +897,6 @@
             }).catch(err => {
                 console.error('Failed to copy: ', err);
             });
-        }
-
-        // Fix all button functionality
-        function fixAll() {
-            // Reset all inputs to default values
-            document.getElementById('encryptKey').value = 'secret key';
-            document.getElementById('decryptKey').value = 'secret key';
-            document.getElementById('plainText').value = 'Test message';
-            document.getElementById('cipherText').value = '';
-            
-            // Reset checkboxes
-            document.getElementById('encryptCBCMode').checked = false;
-            document.getElementById('decryptCBCMode').checked = false;
-            document.getElementById('encryptHomophonicMode').checked = true;
-            document.getElementById('decryptHomophonicMode').checked = true;
-            
-            // Clear results
-            document.getElementById('cipherHex').textContent = '';
-            document.getElementById('decryptedText').textContent = '';
-            
-            // Hide visualizations
-            document.getElementById('encryptProcess').style.display = 'none';
-            document.getElementById('decryptProcess').style.display = 'none';
-            document.getElementById('encryptEntropy').style.display = 'none';
-            document.getElementById('decryptEntropy').style.display = 'none';
-            
-            // Clear status messages
-            document.getElementById('encryptStatus').className = 'status';
-            document.getElementById('decryptStatus').className = 'status';
-            
-            showStatus('encryptStatus', 'success', 'All settings have been reset to defaults');
         }
     </script>
 </body>
