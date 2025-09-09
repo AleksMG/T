@@ -844,6 +844,10 @@
             upperNibble = (3 * (upperNibble - position + 16)) % 16;
             lowerNibble = (3 * (lowerNibble - position + 16)) % 16;
             
+            // Ensure non-negative values
+            upperNibble = upperNibble < 0 ? upperNibble + 16 : upperNibble;
+            lowerNibble = lowerNibble < 0 ? lowerNibble + 16 : lowerNibble;
+            
             // Recombine nibbles
             return (upperNibble << 4) | lowerNibble;
         }
