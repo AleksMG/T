@@ -215,7 +215,7 @@
         }
 
         .iv-generation h3 {
-            color: var(--text-secondary);
+            color: var (--text-secondary);
             margin-bottom: 10px;
             font-size: 1rem;
         }
@@ -338,7 +338,7 @@
             
             <div class="checkbox-group">
                 <input type="checkbox" id="encryptHomophonicMode" checked>
-                <label for="encryptHomophonicMode">Омофоническое шифрование</label>
+                <label for 'encryptHomophonicMode'>Омофоническое шифрование</label>
             </div>
             
             <div class="input-group">
@@ -447,11 +447,11 @@
         <div class="info-grid">
             <div class="info-item">
                 <div class="info-label">Афинное преобразование</div>
-                <div class="info-value">y = (11 * x + 19) mod 256</div>
+                <div class="info-value">y = (11 * x + 19 + prevCipher) mod 256</div>
             </div>
             <div class="info-item">
                 <div class="info-label">Обратное преобразование</div>
-                <div class="info-value">x = (163 * (y - 19)) mod 256</div>
+                <div class="info-value">x = (163 * (y - 19 - prevCipher)) mod 256</div>
             </div>
             <div class="info-item">
                 <div class="info-label">Генерация S-Box</div>
@@ -480,19 +480,16 @@
         let lastEncryptedData = null;
         let lastEncryptedFormat = null;
 
-        // Афинное преобразование: y = (a * x + b) mod m
-        function affineTransform(x, a = 11, b = 19, m = 256) {
-            return (a * x + b) % m;
+        // Афинное преобразование: y = (a * x + b + prevCipher) mod m
+        function affineTransform(x, prevCipher, a = 11, b = 19, m = 256) {
+            return (a * x + b + prevCipher) % m;
         }
 
-        // Обратное афинное преобразование
-        function inverseAffineTransform(y, a = 11, b = 19, m = 256) {
-            // Обратный элемент для a=11 mod 256 = 163
-            // Проверка: (11 * 163) % 256 = 1793 % 256 = 1
+        // Обратное афинное преобразование: x = a_inv * (y - b - prevCipher) mod m
+        function inverseAffineTransform(y, prevCipher, a = 11, b = 19, m = 256) {
             const a_inv = 163;
-            let result = a_inv * (y - b);
+            let result = a_inv * (y - b - prevCipher);
             
-            // Обработка отрицательных значений
             while (result < 0) result += m;
             return result % m;
         }
@@ -692,16 +689,15 @@
 
         // Функции шифрования с афинным преобразованием
         function encryptByte(byte, prevCipher, dynSbox) {
-            // Афинное преобразование с учетом предыдущего зашифрованного байта
-            const inputByte = (prevCipher === 0) ? byte : byte ^ affineTransform(prevCipher);
-            const r = (inputByte >> 4) & 0x0F;
-            const c = inputByte & 0x0F;
+            const xorByte = byte ^ prevCipher;
+            const r = (xorByte >> 4) & 0x0F;
+            const c = xorByte & 0x0F;
             
             // Static S-Box
             const staticValue = staticSbox[r][c];
             
             // Афинное преобразование между S-Box'ами
-            const affineValue = affineTransform(staticValue);
+            const affineValue = affineTransform(staticValue, prevCipher);
             
             // Dynamic S-Box
             const newR = (affineValue >> 4) & 0x0F;
@@ -716,13 +712,12 @@
             const staticValue = dynSboxInverse[dynamicValue];
             
             // Обратное афинное преобразование
-            const affineValue = inverseAffineTransform(staticValue);
+            const affineValue = inverseAffineTransform(staticValue, prevCipher);
             
             // Static S-Box (обратный)
-            const decryptedByte = staticSboxInverse[affineValue];
+            const xorByte = staticSboxInverse[affineValue];
             
-            // Обратное преобразование с учетом предыдущего зашифрованного байта
-            return (prevCipher === 0) ? decryptedByte : decryptedByte ^ affineTransform(prevCipher);
+            return xorByte ^ prevCipher;
         }
 
         // Базовое шифрование
@@ -885,7 +880,7 @@
                 frequency[byteData[i]]++;
             }
             
-            // Вычисляем энтропию
+            // Вычисляем энтропии
             let entropy = 0;
             for (let i = 0; i < 256; i++) {
                 if (frequency[i] > 0) {
