@@ -716,14 +716,14 @@
 
         // Функции шифрования с афинным преобразованием
         function encryptByte(byte, prevEncryptedByte, dynSbox) {
-            const xorByte = byte ^ prevEncryptedByte;
-            const r = (xorByte >> 4) & 0x0F;
-            const c = xorByte & 0x0F;
+            // Убираем XOR с предыдущим зашифрованным байтом!
+            const r = (byte >> 4) & 0x0F;  // Берем старшие 4 бита исходного байта
+            const c = byte & 0x0F;         // Берем младшие 4 бита исходного байта
             
             // Static S-Box
             const staticValue = staticSbox[r][c];
             
-            // Афинное преобразование между S-Box'ами с учетом предыдущего ЗАШИФРОВАННОГО байта
+            // Афинное преобразование использует предыдущий ЗАШИФРОВАННЫЙ байт
             const affineValue = affineTransform(staticValue, prevEncryptedByte);
             
             // Dynamic S-Box
@@ -738,13 +738,11 @@
             const dynamicValue = cipherByte;
             const staticValue = dynSboxInverse[dynamicValue];
             
-            // Обратное афинное преобразование с учетом предыдущего ЗАШИФРОВАННОГО байта
+            // Обратное афинное преобразование использует предыдущий ЗАШИФРОВАННЫЙ байт
             const affineValue = inverseAffineTransform(staticValue, prevEncryptedByte);
             
-            // Static S-Box (обратный)
-            const xorByte = staticSboxInverse[affineValue];
-            
-            return xorByte ^ prevEncryptedByte;
+            // Static S-Box (обратный) - возвращает исходный байт БЕЗ XOR!
+            return staticSboxInverse[affineValue];
         }
 
         // Базовое шифрование
@@ -907,7 +905,7 @@
                 frequency[byteData[i]]++;
             }
             
-            // Вычисляем энтропию
+            // Вычисляем энтропии
             let entropy = 0;
             for (let i = 0; i < 256; i++) {
                 if (frequency[i] > 0) {
