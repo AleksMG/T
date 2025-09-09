@@ -314,7 +314,7 @@
 <body>
     <header>
         <h1>TriBox</h1>
-        <h2>Омофонического шифрования с афинным преобразованием</h2>
+        <h2>Омофонического шифрования с нелинейным преобразованием</h2>
     </header>
 
     <div class="container">
@@ -446,12 +446,12 @@
         <h3>Техническая информация</h3>
         <div class="info-grid">
             <div class="info-item">
-                <div class="info-label">Афинное преобразование</div>
-                <div class="info-value">y = (11 * x + 19) mod 256</div>
+                <div class="info-label">Нелинейное преобразование</div>
+                <div class="info-value">Многораундовое перемешивание тетрад</div>
             </div>
             <div class="info-item">
                 <div class="info-label">Обратное преобразование</div>
-                <div class="info-value">x = (163 * (y - 19)) mod 256</div>
+                <div class="info-value">Обратное многораундовое перемешивание</div>
             </div>
             <div class="info-item">
                 <div class="info-label">Генерация S-Box</div>
@@ -480,21 +480,39 @@
         let lastEncryptedData = null;
         let lastEncryptedFormat = null;
 
-        // Афинное преобразование: y = (a * x + b) mod m
-        function affineTransform(x, a = 11, b = 19, m = 256) {
-            return (a * x + b) % m;
+        // НЕЛИНЕЙНОЕ преобразование между S-Box'ами
+        function nonLinearTransformBetweenSboxes(staticValue) {
+            // Разделяем байт на две тетрады
+            const highNibble = (staticValue >> 4) & 0x0F;
+            const lowNibble = staticValue & 0x0F;
+            
+            // Раунд 1: нелинейные операции между тетрадами
+            const temp1 = (highNibble ^ (lowNibble * 3 + 7)) & 0x0F;
+            const temp2 = (lowNibble ^ (highNibble * 5 + 11)) & 0x0F;
+            
+            // Раунд 2: меняем тетрады местами и добавляем нелинейность
+            const temp3 = temp1;
+            const finalHigh = (temp2 ^ (temp3 * 7 + 13)) & 0x0F;
+            const finalLow = (temp3 ^ (temp2 * 9 + 3)) & 0x0F;
+            
+            return (finalHigh << 4) | finalLow;
         }
 
-        // Обратное афинное преобразование
-        function inverseAffineTransform(y, a = 11, b = 19, m = 256) {
-            // Обратный элемент для a=11 mod 256 = 163
-            // Проверка: (11 * 163) % 256 = 1793 % 256 = 1
-            const a_inv = 163;
-            let result = a_inv * (y - b);
+        // Обратное нелинейное преобразование
+        function inverseNonLinearTransformBetweenSboxes(mixedValue) {
+            const highNibble = (mixedValue >> 4) & 0x0F;
+            const lowNibble = mixedValue & 0x0F;
             
-            // Обработка отрицательных значений
-            while (result < 0) result += m;
-            return result % m;
+            // Обратные операции раунда 2
+            const temp3 = highNibble;
+            const temp2 = (lowNibble ^ (temp3 * 9 + 3)) & 0x0F;
+            const temp1 = (temp3 ^ (temp2 * 7 + 13)) & 0x0F;
+            
+            // Обратные операции раунда 1
+            const originalHigh = (temp1 ^ (temp2 * 5 + 11)) & 0x0F;
+            const originalLow = (temp2 ^ (originalHigh * 3 + 7)) & 0x0F;
+            
+            return (originalHigh << 4) | originalLow;
         }
 
         // Генерация IV из ключа с помощью HMAC-SHA256
@@ -690,7 +708,7 @@
             }
         }
 
-        // Функции шифрования с афинным преобразованием
+        // Функции шифрования с НЕЛИНЕЙНЫМ преобразованием
         function encryptByte(byte, prevCipher, dynSbox) {
             const xorByte = byte ^ prevCipher;
             const r = (xorByte >> 4) & 0x0F;
@@ -699,12 +717,12 @@
             // Static S-Box
             const staticValue = staticSbox[r][c];
             
-            // Афинное преобразование между S-Box'ами
-            const affineValue = affineTransform(staticValue);
+            // НЕЛИНЕЙНОЕ преобразование между S-Box'ами
+            const nonLinearValue = nonLinearTransformBetweenSboxes(staticValue);
             
             // Dynamic S-Box
-            const newR = (affineValue >> 4) & 0x0F;
-            const newC = affineValue & 0x0F;
+            const newR = (nonLinearValue >> 4) & 0x0F;
+            const newC = nonLinearValue & 0x0F;
             
             return dynSbox[newR][newC];
         }
@@ -714,11 +732,11 @@
             const dynamicValue = cipherByte;
             const staticValue = dynSboxInverse[dynamicValue];
             
-            // Обратное афинное преобразование
-            const affineValue = inverseAffineTransform(staticValue);
+            // Обратное НЕЛИНЕЙНОЕ преобразование
+            const nonLinearValue = inverseNonLinearTransformBetweenSboxes(staticValue);
             
             // Static S-Box (обратный)
-            const xorByte = staticSboxInverse[affineValue];
+            const xorByte = staticSboxInverse[nonLinearValue];
             
             return xorByte ^ prevCipher;
         }
@@ -883,7 +901,7 @@
                 frequency[byteData[i]]++;
             }
             
-            // Вычисляем энтропию
+            // Вычисляем энтропии
             let entropy = 0;
             for (let i = 0; i < 256; i++) {
                 if (frequency[i] > 0) {
@@ -956,7 +974,7 @@
             await initStaticSbox("test");
             await createDynamicSbox("test");
             
-            console.log("=== ТЕСТ ОБРАТИМОСТИ ===");
+            console.log("=== ТЕСТ ОБРАТИМОСТИ НЕЛИНЕЙНОГО ПРЕОБРАЗОВАНИЯ ===");
             for (let i = 0; i < 256; i++) {
                 const encrypted = encryptByte(i, 0, dynamicSbox);
                 const decrypted = decryptByte(encrypted, 0, dynamicSboxInverse);
@@ -966,7 +984,7 @@
                     return false;
                 }
             }
-            console.log("Все преобразования обратимы!");
+            console.log("Все нелинейные преобразования обратимы!");
             return true;
         }
     </script>
