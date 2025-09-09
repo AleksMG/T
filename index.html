@@ -692,9 +692,10 @@
 
         // Функции шифрования с афинным преобразованием
         function encryptByte(byte, prevCipher, dynSbox) {
-            const xorByte = byte ^ prevCipher;
-            const r = (xorByte >> 4) & 0x0F;
-            const c = xorByte & 0x0F;
+            // Афинное преобразование с учетом предыдущего зашифрованного байта
+            const inputByte = (prevCipher === 0) ? byte : byte ^ affineTransform(prevCipher);
+            const r = (inputByte >> 4) & 0x0F;
+            const c = inputByte & 0x0F;
             
             // Static S-Box
             const staticValue = staticSbox[r][c];
@@ -718,9 +719,10 @@
             const affineValue = inverseAffineTransform(staticValue);
             
             // Static S-Box (обратный)
-            const xorByte = staticSboxInverse[affineValue];
+            const decryptedByte = staticSboxInverse[affineValue];
             
-            return xorByte ^ prevCipher;
+            // Обратное преобразование с учетом предыдущего зашифрованного байта
+            return (prevCipher === 0) ? decryptedByte : decryptedByte ^ affineTransform(prevCipher);
         }
 
         // Базовое шифрование
