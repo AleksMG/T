@@ -358,7 +358,7 @@
             
             <div class="input-group">
                 <label for="plainText">Текст для шифрования</label>
-                <textarea id="plainText" placeholder="Введите текст для шифрования">Пример текста для шифрования</textarea>
+                <textarea id="plainText" placeholder="Введите текст для шифрования">11111111</textarea>
             </div>
             
             <button class="btn" onclick="encrypt()">Зашифровать</button>
@@ -395,8 +395,8 @@
 
             <div class="debug-info">
                 <h3>Отладочная информация</h3>
-                <div>Афинная формула: y_i = (11 * x_i + 19 + nonLinear(y_{i-1})) mod 256</div>
-                <div>nonLinear(b) = (b * 167 + 113) % 256</div>
+                <div>Формула: combinedByte = (byte + prevEncryptedByte) % 256</div>
+                <div>Афинное преобразование: y = (11 * x + 19) % 256</div>
             </div>
         </div>
 
@@ -463,8 +463,8 @@
 
             <div class="debug-info">
                 <h3>Отладочная информация</h3>
-                <div>Обратная формула: x_i = (163 * (y_i - 19 - nonLinear(y_{i-1}))) mod 256</div>
-                <div>nonLinear(b) = (b * 167 + 113) % 256</div>
+                <div>Обратное преобразование: byte = combinedByte - prevEncryptedByte</div>
+                <div>Обратное афинное: x = (163 * (y - 19)) % 256</div>
             </div>
         </div>
     </div>
@@ -473,16 +473,16 @@
         <h3>Техническая информация</h3>
         <div class="info-grid">
             <div class="info-item">
+                <div class="info-label">Формула комбинирования</div>
+                <div class="info-value">combinedByte = (byte + prevEncryptedByte) % 256</div>
+            </div>
+            <div class="info-item">
                 <div class="info-label">Афинное преобразование</div>
-                <div class="info-value">y_i = (11 * x_i + 19 + nonLinear(y_{i-1})) mod 256</div>
+                <div class="info-value">y = (11 * x + 19) % 256</div>
             </div>
             <div class="info-item">
-                <div class="info-label">Обратное преобразование</div>
-                <div class="info-value">x_i = (163 * (y_i - 19 - nonLinear(y_{i-1}))) mod 256</div>
-            </div>
-            <div class="info-item">
-                <div class="info-label">Нелінійна функція</div>
-                <div class="info-value">nonLinear(b) = (b * 167 + 113) % 256</div>
+                <div class="info-label">Обратное афинное</div>
+                <div class="info-value">x = (163 * (y - 19)) % 256</div>
             </div>
             <div class="info-item">
                 <div class="info-label">Генерация IV</div>
@@ -507,18 +507,15 @@
         let lastEncryptedData = null;
         let lastEncryptedFormat = null;
 
-        // Афинное преобразование: y_i = (a * x_i + b + nonLinear(y_{i-1})) mod m
-        function affineTransform(x, prevEncryptedByte, a = 11, b = 19, m = 256) {
-            // Нелинейная функция от предыдущего зашифрованного байта
-            const nonLinearComponent = (prevEncryptedByte * 167 + 113) % m;
-            return (a * x + b + nonLinearComponent) % m;
+        // Афинное преобразование: y = (a * x + b) mod m
+        function affineTransform(x, a = 11, b = 19, m = 256) {
+            return (a * x + b) % m;
         }
 
-        // Обратное афинное преобразование: x_i = a_inv * (y_i - b - nonLinear(y_{i-1})) mod m
-        function inverseAffineTransform(y, prevEncryptedByte, a = 11, b = 19, m = 256) {
+        // Обратное афинное преобразование: x = a_inv * (y - b) mod m
+        function inverseAffineTransform(y, a = 11, b = 19, m = 256) {
             const a_inv = 163;
-            const nonLinearComponent = (prevEncryptedByte * 167 + 113) % m;
-            let result = a_inv * (y - b - nonLinearComponent);
+            let result = a_inv * (y - b);
             while (result < 0) result += m;
             return result % m;
         }
@@ -716,14 +713,18 @@
 
         // Функции шифрования с афинным преобразованием
         function encryptByte(byte, prevEncryptedByte, dynSbox) {
-            const xorByte = byte ^ prevEncryptedByte;
-            const r = (xorByte >> 4) & 0x0F;
-            const c = xorByte & 0x0F;
+            // combinedByte = (исходный байт + предыдущий зашифрованный)
+            const combinedByte = (byte + prevEncryptedByte) % 256;
             
+            // Static S-Box
+            const r = (combinedByte >> 4) & 0x0F;
+            const c = combinedByte & 0x0F;
             const staticValue = staticSbox[r][c];
             
-            const affineValue = affineTransform(staticValue, prevEncryptedByte);
+            // Афинное преобразование
+            const affineValue = affineTransform(staticValue);
             
+            // Dynamic S-Box
             const newR = (affineValue >> 4) & 0x0F;
             const newC = affineValue & 0x0F;
             
@@ -731,14 +732,20 @@
         }
 
         function decryptByte(cipherByte, prevEncryptedByte, dynSboxInverse) {
+            // Dynamic S-Box (обратный)
             const dynamicValue = cipherByte;
             const staticValue = dynSboxInverse[dynamicValue];
             
-            const affineValue = inverseAffineTransform(staticValue, prevEncryptedByte);
+            // Обратное афинное преобразование
+            const affineValue = inverseAffineTransform(staticValue);
             
-            const xorByte = staticSboxInverse[affineValue];
+            // Static S-Box (обратный)
+            const combinedByte = staticSboxInverse[affineValue];
             
-            return xorByte ^ prevEncryptedByte;
+            // Восстанавливаем исходный байт: byte = combinedByte - prevEncryptedByte
+            let originalByte = combinedByte - prevEncryptedByte;
+            while (originalByte < 0) originalByte += 256;
+            return originalByte % 256;
         }
 
         // Базовое шифрование
@@ -896,7 +903,7 @@
             
             let entropy = 0;
             for (let i = 0; i < 256; i++) {
-                if (frequency[i] > 0) {
+                if (frequency[i > 0) {
                     const p = frequency[i] / byteData.length;
                     entropy -= p * Math.log2(p);
                 }
@@ -957,25 +964,6 @@
             setTimeout(() => {
                 element.className = 'status';
             }, 5000);
-        }
-
-        // Тест обратимости
-        async function testReversibility() {
-            await initStaticSbox("test");
-            await createDynamicSbox("test");
-            
-            console.log("=== ТЕСТ ОБРАТИМОСТИ ===");
-            for (let i = 0; i < 256; i++) {
-                const encrypted = encryptByte(i, 0, dynamicSbox);
-                const decrypted = decryptByte(encrypted, 0, dynamicSboxInverse);
-                
-                if (i !== decrypted) {
-                    console.error("Ошибка при byte:", i, "encrypted:", encrypted, "decrypted:", decrypted);
-                    return false;
-                }
-            }
-            console.log("Все преобразования обратимы!");
-            return true;
         }
     </script>
 </body>
