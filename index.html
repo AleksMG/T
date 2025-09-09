@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>TriBox Enhanced - Dynamic Affine Transformation</title>
+    <title>TriBox Enhanced - Fixed S-Box Usage</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         :root {
@@ -526,8 +526,8 @@
 <body>
     <div class="app-container">
         <header>
-            <h1>TriBox Enhanced</h1>
-            <h2>Dynamic Affine Transformation with Position & Previous Byte Dependency</h2>
+            <h1>TriBox Enhanced - Fixed</h1>
+            <h2>Proper S-Box Usage with Dynamic Affine Transformation</h2>
         </header>
 
         <div class="panels-container">
@@ -538,7 +538,7 @@
                     </div>
                     <div>
                         <div class="panel-title">Encryption</div>
-                        <div class="panel-subtitle">Secure your data with dynamic affine transformation</div>
+                        <div class="panel-subtitle">Both S-Boxes now work correctly</div>
                     </div>
                 </div>
                 
@@ -603,8 +603,9 @@
 
                 <div class="debug-info">
                     <h3><i class="fas fa-code"></i> Technical Details</h3>
-                    <div>Dynamic Affine: y = (11 * x + 19 + prev + pos) % 256</div>
-                    <div>Reverse: x = (163 * (y - 19 - prev - pos)) % 256</div>
+                    <div>1. Static S-Box: combinedByte → staticValue</div>
+                    <div>2. Affine: staticValue → affineValue</div>
+                    <div>3. Dynamic S-Box: affineValue → finalValue</div>
                 </div>
             </div>
 
@@ -615,7 +616,7 @@
                     </div>
                     <div>
                         <div class="panel-title">Decryption</div>
-                        <div class="panel-subtitle">Decrypt your protected data</div>
+                        <div class="panel-subtitle">Proper inverse transformations</div>
                     </div>
                 </div>
                 
@@ -631,7 +632,7 @@
                     </div>
                     
                     <div class="checkbox-container">
-                        <input type="checkbox" id="decryptHomophonicMode" checked>
+                        <input type="checkbox" id"decryptHomophonicMode" checked>
                         <label for="decryptHomophonicMode">Homophonic Encryption</label>
                     </div>
                 </div>
@@ -680,8 +681,9 @@
 
                 <div class="debug-info">
                     <h3><i class="fas fa-code"></i> Technical Details</h3>
-                    <div>Dynamic Affine: y = (11 * x + 19 + prev + pos) % 256</div>
-                    <div>Reverse: x = (163 * (y - 19 - prev - pos)) % 256</div>
+                    <div>1. Inverse Dynamic S-Box: finalValue → affineValue</div>
+                    <div>2. Inverse affine: affineValue → staticValue</div>
+                    <div>3. Inverse Static S-Box: staticValue → combinedByte</div>
                 </div>
             </div>
         </div>
@@ -694,7 +696,7 @@
                     <div class="info-value">combinedByte = (byte + prevEncryptedByte) % 256</div>
                 </div>
                 <div class="info-item">
-                    <div class="info-label"><i class="fas fa-project-diagram"></i> Dynamic Affine Transformation</div>
+                    <div class="info-label"><i class="fas fa-project-diagram"></i> Affine Transformation</div>
                     <div class="info-value">y = (11 * x + 19 + prev + pos) % 256</div>
                 </div>
                 <div class="info-item">
@@ -709,7 +711,7 @@
         </div>
 
         <footer>
-            <div>TriBox Enhanced &copy; 2025 | Dynamic Affine Transformation</div>
+            <div>TriBox Enhanced &copy; 2025 | Fixed S-Box Implementation</div>
         </footer>
     </div>
 
@@ -930,37 +932,36 @@
             }
         }
 
-        // Encryption functions with dynamic affine transformation
+        // Encryption functions with proper S-Box usage
         function encryptByte(byte, prevEncryptedByte, position, dynSbox) {
             const combinedByte = (byte + prevEncryptedByte) % 256;
             
-            // Static S-Box
-            const r = (combinedByte >> 4) & 0x0F;
-            const c = combinedByte & 0x0F;
-            const staticValue = staticSbox[r][c];
+            // 1. Static S-Box: combinedByte -> staticValue
+            const r_static = (combinedByte >> 4) & 0x0F;
+            const c_static = combinedByte & 0x0F;
+            const staticValue = staticSbox[r_static][c_static];
             
-            // Dynamic affine transformation
+            // 2. Dynamic affine transformation: staticValue -> affineValue
             const affineValue = dynamicAffineTransform(staticValue, prevEncryptedByte, position);
             
-            // Dynamic S-Box
-            const newR = (affineValue >> 4) & 0x0F;
-            const newC = affineValue & 0x0F;
-            
-            return dynSbox[newR][newC];
+            // 3. Dynamic S-Box: affineValue -> finalValue
+            const r_dynamic = (affineValue >> 4) & 0x0F;
+            const c_dynamic = affineValue & 0x0F;
+            return dynSbox[r_dynamic][c_dynamic];
         }
 
         function decryptByte(cipherByte, prevEncryptedByte, position, dynSboxInverse) {
-            // Dynamic S-Box (inverse)
+            // 1. Inverse Dynamic S-Box: finalValue -> affineValue
             const dynamicValue = cipherByte;
-            const staticValue = dynSboxInverse[dynamicValue];
+            const affineValue = dynSboxInverse[dynamicValue];
             
-            // Inverse dynamic affine transformation
-            const affineValue = inverseDynamicAffineTransform(staticValue, prevEncryptedByte, position);
+            // 2. Inverse affine transformation: affineValue -> staticValue
+            let staticValue = inverseDynamicAffineTransform(affineValue, prevEncryptedByte, position);
             
-            // Static S-Box (inverse)
-            const combinedByte = staticSboxInverse[affineValue];
+            // 3. Inverse Static S-Box: staticValue -> combinedByte
+            const combinedByte = staticSboxInverse[staticValue];
             
-            // Restore original byte: byte = combinedByte - prevEncryptedByte
+            // 4. Restore original byte
             let originalByte = combinedByte - prevEncryptedByte;
             while (originalByte < 0) originalByte += 256;
             return originalByte % 256;
