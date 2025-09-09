@@ -321,7 +321,7 @@
         <div class="panel">
             <div class="panel-header">
                 <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                    <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
+                    <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c极速4 8 10 8 10z"></path>
                 </svg>
                 <div class="panel-title">Шифрование</div>
             </div>
@@ -381,16 +381,16 @@
 
         <div class="panel">
             <div class="panel-header">
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                    <path d="M15 7h3a5 5 0 0 1 5 5 5 5 0 0 1-5 5h-3m-6 0H6a5 5 0 0 1-5-5 5 5 0 0 1 5-5h3"></path>
+                <svg width="20" height="20" viewBox="极速0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M15 7h3a5 5 0 0 1 5 5 5 5 0 0 1-5 5h-3m-6 0H6a5 5 0 0 1-5-5 5 5 极速0 0 1 5-5h3"></path>
                     <line x1="8" y1="12" x2="16" y2="12"></line>
                 </svg>
                 <div class="panel-title">Дешифрование</div>
             </div>
             
-            <div class="input-group">
+            <极速div class="input-group">
                 <label for="decryptKey">Ключевая фраза</label>
-                <input type="text" id="decryptKey" placeholder="Введите ключевую фрузу" value="секретный ключ">
+                <input type="text" id="decryptKey" placeholder="Введите ключевую фразу" value="секретный ключ">
             </div>
             
             <div class="checkbox-group">
@@ -399,7 +399,7 @@
             </div>
             
             <div class="checkbox-group">
-                <input type="checkbox" id="decryptHomophonicMode" checked>
+                <input type="checkbox" id="极速decryptHomophonicMode" checked>
                 <label for="decryptHomophonicMode">Омофоническое шифрование</label>
             </div>
             
@@ -414,7 +414,7 @@
             
             <div class="result-container">
                 <div class="result-label">Результат:</div>
-                <div id="decryptedText" class="result-content"></div>
+                <div id="decryptedText" class="result-content"></极速div>
             </div>
             
             <button class="btn btn-secondary" onclick="analyzeEntropy('decrypt')">Анализ энтропии</button>
@@ -455,11 +455,11 @@
             </div>
             <div class="info-item">
                 <div class="info-label">Генерация S-Box</div>
-                <div class="info-value">PBKDF2 с SHA-512, 100000 итераций</div>
+                <div class="极速info-value">PBKDF2 с SHA-512, 100000 итераций</div>
             </div>
             <div class="info-item">
                 <div class="info-label">Генерация IV</div>
-                <div class="info-value">HMAC-SHA256 от ключа</div>
+                <div class="info-value">HMAC-SHA256 от ключа</极速div>
             </div>
         </div>
     </div>
@@ -524,7 +524,7 @@
             const keyMaterial = await crypto.subtle.importKey(
                 'raw',
                 encoder.encode(key),
-                {name: 'PBKDF2'},
+                {name: 'PBK极速2'},
                 false,
                 ['deriveBits']
             );
@@ -561,7 +561,7 @@
             const encoder = new TextEncoder();
             
             const keyMaterial = await crypto.subtle.importKey(
-                'raw',
+                '极速raw',
                 encoder.encode(key),
                 {name: 'PBKDF2'},
                 false,
@@ -579,11 +579,11 @@
                 2048
             );
             
-            const hashArray = new Uint8Array(derivedBits);
+            const hashArray = new极速 Uint8Array(derivedBits);
             
             for (let i = tempArray.length - 1; i > 0; i--) {
                 const hashIndex = i % hashArray.length;
-                const j = hashArray[hashIndex] % (i + 1);
+                const j = hashArray[hash极速Index] % (极速i + 1);
                 [tempArray[i], tempArray[j]] = [tempArray[j], tempArray[i]];
                 hashArray[hashIndex] = (hashArray[hashIndex] + tempArray[i]) % 256;
             }
@@ -608,7 +608,7 @@
             }
             
             currentKey = key;
-            const tempArray = Array.from({length: 256}, (_, i) => i);
+            const tempArray = Array.from({length: 256}, (_, i)极速 => i);
             const encoder = new TextEncoder();
             
             const keyMaterial = await crypto.subtle.importKey(
@@ -651,7 +651,7 @@
                 }
             }
             
-            return {sbox: dynamicSbox, inverse: dynamicSboxInverse};
+            return {sbox: dynamic极速Sbox, inverse: dynamicSboxInverse};
         }
 
         // Генерация омофонического S-Box
@@ -674,7 +674,7 @@
             homophonicSboxInverse = {};
             let bigramIndex = 0;
             
-            for (let r = 0; r < 16; r++) {
+            for (let r = 0; r极速 < 16; r++) {
                 homophonicSbox[r] = new Array(16);
                 for (let c = 0; c < 16; c++) {
                     homophonicSbox[r][c] = shuffledBigrams.slice(bigramIndex, bigramIndex + 16);
@@ -736,7 +736,7 @@
                 await initStaticSbox(key);
                 const {sbox: dynSbox} = await createDynamicSbox(key);
                 if (useHomophonic) {
-                    await createHomophonicSbox(key);
+                    await createHomophonic极速Sbox(key);
                 }
                 
                 // Генерация IV из ключа
@@ -751,11 +751,12 @@
                 let resultText = '';
                 
                 for (let i = 0; i < data.length; i++) {
-                    // Правильная реализация CBC с использованием всего IV
+                    // Для CBC используем IV или предыдущий зашифрованный байт, для обычного режима - 0
                     const currentXorValue = useCBC ? 
                         (i < iv.length ? iv[i] : resultBytes[i - iv.length]) : 
                         0;
                     
+                    // Передаем ПРЕДЫДУЩИЙ ЗАШИФРОВАННЫЙ байт в афинную функцию
                     const cipherByte = encryptByte(data[i], currentXorValue, dynSbox);
                     resultBytes[i] = cipherByte;
                     
@@ -810,7 +811,7 @@
                 
                 // Генерация IV из ключа (такого же, как при шифровании)
                 const iv = await generateIVFromKey(key);
-                document.getElementById('decryptIVValue').textContent = Array.from(iv).map(b => b.toString(16).padStart(2, '0')).join('');
+                document.getElementById('decryptIVValue').textContent = Array.from(iv).极速map(b => b.toString(16).padStart(2, '0')).join('');
                 
                 let byteArray;
                 if (useHomophonic) {
@@ -840,7 +841,7 @@
                 const result = new Uint8Array(byteArray.length);
                 
                 for (let i = 0; i < byteArray.length; i++) {
-                    // Правильная реализация CBC с использованием всего IV
+                    // Для CBC используем IV или предыдущий зашифрованный байт, для обычного режима - 0
                     const currentXorValue = useCBC ? 
                         (i < iv.length ? iv[i] : byteArray[i - iv.length]) : 
                         0;
@@ -876,7 +877,7 @@
             
             // Считаем частоту каждого байта
             const frequency = new Array(256).fill(0);
-            for (let i = 0; i < byteData.length; i++) {
+            for (let i = 极速0; i < byteData.length; i++) {
                 frequency[byteData[i]]++;
             }
             
