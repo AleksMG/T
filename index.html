@@ -314,7 +314,7 @@
 <body>
     <header>
         <h1>TriBox</h1>
-        <h2>Омофонического шифрования с афинным преобразованием</h2>
+        <h2>Омофонического шифрования с нелинейным афинным преобразованием</h2>
     </header>
 
     <div class="container">
@@ -447,11 +447,11 @@
         <div class="info-grid">
             <div class="info-item">
                 <div class="info-label">Афинное преобразование</div>
-                <div class="info-value">y = (11 * x + 19) mod 256</div>
+                <div class="info-value">y = (11 * x + 19 + prevInput) mod 256</div>
             </div>
             <div class="info-item">
                 <div class="info-label">Обратное преобразование</div>
-                <div class="info-value">x = (163 * (y - 19)) mod 256</div>
+                <div class="info-value">x = (163 * (y - 19 - prevInput)) mod 256</div>
             </div>
             <div class="info-item">
                 <div class="info-label">Генерация S-Box</div>
@@ -480,19 +480,15 @@
         let lastEncryptedData = null;
         let lastEncryptedFormat = null;
 
-        // Афинное преобразование: y = (a * x + b) mod m
-        function affineTransform(x, a = 11, b = 19, m = 256) {
-            return (a * x + b) % m;
+        // НЕЛИНЕЙНОЕ афинное преобразование с зависимостью от предыдущего ВХОДНОГО значения
+        function affineTransform(x, prevInputValue, a = 11, b = 19, m = 256) {
+            return (a * x + b + prevInputValue) % m;
         }
 
         // Обратное афинное преобразование
-        function inverseAffineTransform(y, a = 11, b = 19, m = 256) {
-            // Обратный элемент для a=11 mod 256 = 163
-            // Проверка: (11 * 163) % 256 = 1793 % 256 = 1
-            const a_inv = 163;
-            let result = a_inv * (y - b);
-            
-            // Обработка отрицательных значений
+        function inverseAffineTransform(y, prevInputValue, a = 11, b = 19, m = 256) {
+            const a_inv = 163; // Обратный элемент для a=11 mod 256
+            let result = a_inv * (y - b - prevInputValue);
             while (result < 0) result += m;
             return result % m;
         }
@@ -502,45 +498,24 @@
             const encoder = new TextEncoder();
             const keyData = encoder.encode(key);
             
-            // Используем HMAC-SHA256 для генерации IV из ключа
             const cryptoKey = await crypto.subtle.importKey(
-                'raw',
-                keyData,
-                { name: 'HMAC', hash: 'SHA-256' },
-                false,
-                ['sign']
+                'raw', keyData, { name: 'HMAC', hash: 'SHA-256' }, false, ['sign']
             );
             
-            const iv = await crypto.subtle.sign(
-                'HMAC',
-                cryptoKey,
-                encoder.encode('IV_GENERATION')
-            );
-            
-            return new Uint8Array(iv).slice(0, 16); // Берем первые 16 байт
+            const iv = await crypto.subtle.sign('HMAC', cryptoKey, encoder.encode('IV_GENERATION'));
+            return new Uint8Array(iv).slice(0, 16);
         }
 
         // Криптографически стойкое перемешивание Фишера-Йейтса
         async function cryptoShuffle(array, key, salt = "") {
             const encoder = new TextEncoder();
-            
             const keyMaterial = await crypto.subtle.importKey(
-                'raw',
-                encoder.encode(key),
-                {name: 'PBKDF2'},
-                false,
-                ['deriveBits']
+                'raw', encoder.encode(key), {name: 'PBKDF2'}, false, ['deriveBits']
             );
             
             const derivedBits = await crypto.subtle.deriveBits(
-                {
-                    name: 'PBKDF2',
-                    salt: encoder.encode(salt),
-                    iterations: 100000,
-                    hash: 'SHA-512'
-                },
-                keyMaterial,
-                array.length * 16
+                { name: 'PBKDF2', salt: encoder.encode(salt), iterations: 100000, hash: 'SHA-512' },
+                keyMaterial, array.length * 16
             );
             
             const hashArray = new Uint8Array(derivedBits);
@@ -550,7 +525,6 @@
                 const hashIndex = i % hashArray.length;
                 const j = hashArray[hashIndex] % (i + 1);
                 [result[i], result[j]] = [result[j], result[i]];
-                hashArray[hashIndex] = (hashArray[hashIndex] + result[i].charCodeAt(0)) % 256;
             }
             
             return result;
@@ -562,24 +536,13 @@
             
             const tempArray = Array.from({length: 256}, (_, i) => i);
             const encoder = new TextEncoder();
-            
             const keyMaterial = await crypto.subtle.importKey(
-                'raw',
-                encoder.encode(key),
-                {name: 'PBKDF2'},
-                false,
-                ['deriveBits']
+                'raw', encoder.encode(key), {name: 'PBKDF2'}, false, ['deriveBits']
             );
             
             const derivedBits = await crypto.subtle.deriveBits(
-                {
-                    name: 'PBKDF2',
-                    salt: encoder.encode("static_salt"),
-                    iterations: 100000,
-                    hash: 'SHA-512'
-                },
-                keyMaterial,
-                2048
+                { name: 'PBKDF2', salt: encoder.encode("static_salt"), iterations: 100000, hash: 'SHA-512' },
+                keyMaterial, 2048
             );
             
             const hashArray = new Uint8Array(derivedBits);
@@ -588,7 +551,6 @@
                 const hashIndex = i % hashArray.length;
                 const j = hashArray[hashIndex] % (i + 1);
                 [tempArray[i], tempArray[j]] = [tempArray[j], tempArray[i]];
-                hashArray[hashIndex] = (hashArray[hashIndex] + tempArray[i]) % 256;
             }
             
             staticSbox = new Array(16);
@@ -606,31 +568,18 @@
 
         // Генерация динамического S-Box
         async function createDynamicSbox(key) {
-            if (key === currentKey && dynamicSbox !== null) {
-                return {sbox: dynamicSbox, inverse: dynamicSboxInverse};
-            }
+            if (key === currentKey && dynamicSbox !== null) return {sbox: dynamicSbox, inverse: dynamicSboxInverse};
             
             currentKey = key;
             const tempArray = Array.from({length: 256}, (_, i) => i);
             const encoder = new TextEncoder();
-            
             const keyMaterial = await crypto.subtle.importKey(
-                'raw',
-                encoder.encode(key),
-                {name: 'PBKDF2'},
-                false,
-                ['deriveBits']
+                'raw', encoder.encode(key), {name: 'PBKDF2'}, false, ['deriveBits']
             );
             
             const derivedBits = await crypto.subtle.deriveBits(
-                {
-                    name: 'PBKDF2',
-                    salt: encoder.encode("dynamic_salt"),
-                    iterations: 100000,
-                    hash: 'SHA-512'
-                },
-                keyMaterial,
-                2048
+                { name: 'PBKDF2', salt: encoder.encode("dynamic_salt"), iterations: 100000, hash: 'SHA-512' },
+                keyMaterial, 2048
             );
             
             const hashArray = new Uint8Array(derivedBits);
@@ -639,7 +588,6 @@
                 const hashIndex = i % hashArray.length;
                 const j = hashArray[hashIndex] % (i + 1);
                 [tempArray[i], tempArray[j]] = [tempArray[j], tempArray[i]];
-                hashArray[hashIndex] = (hashArray[hashIndex] + tempArray[i]) % 256;
             }
             
             dynamicSbox = new Array(16);
@@ -670,9 +618,7 @@
                 }
             }
             
-            // Ключезависимое перемешивание ВСЕХ 4096 биграмм
             const shuffledBigrams = await cryptoShuffle(allBigrams, key, "homophonic_salt");
-            
             homophonicSbox = new Array(16);
             homophonicSboxInverse = {};
             let bigramIndex = 0;
@@ -690,37 +636,28 @@
             }
         }
 
-        // Функции шифрования с афинным преобразованием
-        function encryptByte(byte, prevCipher, dynSbox) {
+        // Функции шифрования с НЕЛИНЕЙНЫМ афинным преобразованием
+        function encryptByte(byte, prevCipher, dynSbox, prevInputByte) {
             const xorByte = byte ^ prevCipher;
             const r = (xorByte >> 4) & 0x0F;
             const c = xorByte & 0x0F;
             
-            // Static S-Box
             const staticValue = staticSbox[r][c];
+            const affineValue = affineTransform(staticValue, prevInputByte);
             
-            // Афинное преобразование между S-Box'ами
-            const affineValue = affineTransform(staticValue);
-            
-            // Dynamic S-Box
             const newR = (affineValue >> 4) & 0x0F;
             const newC = affineValue & 0x0F;
             
-            return dynSbox[newR][newC];
+            return {encrypted: dynSbox[newR][newC], nonLinear: affineValue};
         }
 
-        function decryptByte(cipherByte, prevCipher, dynSboxInverse) {
-            // Dynamic S-Box (обратный)
+        function decryptByte(cipherByte, prevCipher, dynSboxInverse, prevInputByte) {
             const dynamicValue = cipherByte;
             const staticValue = dynSboxInverse[dynamicValue];
+            const affineValue = inverseAffineTransform(staticValue, prevInputByte);
             
-            // Обратное афинное преобразование
-            const affineValue = inverseAffineTransform(staticValue);
-            
-            // Static S-Box (обратный)
             const xorByte = staticSboxInverse[affineValue];
-            
-            return xorByte ^ prevCipher;
+            return {decrypted: xorByte ^ prevCipher, nonLinear: affineValue};
         }
 
         // Базовое шифрование
@@ -738,52 +675,43 @@
             try {
                 await initStaticSbox(key);
                 const {sbox: dynSbox} = await createDynamicSbox(key);
-                if (useHomophonic) {
-                    await createHomophonicSbox(key);
-                }
+                if (useHomophonic) await createHomophonicSbox(key);
                 
-                // Генерация IV из ключа
                 const iv = await generateIVFromKey(key);
                 document.getElementById('encryptIVValue').textContent = Array.from(iv).map(b => b.toString(16).padStart(2, '0')).join('');
                 
                 const encoder = new TextEncoder();
                 const data = encoder.encode(text);
-                
-                let prevCipher = 0;
                 const resultBytes = new Uint8Array(data.length);
                 let resultText = '';
+                let prevCipher = 0;
+                let prevInputByte = data[0]; // Первый входной байт
                 
                 for (let i = 0; i < data.length; i++) {
-                    // Правильная реализация CBC с использованием всего IV
-                    const currentXorValue = useCBC ? 
-                        (i < iv.length ? iv[i] : resultBytes[i - iv.length]) : 
-                        0;
+                    const currentXorValue = useCBC ? (i < iv.length ? iv[i] : resultBytes[i - iv.length]) : 0;
                     
-                    const cipherByte = encryptByte(data[i], currentXorValue, dynSbox);
-                    resultBytes[i] = cipherByte;
+                    const {encrypted, nonLinear} = encryptByte(data[i], currentXorValue, dynSbox, prevInputByte);
+                    resultBytes[i] = encrypted;
                     
                     if (useHomophonic) {
-                        const r = (cipherByte >> 4) & 0x0F;
-                        const c = cipherByte & 0x0F;
+                        const r = (encrypted >> 4) & 0x0F;
+                        const c = encrypted & 0x0F;
                         const options = homophonicSbox[r][c];
                         const randomIndex = crypto.getRandomValues(new Uint8Array(1))[0] % 16;
                         resultText += options[randomIndex];
                     }
                     
-                    prevCipher = cipherByte;
+                    prevInputByte = data[i]; // Используем ВХОДНОЙ байт для следующего
+                    prevCipher = encrypted;
                 }
                 
                 if (!useHomophonic) {
                     const hexResult = Array.from(resultBytes).map(b => b.toString(16).padStart(2, '0')).join('');
                     document.getElementById('cipherText').value = hexResult;
                     document.getElementById('cipherHex').textContent = hexResult;
-                    lastEncryptedData = resultBytes;
-                    lastEncryptedFormat = 'hex';
                 } else {
                     document.getElementById('cipherText').value = resultText;
                     document.getElementById('cipherHex').textContent = resultText;
-                    lastEncryptedData = resultText;
-                    lastEncryptedFormat = 'homophonic';
                 }
                 
                 showStatus('encryptStatus', 'success', `Успешно зашифровано ${data.length} байт`);
@@ -807,33 +735,22 @@
             try {
                 await initStaticSbox(key);
                 const {inverse: dynSboxInverse} = await createDynamicSbox(key);
-                if (useHomophonic) {
-                    await createHomophonicSbox(key);
-                }
+                if (useHomophonic) await createHomophonicSbox(key);
                 
-                // Генерация IV из ключа (такого же, как при шифровании)
                 const iv = await generateIVFromKey(key);
                 document.getElementById('decryptIVValue').textContent = Array.from(iv).map(b => b.toString(16).padStart(2, '0')).join('');
                 
                 let byteArray;
                 if (useHomophonic) {
-                    if (cipherData.length % 2 !== 0) {
-                        throw new Error('Неверная длина омофонического шифротекста');
-                    }
-                    
+                    if (cipherData.length % 2 !== 0) throw new Error('Неверная длина омофонического шифротекста');
                     byteArray = new Uint8Array(cipherData.length / 2);
                     for (let i = 0; i < cipherData.length; i += 2) {
                         const bigram = cipherData.substr(i, 2);
-                        if (!(bigram in homophonicSboxInverse)) {
-                            throw new Error(`Неизвестная биграмма: ${bigram}`);
-                        }
+                        if (!(bigram in homophonicSboxInverse)) throw new Error(`Неизвестная биграмма: ${bigram}`);
                         byteArray[i/2] = homophonicSboxInverse[bigram];
                     }
                 } else {
-                    if (!/^[0-9a-fA-F]+$/.test(cipherData) || cipherData.length % 2 !== 0) {
-                        throw new Error('Неверный формат HEX данных');
-                    }
-                    
+                    if (!/^[0-9a-fA-F]+$/.test(cipherData) || cipherData.length % 2 !== 0) throw new Error('Неверный формат HEX данных');
                     byteArray = new Uint8Array(cipherData.length / 2);
                     for (let i = 0; i < cipherData.length; i += 2) {
                         byteArray[i/2] = parseInt(cipherData.substr(i, 2), 16);
@@ -841,14 +758,17 @@
                 }
                 
                 const result = new Uint8Array(byteArray.length);
+                let prevCipher = 0;
+                let prevInputByte = result[0]; // Будем восстанавливать по мере дешифрования
                 
                 for (let i = 0; i < byteArray.length; i++) {
-                    // Правильная реализация CBC с использованием всего IV
-                    const currentXorValue = useCBC ? 
-                        (i < iv.length ? iv[i] : byteArray[i - iv.length]) : 
-                        0;
+                    const currentXorValue = useCBC ? (i < iv.length ? iv[i] : byteArray[i - iv.length]) : 0;
                     
-                    result[i] = decryptByte(byteArray[i], currentXorValue, dynSboxInverse);
+                    const {decrypted, nonLinear} = decryptByte(byteArray[i], currentXorValue, dynSboxInverse, prevInputByte);
+                    result[i] = decrypted;
+                    
+                    prevInputByte = decrypted; // Используем РАСШИФРОВАННЫЙ байт для следующего
+                    prevCipher = byteArray[i];
                 }
                 
                 const decoder = new TextDecoder();
@@ -866,24 +786,20 @@
             let byteData;
             
             if (isHex) {
-                // Для HEX: преобразуем строку HEX в байты
                 byteData = new Uint8Array(data.length / 2);
                 for (let i = 0; i < data.length; i += 2) {
                     byteData[i/2] = parseInt(data.substr(i, 2), 16);
                 }
             } else {
-                // Для текста: преобразуем строку в байты
                 const encoder = new TextEncoder();
                 byteData = encoder.encode(data);
             }
             
-            // Считаем частоту каждого байта
             const frequency = new Array(256).fill(0);
             for (let i = 0; i < byteData.length; i++) {
                 frequency[byteData[i]]++;
             }
             
-            // Вычисляем энтропию
             let entropy = 0;
             for (let i = 0; i < 256; i++) {
                 if (frequency[i] > 0) {
@@ -918,7 +834,7 @@
             
             try {
                 const entropy = calculateShannonEntropy(data, isHex);
-                const maxEntropy = isHex ? 8 : 6; // Максимальная энтропия: 8 для байтов, 6 для Base64-like
+                const maxEntropy = isHex ? 8 : 6;
                 const percentage = (entropy / maxEntropy) * 100;
                 
                 const resultElement = document.getElementById(mode + 'EntropyResult');
@@ -929,7 +845,6 @@
                 barElement.style.width = percentage + '%';
                 containerElement.style.display = 'block';
                 
-                // Обновляем максимальную метку для encrypt панели
                 if (mode === 'encrypt') {
                     document.getElementById('entropyMaxLabel').textContent = maxEntropy.toString();
                 }
@@ -944,29 +859,29 @@
             const element = document.getElementById(elementId);
             element.textContent = message;
             element.className = 'status ' + type + ' visible';
-            
-            // Автоматическое скрытие через 5 секунд
-            setTimeout(() => {
-                element.className = 'status';
-            }, 5000);
+            setTimeout(() => { element.className = 'status'; }, 5000);
         }
 
-        // Тест обратимости (для отладки)
+        // Тест обратимости
         async function testReversibility() {
             await initStaticSbox("test");
             await createDynamicSbox("test");
             
-            console.log("=== ТЕСТ ОБРАТИМОСТИ ===");
-            for (let i = 0; i < 256; i++) {
-                const encrypted = encryptByte(i, 0, dynamicSbox);
-                const decrypted = decryptByte(encrypted, 0, dynamicSboxInverse);
+            console.log("=== ТЕСТ ОБРАТИМОСТИ НЕЛИНЕЙНОГО АФИННОГО ПРЕОБРАЗОВАНИЯ ===");
+            const testData = new Uint8Array([0, 1, 2, 255, 128, 64, 32, 16, 8, 4, 2, 1]);
+            let prevInput = testData[0];
+            
+            for (let i = 0; i < testData.length; i++) {
+                const encrypted = affineTransform(testData[i], prevInput);
+                const decrypted = inverseAffineTransform(encrypted, prevInput);
                 
-                if (i !== decrypted) {
-                    console.error("Ошибка при byte:", i, "encrypted:", encrypted, "decrypted:", decrypted);
+                if (testData[i] !== decrypted) {
+                    console.error("Ошибка:", testData[i], "->", encrypted, "->", decrypted);
                     return false;
                 }
+                prevInput = testData[i];
             }
-            console.log("Все преобразования обратимы!");
+            console.log("Все нелинейные афинные преобразования обратимы!");
             return true;
         }
     </script>
