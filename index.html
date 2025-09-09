@@ -1,167 +1,209 @@
 <!DOCTYPE html>
-<html lang="ru">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>TriBox</title>
+    <title>CryptoBox</title>
     <style>
         :root {
-            --primary-dark: #0d1117;
-            --secondary-dark: #161b22;
-            --accent-dark: #1f6feb;
-            --text-primary: #e6edf3;
-            --text-secondary: #7d8590;
-            --success: #3fb950;
-            --error: #f85149;
-            --warning: #d29922;
+            --system-background: #ffffff;
+            --secondary-background: #f2f2f7;
+            --tertiary-background: #e5e5ea;
+            --label-primary: #000000;
+            --label-secondary: #8e8e93;
+            --accent-blue: #007aff;
+            --accent-green: #34c759;
+            --accent-red: #ff3b30;
+            --accent-orange: #ff9500;
+            --card-corner-radius: 14px;
+            --element-corner-radius: 10px;
         }
 
-        body {
-            font-family: 'SF Mono', 'Monaco', 'Consolas', monospace;
-            background-color: var(--primary-dark);
-            color: var(--text-primary);
-            line-height: 1.6;
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 20px;
-        }
-
-        header {
-            text-align: center;
-            margin-bottom: 30px;
-            padding: 20px;
-            border-bottom: 1px solid var(--secondary-dark);
-        }
-
-        h1 {
-            color: var(--accent-dark);
-            font-size: 2.5rem;
-            margin-bottom: 10px;
-        }
-
-        h2 {
-            color: var(--text-secondary);
-            font-size: 1.5rem;
-            font-weight: 400;
-        }
-
-        .container {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 20px;
-            margin-bottom: 30px;
-        }
-
-        @media (max-width: 900px) {
-            .container {
-                grid-template-columns: 1fr;
+        @media (prefers-color-scheme: dark) {
+            :root {
+                --system-background: #000000;
+                --secondary-background: #1c1c1e;
+                --tertiary-background: #2c2c2e;
+                --label-primary: #ffffff;
+                --label-secondary: #8e8e93;
             }
         }
 
-        .panel {
-            background: var(--secondary-dark);
-            border-radius: 6px;
-            padding: 20px;
-            border: 1px solid #30363d;
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            -webkit-font-smoothing: antialiased;
         }
 
-        .panel-header {
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            background-color: var(--system-background);
+            color: var(--label-primary);
+            line-height: 1.4;
+            padding: 16px;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 32px;
+            padding: 24px 0;
+        }
+
+        .header h1 {
+            font-size: 34px;
+            font-weight: 700;
+            letter-spacing: -0.5px;
+            margin-bottom: 4px;
+            color: var(--label-primary);
+        }
+
+        .header p {
+            font-size: 17px;
+            color: var(--label-secondary);
+            font-weight: 400;
+        }
+
+        .card {
+            background-color: var(--secondary-background);
+            border-radius: var(--card-corner-radius);
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+        }
+
+        .card-header {
             display: flex;
             align-items: center;
             margin-bottom: 20px;
-            padding-bottom: 10px;
-            border-bottom: 1px solid #30363d;
         }
 
-        .panel-title {
-            font-size: 1.3rem;
+        .card-icon {
+            width: 24px;
+            height: 24px;
+            margin-right: 12px;
+            background-color: var(--accent-blue);
+            border-radius: 6px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .card-title {
+            font-size: 20px;
             font-weight: 600;
-            color: var(--accent-dark);
-            margin-left: 10px;
+            color: var(--label-primary);
         }
 
-        .input-group {
-            margin-bottom: 15px;
+        .form-group {
+            margin-bottom: 20px;
         }
 
-        label {
+        .form-label {
             display: block;
-            margin-bottom: 5px;
+            font-size: 15px;
             font-weight: 500;
-            color: var(--text-secondary);
-            font-size: 0.9rem;
+            color: var(--label-secondary);
+            margin-bottom: 6px;
         }
 
-        input, textarea {
+        .form-input {
             width: 100%;
-            padding: 10px;
-            background-color: #0d1117;
-            border: 1px solid #30363d;
-            border-radius: 4px;
-            color: var(--text-primary);
+            padding: 14px;
+            background-color: var(--tertiary-background);
+            border: none;
+            border-radius: var(--element-corner-radius);
+            font-size: 16px;
+            color: var(--label-primary);
             font-family: inherit;
-            font-size: 0.95rem;
         }
 
-        textarea {
+        .form-input:focus {
+            outline: none;
+            background-color: var(--tertiary-background);
+        }
+
+        .form-textarea {
             min-height: 120px;
             resize: vertical;
         }
 
-        input:focus, textarea:focus {
-            outline: none;
-            border-color: var(--accent-dark);
-            box-shadow: 0 0 0 3px rgba(31, 111, 235, 0.3);
-        }
-
-        .checkbox-group {
+        .toggle-group {
             display: flex;
             align-items: center;
-            margin: 15px 0;
+            margin-bottom: 16px;
         }
 
-        .checkbox-group input {
-            width: auto;
-            margin-right: 10px;
+        .toggle {
+            position: relative;
+            width: 51px;
+            height: 31px;
+            background-color: var(--tertiary-background);
+            border-radius: 31px;
+            margin-right: 12px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
         }
 
-        .btn {
-            display: block;
+        .toggle.active {
+            background-color: var(--accent-blue);
+        }
+
+        .toggle-handle {
+            position: absolute;
+            top: 2px;
+            left: 2px;
+            width: 27px;
+            height: 27px;
+            background-color: white;
+            border-radius: 50%;
+            transition: transform 0.3s ease;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+        }
+
+        .toggle.active .toggle-handle {
+            transform: translateX(20px);
+        }
+
+        .toggle-label {
+            font-size: 16px;
+            color: var(--label-primary);
+        }
+
+        .button {
             width: 100%;
-            padding: 12px;
-            background-color: var(--accent-dark);
+            padding: 16px;
+            background-color: var(--accent-blue);
             color: white;
             border: none;
-            border-radius: 6px;
-            font-family: inherit;
-            font-weight: 500;
-            font-size: 1rem;
+            border-radius: var(--element-corner-radius);
+            font-size: 17px;
+            font-weight: 600;
             cursor: pointer;
-            transition: background-color 0.2s;
-            margin-top: 15px;
+            transition: background-color 0.2s ease;
         }
 
-        .btn:hover {
-            background-color: #2c67d1;
+        .button:hover {
+            background-color: var(--accent-blue);
+            opacity: 0.9;
         }
 
-        .btn:active {
-            background-color: #255cbc;
+        .button:active {
+            opacity: 0.8;
         }
 
-        .btn-secondary {
-            background-color: #30363d;
-        }
-
-        .btn-secondary:hover {
-            background-color: #3d444d;
+        .button-secondary {
+            background-color: var(--tertiary-background);
+            color: var(--label-primary);
         }
 
         .status {
-            padding: 12px;
-            border-radius: 6px;
-            margin: 15px 0;
-            font-size: 0.9rem;
+            padding: 14px;
+            border-radius: var(--element-corner-radius);
+            margin: 16px 0;
+            font-size: 15px;
             display: none;
         }
 
@@ -170,306 +212,238 @@
         }
 
         .status.success {
-            background-color: rgba(63, 185, 80, 0.15);
-            border: 1px solid rgba(63, 185, 80, 0.4);
-            color: var(--success);
+            background-color: rgba(52, 199, 89, 0.1);
+            color: var(--accent-green);
         }
 
         .status.error {
-            background-color: rgba(248, 81, 73, 0.15);
-            border: 1px solid rgba(248, 81, 73, 0.4);
-            color: var(--error);
+            background-color: rgba(255, 59, 48, 0.1);
+            color: var(--accent-red);
         }
 
         .result-container {
             margin-top: 20px;
-            padding: 15px;
-            background-color: rgba(13, 17, 23, 0.5);
-            border-radius: 6px;
-            border: 1px solid #30363d;
+            padding: 16px;
+            background-color: var(--tertiary-background);
+            border-radius: var(--element-corner-radius);
         }
 
         .result-label {
-            font-size: 0.9rem;
-            color: var(--text-secondary);
+            font-size: 14px;
+            color: var(--label-secondary);
             margin-bottom: 8px;
+            font-weight: 500;
         }
 
         .result-content {
-            font-family: 'SF Mono', monospace;
+            font-family: 'SF Mono', 'Menlo', monospace;
+            font-size: 14px;
             word-break: break-all;
-            padding: 10px;
-            background-color: rgba(0, 0, 0, 0.2);
-            border-radius: 4px;
+            padding: 12px;
+            background-color: rgba(0, 0, 0, 0.05);
+            border-radius: 8px;
             max-height: 200px;
             overflow-y: auto;
         }
 
-        .iv-generation {
-            margin-top: 15px;
-            padding: 15px;
-            background-color: rgba(13, 17, 23, 0.5);
-            border-radius: 6px;
-            border: 1px solid #30363d;
-            font-size: 0.85rem;
-        }
-
-        .iv-generation h3 {
-            color: var(--text-secondary);
-            margin-bottom: 10px;
-            font-size: 1rem;
-        }
-
-        .entropy-analysis {
-            margin-top: 20px;
-            padding: 15px;
-            background-color: rgba(13, 17, 23, 0.5);
-            border-radius: 6px;
-            border: 1px solid #30363d;
-        }
-
-        .entropy-analysis h3 {
-            color: var(--text-secondary);
-            margin-bottom: 10px;
-            font-size: 1rem;
-        }
-
-        .entropy-result {
-            font-family: 'SF Mono', monospace;
-            padding: 10px;
-            background-color: rgba(0, 0, 0, 0.2);
-            border-radius: 4px;
-        }
-
-        .entropy-bar {
-            height: 20px;
-            background: linear-gradient(90deg, #f85149 0%, #d29922 50%, #3fb950 100%);
-            border-radius: 3px;
-            margin-top: 10px;
-            position: relative;
-        }
-
-        .entropy-value {
-            position: absolute;
-            height: 100%;
-            background-color: rgba(31, 111, 235, 0.5);
-            border-radius: 3px;
-        }
-
-        .entropy-labels {
-            display: flex;
-            justify-content: space-between;
-            margin-top: 5px;
-            font-size: 0.8rem;
-            color: var(--text-secondary);
-        }
-
         .technical-info {
-            margin-top: 30px;
+            margin-top: 32px;
             padding: 20px;
-            background-color: var(--secondary-dark);
-            border-radius: 6px;
-            border: 1px solid #30363d;
-            font-size: 0.9rem;
+            background-color: var(--secondary-background);
+            border-radius: var(--card-corner-radius);
         }
 
         .technical-info h3 {
-            color: var(--accent-dark);
-            margin-bottom: 15px;
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 16px;
+            color: var(--label-primary);
         }
 
         .info-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 15px;
+            gap: 12px;
         }
 
         .info-item {
-            padding: 10px;
-            background-color: rgba(13, 17, 23, 0.5);
-            border-radius: 4px;
+            padding: 12px;
+            background-color: var(--tertiary-background);
+            border-radius: var(--element-corner-radius);
         }
 
         .info-label {
-            color: var(--text-secondary);
-            font-size: 0.8rem;
-            margin-bottom: 5px;
+            font-size: 13px;
+            color: var(--label-secondary);
+            margin-bottom: 4px;
+            font-weight: 500;
         }
 
         .info-value {
-            font-family: 'SF Mono', monospace;
-            word-break: break-all;
+            font-family: 'SF Mono', 'Menlo', monospace;
+            font-size: 13px;
+            color: var(--label-primary);
         }
 
         footer {
             text-align: center;
             margin-top: 40px;
             padding-top: 20px;
-            border-top: 1px solid #30363d;
-            color: var(--text-secondary);
-            font-size: 0.9rem;
+            color: var(--label-secondary);
+            font-size: 14px;
+        }
+
+        @media (max-width: 600px) {
+            body {
+                padding: 12px;
+            }
+            
+            .header h1 {
+                font-size: 28px;
+            }
+            
+            .card {
+                padding: 16px;
+            }
         }
     </style>
 </head>
 <body>
-    <header>
-        <h1>TriBox</h1>
-        <h2>Омофонического шифрования с афинным преобразованием</h2>
-    </header>
+    <div class="header">
+        <h1>CryptoBox</h1>
+        <p>Homomorphic encryption with affine transformation</p>
+    </div>
 
-    <div class="container">
-        <div class="panel">
-            <div class="panel-header">
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+    <div class="card">
+        <div class="card-header">
+            <div class="card-icon">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                     <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
                 </svg>
-                <div class="panel-title">Шифрование</div>
             </div>
-            
-            <div class="input-group">
-                <label for="encryptKey">Ключевая фраза</label>
-                <input type="text" id="encryptKey" placeholder="Введите ключевую фразу" value="секретный ключ">
-            </div>
-            
-            <div class="checkbox-group">
-                <input type="checkbox" id="encryptCBCMode">
-                <label for="encryptCBCMode">Режим CBC</label>
-            </div>
-            
-            <div class="checkbox-group">
-                <input type="checkbox" id="encryptHomophonicMode" checked>
-                <label for="encryptHomophonicMode">Омофоническое шифрование</label>
-            </div>
-            
-            <div class="input-group">
-                <label for="plainText">Текст для шифрования</label>
-                <textarea id="plainText" placeholder="Введите текст для шифрования">Пример текста для шифрования</textarea>
-            </div>
-            
-            <button class="btn" onclick="encrypt()">Зашифровать</button>
-            
-            <div id="encryptStatus" class="status"></div>
-            
-            <div class="result-container">
-                <div class="result-label">Шифротекст:</div>
-                <div id="cipherHex" class="result-content"></div>
-            </div>
-            
-            <button class="btn btn-secondary" onclick="analyzeEntropy('encrypt')">Анализ энтропии</button>
-            
-            <div class="entropy-analysis" id="encryptEntropy" style="display: none;">
-                <h3>Анализ энтропии шифротекста</h3>
-                <div class="entropy-result" id="encryptEntropyResult"></div>
-                <div class="entropy-bar">
-                    <div class="entropy-value" id="encryptEntropyBar"></div>
-                </div>
-                <div class="entropy-labels">
-                    <span>0</span>
-                    <span>2</span>
-                    <span>4</span>
-                    <span>6</span>
-                    <span id="entropyMaxLabel">8</span>
-                </div>
-            </div>
-            
-            <div class="iv-generation">
-                <h3>Генерация IV</h3>
-                <div>IV генерируется автоматически из ключа с помощью HMAC-SHA256</div>
-                <div id="encryptIVValue" class="result-content" style="margin-top: 10px; font-size: 0.8rem;"></div>
-            </div>
+            <div class="card-title">Encryption</div>
         </div>
+        
+        <div class="form-group">
+            <label class="form-label">Key phrase</label>
+            <input type="text" class="form-input" id="encryptKey" placeholder="Enter key phrase" value="secret key">
+        </div>
+        
+        <div class="toggle-group">
+            <div class="toggle" id="encryptCBCModeToggle">
+                <div class="toggle-handle"></div>
+            </div>
+            <span class="toggle-label">CBC Mode</span>
+        </div>
+        
+        <div class="toggle-group">
+            <div class="toggle active" id="encryptHomophonicModeToggle">
+                <div class="toggle-handle"></div>
+            </div>
+            <span class="toggle-label">Homomorphic Encryption</span>
+        </div>
+        
+        <div class="form-group">
+            <label class="form-label">Text to encrypt</label>
+            <textarea class="form-input form-textarea" id="plainText" placeholder="Enter text to encrypt">Sample text for encryption</textarea>
+        </div>
+        
+        <button class="button" onclick="encrypt()">Encrypt</button>
+        
+        <div id="encryptStatus" class="status"></div>
+        
+        <div class="result-container">
+            <div class="result-label">Ciphertext:</div>
+            <div id="cipherHex" class="result-content"></div>
+        </div>
+        
+        <button class="button button-secondary" onclick="analyzeEntropy('encrypt')">Analyze Entropy</button>
+        
+        <div class="result-container" id="encryptEntropy" style="display: none;">
+            <div class="result-label">Ciphertext Entropy Analysis:</div>
+            <div id="encryptEntropyResult" class="result-content"></div>
+        </div>
+    </div>
 
-        <div class="panel">
-            <div class="panel-header">
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+    <div class="card">
+        <div class="card-header">
+            <div class="card-icon">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                     <path d="M15 7h3a5 5 0 0 1 5 5 5 5 0 0 1-5 5h-3m-6 0H6a5 5 0 0 1-5-5 5 5 0 0 1 5-5h3"></path>
                     <line x1="8" y1="12" x2="16" y2="12"></line>
                 </svg>
-                <div class="panel-title">Дешифрование</div>
             </div>
-            
-            <极速div class="input-group">
-                <label for="decryptKey">Ключевая фраза</label>
-                <input type="text" id="decryptKey" placeholder="Введите ключевую фразу" value="секретный ключ">
+            <div class="card-title">Decryption</div>
+        </div>
+        
+        <div class="form-group">
+            <label class="form-label">Key phrase</label>
+            <input type="text" class="form-input" id="decryptKey" placeholder="Enter key phrase" value="secret key">
+        </div>
+        
+        <div class="toggle-group">
+            <div class="toggle" id="decryptCBCModeToggle">
+                <div class="toggle-handle"></div>
             </div>
-            
-            <div class="checkbox-group">
-                <input type="checkbox" id="decryptCBCMode">
-                <label for="decryptCBCMode">Режим CBC</label>
+            <span class="toggle-label">CBC Mode</span>
+        </div>
+        
+        <div class="toggle-group">
+            <div class="toggle active" id="decryptHomophonicModeToggle">
+                <div class="toggle-handle"></div>
             </div>
-            
-            <div class="checkbox-group">
-                <input type="checkbox" id="decryptHomophonicMode" checked>
-                <label for="decryptHomophonicMode">Омофоническое шифрование</label>
-            </div>
-            
-            <div class="input-group">
-                <label for="cipherText">Шифротекст</label>
-                <textarea id="cipherText" placeholder="Введите шифротекст для дешифрования"></textarea>
-            </div>
-            
-            <button class="btn" onclick="decrypt()">Дешифровать</button>
-            
-            <div id="decryptStatus" class="status"></div>
-            
-            <div class="result-container">
-                <div class="result-label">Результат:</div>
-                <div id="decryptedText" class="result-content"></div>
-            </div>
-            
-            <button class="btn btn-secondary" onclick="analyzeEntropy('decrypt')">Анализ энтропии</button>
-            
-            <div class="entropy-analysis" id="decryptEntropy" style="display: none;">
-                <h3>Анализ энтропии шифротекста</h3>
-                <div class="entropy-result" id="decryptEntropyResult"></div>
-                <div class="entropy-bar">
-                    <div class="entropy-value" id="decryptEntropyBar"></div>
-                </div>
-                <div class="entropy-labels">
-                    <span>0</span>
-                    <span>2</span>
-                    <span>4</span>
-                    <span>6</span>
-                    <span>8</span>
-                </div>
-            </div>
-            
-            <div class="iv-generation">
-                <h3>Генерация IV</h3>
-                <div>IV генерируется автоматически из ключа с помощью HMAC-SHA256</div>
-                <div id="decryptIVValue" class="result-content" style="margin-top: 10px; font-size: 0.8rem;"></div>
-            </div>
+            <span class="toggle-label">Homomorphic Encryption</span>
+        </div>
+        
+        <div class="form-group">
+            <label class="form-label">Ciphertext</label>
+            <textarea class="form-input form-textarea" id="cipherText" placeholder="Enter ciphertext for decryption"></textarea>
+        </div>
+        
+        <button class="button" onclick="decrypt()">Decrypt</button>
+        
+        <div id="decryptStatus" class="status"></div>
+        
+        <div class="result-container">
+            <div class="result-label">Result:</div>
+            <div id="decryptedText" class="result-content"></div>
+        </div>
+        
+        <button class="button button-secondary" onclick="analyzeEntropy('decrypt')">Analyze Entropy</button>
+        
+        <div class="result-container" id="decryptEntropy" style="display: none;">
+            <div class="result-label">Ciphertext Entropy Analysis:</div>
+            <div id="decryptEntropyResult" class="result-content"></div>
         </div>
     </div>
 
     <div class="technical-info">
-        <h3>Техническая информация</h3>
+        <h3>Technical Information</h3>
         <div class="info-grid">
             <div class="info-item">
-                <div class="info-label">Афинное преобразование</div>
+                <div class="info-label">Affine Transformation</div>
                 <div class="info-value">y = (11 * x + 19 + prevEncryptedByte) mod 256</div>
             </div>
             <div class="info-item">
-                <div class="info-label">Обратное преобразование</div>
+                <div class="info-label">Inverse Transformation</div>
                 <div class="info-value">x = (163 * (y - 19 - prevEncryptedByte)) mod 256</div>
             </div>
             <div class="info-item">
-                <div class="info-label">Генерация S-Box</div>
-                <div class="info-value">PBKDF2 с SHA-512, 100000 итераций</div>
+                <div class="info-label">S-Box Generation</div>
+                <div class="info-value">PBKDF2 with SHA-512, 100000 iterations</div>
             </div>
             <div class="info-item">
-                <div class="info-label">Генерация IV</div>
-                <div class="info-value">HMAC-SHA256 от ключа</极速div>
+                <div class="info-label">IV Generation</div>
+                <div class="info-value">HMAC-SHA256 from key</div>
             </div>
         </div>
     </div>
 
     <footer>
-        <div>TriBox &copy; 2025</div>
+        <div>CryptoBox &copy; 2025</div>
     </footer>
 
     <script>
-        // Глобальные переменные
+        // Global variables
         let staticSbox = null;
         let staticSboxInverse = null;
         let dynamicSbox = null;
@@ -480,12 +454,33 @@
         let lastEncryptedData = null;
         let lastEncryptedFormat = null;
 
-        // Афинное преобразование: y = (a * x + b + prevEncryptedByte) mod m
+        // Initialize toggle functionality
+        function initToggles() {
+            const toggles = document.querySelectorAll('.toggle');
+            toggles.forEach(toggle => {
+                toggle.addEventListener('click', function() {
+                    this.classList.toggle('active');
+                    
+                    const id = this.id;
+                    if (id === 'encryptCBCModeToggle') {
+                        document.getElementById('encryptCBCMode').checked = this.classList.contains('active');
+                    } else if (id === 'encryptHomophonicModeToggle') {
+                        document.getElementById('encryptHomophonicMode').checked = this.classList.contains('active');
+                    } else if (id === 'decryptCBCModeToggle') {
+                        document.getElementById('decryptCBCMode').checked = this.classList.contains('active');
+                    } else if (id === 'decryptHomophonicModeToggle') {
+                        document.getElementById('decryptHomophonicMode').checked = this.classList.contains('active');
+                    }
+                });
+            });
+        }
+
+        // Affine transformation: y = (a * x + b + prevEncryptedByte) mod m
         function affineTransform(x, prevEncryptedByte, a = 11, b = 19, m = 256) {
             return (a * x + b + prevEncryptedByte) % m;
         }
 
-        // Обратное афинное преобразование: x = a_inv * (y - b - prevEncryptedByte) mod m
+        // Inverse affine transformation: x = a_inv * (y - b - prevEncryptedByte) mod m
         function inverseAffineTransform(y, prevEncryptedByte, a = 11, b = 19, m = 256) {
             const a_inv = 163;
             let result = a_inv * (y - b - prevEncryptedByte);
@@ -494,12 +489,11 @@
             return result % m;
         }
 
-        // Генерация IV из ключа с помощью HMAC-SHA256
+        // Generate IV from key using HMAC-SHA256
         async function generateIVFromKey(key) {
             const encoder = new TextEncoder();
             const keyData = encoder.encode(key);
             
-            // Используем HMAC-SHA256 для генерации IV из ключа
             const cryptoKey = await crypto.subtle.importKey(
                 'raw',
                 keyData,
@@ -514,10 +508,10 @@
                 encoder.encode('IV_GENERATION')
             );
             
-            return new Uint8Array(iv).slice(0, 16); // Берем первые 16 байт
+            return new Uint8Array(iv).slice(0, 16);
         }
 
-        // Криптографически стойкое перемешивание Фишера-Йейтса
+        // Cryptographically secure Fisher-Yates shuffle
         async function cryptoShuffle(array, key, salt = "") {
             const encoder = new TextEncoder();
             
@@ -553,7 +547,7 @@
             return result;
         }
 
-        // Инициализация статического S-Box
+        // Initialize static S-Box
         async function initStaticSbox(key) {
             if (staticSbox !== null && currentKey === key) return;
             
@@ -561,7 +555,7 @@
             const encoder = new TextEncoder();
             
             const keyMaterial = await crypto.subtle.importKey(
-                '极速raw',
+                'raw',
                 encoder.encode(key),
                 {name: 'PBKDF2'},
                 false,
@@ -601,7 +595,7 @@
             }
         }
 
-        // Генерация динамического S-Box
+        // Create dynamic S-Box
         async function createDynamicSbox(key) {
             if (key === currentKey && dynamicSbox !== null) {
                 return {sbox: dynamicSbox, inverse: dynamicSboxInverse};
@@ -654,7 +648,7 @@
             return {sbox: dynamicSbox, inverse: dynamicSboxInverse};
         }
 
-        // Генерация омофонического S-Box
+        // Create homophonic S-Box
         async function createHomophonicSbox(key) {
             if (homophonicSbox !== null && currentKey === key) return;
             
@@ -667,14 +661,13 @@
                 }
             }
             
-            // Ключезависимое перемешивание ВСЕХ 4096 биграмм
             const shuffledBigrams = await cryptoShuffle(allBigrams, key, "homophonic_salt");
             
             homophonicSbox = new Array(16);
             homophonicSboxInverse = {};
             let bigramIndex = 0;
             
-            for (let r = 0; r< 16; r++) {
+            for (let r = 0; r < 16; r++) {
                 homophonicSbox[r] = new Array(16);
                 for (let c = 0; c < 16; c++) {
                     homophonicSbox[r][c] = shuffledBigrams.slice(bigramIndex, bigramIndex + 16);
@@ -687,19 +680,14 @@
             }
         }
 
-        // Функции шифрования с афинным преобразованием
+        // Encryption functions with affine transformation
         function encryptByte(byte, prevEncryptedByte, dynSbox) {
             const xorByte = byte ^ prevEncryptedByte;
             const r = (xorByte >> 4) & 0x0F;
             const c = xorByte & 0x0F;
             
-            // Static S-Box
             const staticValue = staticSbox[r][c];
-            
-            // Афинное преобразование между S-Box'ами с учетом предыдущего ЗАШИФРОВАННОГО байта
             const affineValue = affineTransform(staticValue, prevEncryptedByte);
-            
-            // Dynamic S-Box
             const newR = (affineValue >> 4) & 0x0F;
             const newC = affineValue & 0x0F;
             
@@ -707,28 +695,23 @@
         }
 
         function decryptByte(cipherByte, prevEncryptedByte, dynSboxInverse) {
-            // Dynamic S-Box (обратный)
             const dynamicValue = cipherByte;
             const staticValue = dynSboxInverse[dynamicValue];
-            
-            // Обратное афинное преобразование с учетом предыдущего ЗАШИФРОВАННОГО байта
             const affineValue = inverseAffineTransform(staticValue, prevEncryptedByte);
-            
-            // Static S-Box (обратный)
             const xorByte = staticSboxInverse[affineValue];
             
             return xorByte ^ prevEncryptedByte;
         }
 
-        // Базовое шифрование
+        // Base encryption
         async function encrypt() {
             const key = document.getElementById('encryptKey').value;
             const text = document.getElementById('plainText').value;
-            const useCBC = document.getElementById('encryptCBCMode').checked;
-            const useHomophonic = document.getElementById('encryptHomophonicMode').checked;
+            const useCBC = document.getElementById('encryptCBCModeToggle').classList.contains('active');
+            const useHomophonic = document.getElementById('encryptHomophonicModeToggle').classList.contains('active');
             
             if (!key || !text) {
-                showStatus('encryptStatus', 'error', 'Введите ключ и текст');
+                showStatus('encryptStatus', 'error', 'Please enter key and text');
                 return;
             }
             
@@ -736,13 +719,10 @@
                 await initStaticSbox(key);
                 const {sbox: dynSbox} = await createDynamicSbox(key);
                 if (useHomophonic) {
-                    await createHomophonic极速Sbox(key);
+                    await createHomophonicSbox(key);
                 }
                 
-                // Генерация IV из ключа
                 const iv = await generateIVFromKey(key);
-                document.getElementById('encryptIVValue').textContent = Array.from(iv).map(b => b.toString(16).padStart(2, '0')).join('');
-                
                 const encoder = new TextEncoder();
                 const data = encoder.encode(text);
                 
@@ -751,12 +731,10 @@
                 let resultText = '';
                 
                 for (let i = 0; i < data.length; i++) {
-                    // Для CBC используем IV или предыдущий зашифрованный байт, для обычного режима - 0
                     const currentXorValue = useCBC ? 
                         (i < iv.length ? iv[i] : resultBytes[i - iv.length]) : 
                         0;
                     
-                    // Передаем ПРЕДЫДУЩИЙ ЗАШИФРОВАННЫЙ байт в афинную функцию
                     const cipherByte = encryptByte(data[i], currentXorValue, dynSbox);
                     resultBytes[i] = cipherByte;
                     
@@ -784,21 +762,21 @@
                     lastEncryptedFormat = 'homophonic';
                 }
                 
-                showStatus('encryptStatus', 'success', `Успешно зашифровано ${data.length} байт`);
+                showStatus('encryptStatus', 'success', `Successfully encrypted ${data.length} bytes`);
             } catch (error) {
-                showStatus('encryptStatus', 'error', 'Ошибка при шифровании: ' + error.message);
+                showStatus('encryptStatus', 'error', 'Encryption error: ' + error.message);
             }
         }
 
-        // Базовое дешифрование
+        // Base decryption
         async function decrypt() {
             const key = document.getElementById('decryptKey').value;
             const cipherData = document.getElementById('cipherText').value;
-            const useCBC = document.getElementById('decryptCBCMode').checked;
-            const useHomophonic = document.getElementById('decryptHomophonicMode').checked;
+            const useCBC = document.getElementById('decryptCBCModeToggle').classList.contains('active');
+            const useHomophonic = document.getElementById('decryptHomophonicModeToggle').classList.contains('active');
             
             if (!key || !cipherData) {
-                showStatus('decryptStatus', 'error', 'Введите ключ и шифротекст');
+                showStatus('decryptStatus', 'error', 'Please enter key and ciphertext');
                 return;
             }
             
@@ -809,27 +787,25 @@
                     await createHomophonicSbox(key);
                 }
                 
-                // Генерация IV из ключа (такого же, как при шифровании)
                 const iv = await generateIVFromKey(key);
-                document.getElementById('decryptIVValue').textContent = Array.from(iv).极速map(b => b.toString(16).padStart(2, '0')).join('');
-                
                 let byteArray;
+                
                 if (useHomophonic) {
                     if (cipherData.length % 2 !== 0) {
-                        throw new Error('Неверная длина омофонического шифротекста');
+                        throw new Error('Invalid homophonic ciphertext length');
                     }
                     
                     byteArray = new Uint8Array(cipherData.length / 2);
                     for (let i = 0; i < cipherData.length; i += 2) {
                         const bigram = cipherData.substr(i, 2);
                         if (!(bigram in homophonicSboxInverse)) {
-                            throw new Error(`Неизвестная биграмма: ${bigram}`);
+                            throw new Error(`Unknown bigram: ${bigram}`);
                         }
                         byteArray[i/2] = homophonicSboxInverse[bigram];
                     }
                 } else {
                     if (!/^[0-9a-fA-F]+$/.test(cipherData) || cipherData.length % 2 !== 0) {
-                        throw new Error('Неверный формат HEX данных');
+                        throw new Error('Invalid HEX format');
                     }
                     
                     byteArray = new Uint8Array(cipherData.length / 2);
@@ -841,7 +817,6 @@
                 const result = new Uint8Array(byteArray.length);
                 
                 for (let i = 0; i < byteArray.length; i++) {
-                    // Для CBC используем IV или предыдущий зашифрованный байт, для обычного режима - 0
                     const currentXorValue = useCBC ? 
                         (i < iv.length ? iv[i] : byteArray[i - iv.length]) : 
                         0;
@@ -853,35 +828,31 @@
                 const textResult = decoder.decode(result);
                 document.getElementById('decryptedText').textContent = textResult;
                 
-                showStatus('decryptStatus', 'success', `Успешно дешифровано ${byteArray.length} байт`);
+                showStatus('decryptStatus', 'success', `Successfully decrypted ${byteArray.length} bytes`);
             } catch (error) {
-                showStatus('decryptStatus', 'error', 'Ошибка при дешифровании: ' + error.message);
+                showStatus('decryptStatus', 'error', 'Decryption error: ' + error.message);
             }
         }
 
-        // Функция для расчета энтропии Шеннона
+        // Calculate Shannon entropy
         function calculateShannonEntropy(data, isHex = false) {
             let byteData;
             
             if (isHex) {
-                // Для HEX: преобразуем строку HEX в байты
                 byteData = new Uint8Array(data.length / 2);
                 for (let i = 0; i < data.length; i += 2) {
                     byteData[i/2] = parseInt(data.substr(i, 2), 16);
                 }
             } else {
-                // Для текста: преобразуем строку в байты
                 const encoder = new TextEncoder();
                 byteData = encoder.encode(data);
             }
             
-            // Считаем частоту каждого байта
             const frequency = new Array(256).fill(0);
-            for (let i = 极速0; i < byteData.length; i++) {
+            for (let i = 0; i < byteData.length; i++) {
                 frequency[byteData[i]]++;
             }
             
-            // Вычисляем энтропию
             let entropy = 0;
             for (let i = 0; i < 256; i++) {
                 if (frequency[i] > 0) {
@@ -893,11 +864,11 @@
             return entropy;
         }
 
-        // Анализ энтропии
+        // Entropy analysis
         function analyzeEntropy(mode) {
             const useHomophonic = mode === 'encrypt' ? 
-                document.getElementById('encryptHomophonicMode').checked : 
-                document.getElementById('decryptHomophonicMode').checked;
+                document.getElementById('encryptHomophonicModeToggle').classList.contains('active') : 
+                document.getElementById('decryptHomophonicModeToggle').classList.contains('active');
             
             let data, isHex;
             
@@ -906,67 +877,60 @@
                 isHex = !useHomophonic;
             } else {
                 data = document.getElementById('cipherText').value;
-                isHex = !document.getElementById('decryptHomophonicMode').checked;
+                isHex = !document.getElementById('decryptHomophonicModeToggle').classList.contains('active');
             }
             
             if (!data) {
-                showStatus(mode + 'Status', 'error', 'Нет данных для анализа энтропии');
+                showStatus(mode + 'Status', 'error', 'No data for entropy analysis');
                 return;
             }
             
             try {
                 const entropy = calculateShannonEntropy(data, isHex);
-                const maxEntropy = isHex ? 8 : 6; // Максимальная энтропия: 8 для байтов, 6 для Base64-like
+                const maxEntropy = isHex ? 8 : 6;
                 const percentage = (entropy / maxEntropy) * 100;
                 
                 const resultElement = document.getElementById(mode + 'EntropyResult');
-                const barElement = document.getElementById(mode + 'EntropyBar');
                 const containerElement = document.getElementById(mode + 'Entropy');
                 
-                resultElement.textContent = `Энтропия Шеннона: ${entropy.toFixed(4)} бит/байт (${percentage.toFixed(1)}% от максимальной ${maxEntropy})`;
-                barElement.style.width = percentage + '%';
+                resultElement.textContent = `Shannon entropy: ${entropy.toFixed(4)} bits/byte (${percentage.toFixed(1)}% of maximum ${maxEntropy})`;
                 containerElement.style.display = 'block';
                 
-                // Обновляем максимальную метку для encrypt панели
-                if (mode === 'encrypt') {
-                    document.getElementById('entropyMaxLabel').textContent = maxEntropy.toString();
-                }
-                
             } catch (error) {
-                showStatus(mode + 'Status', 'error', 'Ошибка при анализе энтропии: ' + error.message);
+                showStatus(mode + 'Status', 'error', 'Entropy analysis error: ' + error.message);
             }
         }
 
-        // Вспомогательные функции
+        // Helper functions
         function showStatus(elementId, type, message) {
             const element = document.getElementById(elementId);
             element.textContent = message;
             element.className = 'status ' + type + ' visible';
             
-            // Автоматическое скрытие через 5 секунд
             setTimeout(() => {
                 element.className = 'status';
             }, 5000);
         }
 
-        // Тест обратимости (для отладки)
-        async function testReversibility() {
-            await initStaticSbox("test");
-            await createDynamicSbox("test");
+        // Initialize the application
+        document.addEventListener('DOMContentLoaded', function() {
+            initToggles();
             
-            console.log("=== ТЕСТ ОБРАТИМОСТИ ===");
-            for (let i = 0; i < 256; i++) {
-                const encrypted = encryptByte(i, 0, dynamicSbox);
-                const decrypted = decryptByte(encrypted, 0, dynamicSboxInverse);
-                
-                if (i !== decrypted) {
-                    console.error("Ошибка при byte:", i, "encrypted:", encrypted, "decrypted:", decrypted);
-                    return false;
-                }
-            }
-            console.log("Все преобразования обратимы!");
-            return true;
-        }
+            // Create hidden checkboxes for state management
+            const createHiddenCheckbox = (id, checked) => {
+                const checkbox = document.createElement('input');
+                checkbox.type = 'checkbox';
+                checkbox.id = id;
+                checkbox.checked = checked;
+                checkbox.style.display = 'none';
+                document.body.appendChild(checkbox);
+            };
+            
+            createHiddenCheckbox('encryptCBCMode', false);
+            createHiddenCheckbox('encryptHomophonicMode', true);
+            createHiddenCheckbox('decryptCBCMode', false);
+            createHiddenCheckbox('decryptHomophonicMode', true);
+        });
     </script>
 </body>
 </html>
