@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>TriBox Enhanced - Fixed S-Box Usage</title>
+    <title>TriBox Enhanced - Fixed Encryption/Decryption</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         :root {
@@ -561,7 +561,7 @@
                 
                 <div class="input-group">
                     <label for="plainText">Text to Encrypt</label>
-                    <textarea id="plainText" placeholder="Enter text to encrypt">11111111</textarea>
+                    <textarea id="plainText" placeholder="Enter text to encrypt">Test message 123</textarea>
                 </div>
                 
                 <button class="btn" onclick="encrypt()"><i class="fas fa-shield-alt"></i> Encrypt</button>
@@ -632,7 +632,7 @@
                     </div>
                     
                     <div class="checkbox-container">
-                        <input type="checkbox" id"decryptHomophonicMode" checked>
+                        <input type="checkbox" id="decryptHomophonicMode" checked>
                         <label for="decryptHomophonicMode">Homophonic Encryption</label>
                     </div>
                 </div>
@@ -1201,6 +1201,37 @@
                 console.error('Failed to copy: ', err);
             });
         }
+
+        // Fix all button functionality
+        function fixAll() {
+            // Reset all inputs to default values
+            document.getElementById('encryptKey').value = 'secret key';
+            document.getElementById('decryptKey').value = 'secret key';
+            document.getElementById('plainText').value = 'Test message 123';
+            document.getElementById('cipherText').value = '';
+            
+            // Reset checkboxes
+            document.getElementById('encryptCBCMode').checked = false;
+            document.getElementById('decryptCBCMode').checked = false;
+            document.getElementById('encryptHomophonicMode').checked = true;
+            document.getElementById('decryptHomophonicMode').checked = true;
+            
+            // Clear results
+            document.getElementById('cipherHex').textContent = '';
+            document.getElementById('decryptedText').textContent = '';
+            document.getElementById('encryptIVValue').textContent = '';
+            document.getElementById('decryptIVValue').textContent = '';
+            
+            // Hide entropy analysis
+            document.getElementById('encryptEntropy').style.display = 'none';
+            document.getElementById('decryptEntropy').style.display = 'none';
+            
+            // Clear status messages
+            document.getElementById('encryptStatus').className = 'status';
+            document.getElementById('decryptStatus').className = 'status';
+            
+            showStatus('encryptStatus', 'success', 'All settings have been reset to defaults');
+        }
     </script>
 </body>
-</html>
+    </html>
