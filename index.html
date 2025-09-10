@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Омонофонный шифр с аффинным преобразованием</title>
     <style>
+        /* Стили остаются без изменений */
         :root {
             --primary-color: #2c3e50;
             --secondary-color: #3498db;
@@ -230,25 +231,12 @@
         </div>
         
         <div class="panel key-management">
-            <h2>Управление ключами и таблица омонофонов</h2>
+            <h2>Таблица омонофонов (постоянная на основе частот)</h2>
             <div class="input-group">
-                <label for="key-phrase">Фраза для генерации ключа:</label>
-                <div class="flex-row">
-                    <input type="text" id="key-phrase" placeholder="Введите фразу для генерации" value="SECRETKEY">
-                    <button id="generate-keys">Сгенерировать ключи</button>
-                </div>
-            </div>
-            
-            <div class="input-group">
-                <label>Таблица омонофонов (генерируется автоматически):</label>
+                <label>Таблица омонофонов:</label>
                 <div class="key-visualization" id="key-table">
                     <!-- Сюда будет вставлена таблица ключей -->
                 </div>
-            </div>
-            
-            <div class="flex-row">
-                <button id="save-keys">Сохранить ключи</button>
-                <button id="load-keys" class="secondary">Загрузить ключи</button>
             </div>
         </div>
     </div>
@@ -265,40 +253,20 @@
         
         // Инициализация при загрузке страницы
         document.addEventListener('DOMContentLoaded', function() {
-            // Генерация начальной таблицы омонофонов
-            generateHomophoneTables('CRYPTO');
+            // Генерация постоянной таблицы омонофонов на основе частот
+            generateHomophoneTables();
             
             // Назначение обработчиков событий
             document.getElementById('encrypt-btn').addEventListener('click', encryptText);
             document.getElementById('decrypt-btn').addEventListener('click', decryptText);
-            document.getElementById('generate-keys').addEventListener('click', generateKeysFromPhrase);
-            document.getElementById('save-keys').addEventListener('click', saveKeys);
-            document.getElementById('load-keys').addEventListener('click', loadKeys);
         });
         
-        // Генерация таблиц омонофонов на основе ключевой фразы
-        function generateHomophoneTables(keyPhrase) {
+        // Генерация ПОСТОЯННОЙ таблицы омонофонов на основе частот
+        function generateHomophoneTables() {
             // Очистка предыдущих данных
             homophoneMap = {};
             reverseHomophoneMap = {};
             
-            // Нормализация ключевой фразы (только буквы, в верхнем регистре)
-            const normalizedKey = keyPhrase.toUpperCase().replace(/[^A-Z]/g, '');
-            
-            // Создание числового представления ключа для детерминированной генерации
-            let keySum = 0;
-            for (let i = 0; i < normalizedKey.length; i++) {
-                keySum += ALPHABET.indexOf(normalizedKey[i]);
-            }
-            
-            // Инициализация генератора псевдослучайных чисел с seed на основе ключа
-            let seed = keySum;
-            function seededRandom() {
-                seed = (seed * 9301 + 49297) % 233280;
-                return seed / 233280;
-            }
-            
-            // Распределение омонофонов по буквам пропорционально частотам в английском языке
             // Частоты букв в английском языке (приблизительные)
             const letterFrequencies = {
                 'A': 8.2, 'B': 1.5, 'C': 2.8, 'D': 4.3, 'E': 12.7,
@@ -314,27 +282,35 @@
                 totalWeight += letterFrequencies[letter];
             }
             
-            // Распределение омонофонов
-            const usedNumbers = new Set();
+            // Распределение омонофонов пропорционально частотам
+            let currentNumber = 0;
+            
             for (let letter of ALPHABET) {
                 const frequency = letterFrequencies[letter];
                 const homophoneCount = Math.max(1, Math.round(frequency / totalWeight * HOMOPHONE_POOL_SIZE));
                 
                 homophoneMap[letter] = [];
                 
-                // Генерация уникальных омонофонов для этой буквы
-                while (homophoneMap[letter].length < homophoneCount) {
-                    const num = Math.floor(seededRandom() * HOMOPHONE_POOL_SIZE);
-                    
-                    if (!usedNumbers.has(num)) {
-                        homophoneMap[letter].push(num);
-                        usedNumbers.add(num);
-                        reverseHomophoneMap[num] = letter;
+                // Назначаем последовательные числа каждой букве
+                for (let i = 0; i < homophoneCount; i++) {
+                    if (currentNumber < HOMOPHONE_POOL_SIZE) {
+                        homophoneMap[letter].push(currentNumber);
+                        reverseHomophoneMap[currentNumber] = letter;
+                        currentNumber++;
                     }
                 }
-                
-                // Сортировка для удобства
-                homophoneMap[letter].sort((a, b) => a - b);
+            }
+            
+            // Если остались свободные числа, распределяем их по частым буквам
+            while (currentNumber < HOMOPHONE_POOL_SIZE) {
+                for (let letter of ALPHABET) {
+                    if (currentNumber >= HOMOPHONE_POOL_SIZE) break;
+                    if (letterFrequencies[letter] > 5) { // Частые буквы
+                        homophoneMap[letter].push(currentNumber);
+                        reverseHomophoneMap[currentNumber] = letter;
+                        currentNumber++;
+                    }
+                }
             }
             
             // Визуализация таблицы омонофонов
@@ -365,13 +341,18 @@
         
         // Аффинное преобразование (нелинейная замена на решётке Z₂₆)
         function affineTransform(letter, key, position, encrypt = true) {
-            const a = 15; // Взаимно простое с 26
+            const a = 15; // Взаимно простое с 26 (15 и 26 взаимно просты)
             const aInverse = 7; // Обратное к a mod 26 (15*7=105≡1 mod 26)
             
-            // Преобразование ключа в числовое значение для влияния на преобразование
+            // Преобразование ключа в числовое значение
             let keyValue = 0;
-            for (let i = 0; i < key.length; i++) {
-                keyValue += ALPHABET.indexOf(key[i]);
+            if (key && key.length > 0) {
+                for (let i = 0; i < key.length; i++) {
+                    const keyCharIndex = ALPHABET.indexOf(key[i]);
+                    if (keyCharIndex !== -1) {
+                        keyValue = (keyValue + keyCharIndex) % ALPHABET_SIZE;
+                    }
+                }
             }
             
             const letterIndex = ALPHABET.indexOf(letter);
@@ -385,8 +366,7 @@
                 return ALPHABET[(a * letterIndex + b) % ALPHABET_SIZE];
             } else {
                 // Расшифрование: D(x) = a⁻¹(x - b) mod 26
-                let result = aInverse * (letterIndex - b);
-                while (result < 0) result += ALPHABET_SIZE;
+                let result = aInverse * (letterIndex - b + ALPHABET_SIZE);
                 return ALPHABET[result % ALPHABET_SIZE];
             }
         }
@@ -413,15 +393,18 @@
                 let position = 0;
                 for (let char of plaintext) {
                     if (ALPHABET.includes(char)) {
-                        // Применяем аффинное преобразование
+                        // 1. Аффинное преобразование: буква → другая буква
                         const transformedChar = affineTransform(char, key, position, true);
                         
-                        // Выбираем случайный омонофон для преобразованной буквы
+                        // 2. Случайный выбор омонофона из целевой буквы
                         const homophones = homophoneMap[transformedChar];
-                        const randomIndex = Math.floor(Math.random() * homophones.length);
-                        const homophone = homophones[randomIndex];
-                        
-                        ciphertext.push(homophone.toString().padStart(3, '0'));
+                        if (homophones && homophones.length > 0) {
+                            const randomIndex = Math.floor(Math.random() * homophones.length);
+                            const homophone = homophones[randomIndex];
+                            ciphertext.push(homophone.toString().padStart(3, '0'));
+                        } else {
+                            ciphertext.push('???');
+                        }
                         position++;
                     } else {
                         // Не-буквенные символы добавляем как есть
@@ -432,6 +415,7 @@
                 resultElement.innerHTML = ciphertext.join(' ');
             } catch (error) {
                 resultElement.innerHTML = `<span class="error">Ошибка шифрования: ${error.message}</span>`;
+                console.error("Ошибка шифрования:", error);
             }
         }
         
@@ -464,12 +448,12 @@
                     if (/^\d+$/.test(numStr)) {
                         const num = parseInt(numStr, 10);
                         
-                        // Находим букву по омонофону
+                        // 1. Находим букву по омонофону
                         if (reverseHomophoneMap.hasOwnProperty(num)) {
-                            const letter = reverseHomophoneMap[num];
+                            const transformedChar = reverseHomophoneMap[num];
                             
-                            // Применяем обратное аффинное преобразование
-                            const originalChar = affineTransform(letter, key, position, false);
+                            // 2. Обратное аффинное преобразование
+                            const originalChar = affineTransform(transformedChar, key, position, false);
                             plaintext.push(originalChar);
                             position++;
                         } else {
@@ -484,54 +468,7 @@
                 resultElement.textContent = plaintext.join('');
             } catch (error) {
                 resultElement.innerHTML = `<span class="error">Ошибка расшифрования: ${error.message}</span>`;
-            }
-        }
-        
-        // Генерация ключей из фразы
-        function generateKeysFromPhrase() {
-            const phrase = document.getElementById('key-phrase').value;
-            if (phrase) {
-                generateHomophoneTables(phrase);
-                document.getElementById('encryption-key').value = phrase;
-                document.getElementById('decryption-key').value = phrase;
-                
-                const keyTable = document.getElementById('key-table');
-                keyTable.innerHTML = '<span class="success">Ключи успешно сгенерированы</span>';
-                setTimeout(() => renderKeyTable(), 1000);
-            }
-        }
-        
-        // Сохранение ключей в LocalStorage
-        function saveKeys() {
-            try {
-                const keysData = {
-                    homophoneMap: homophoneMap,
-                    reverseHomophoneMap: reverseHomophoneMap
-                };
-                
-                localStorage.setItem('homophoneCipherKeys', JSON.stringify(keysData));
-                alert('Ключи успешно сохранены в браузере!');
-            } catch (error) {
-                alert('Ошибка при сохранении ключей: ' + error.message);
-            }
-        }
-        
-        // Загрузка ключей из LocalStorage
-        function loadKeys() {
-            try {
-                const savedKeys = localStorage.getItem('homophoneCipherKeys');
-                if (savedKeys) {
-                    const keysData = JSON.parse(savedKeys);
-                    homophoneMap = keysData.homophoneMap;
-                    reverseHomophoneMap = keysData.reverseHomophoneMap;
-                    
-                    renderKeyTable();
-                    alert('Ключи успешно загружены!');
-                } else {
-                    alert('Сохранённые ключи не найдены.');
-                }
-            } catch (error) {
-                alert('Ошибка при загрузке ключей: ' + error.message);
+                console.error("Ошибка расшифрования:", error);
             }
         }
     </script>
