@@ -3,9 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Омонофонный шифр с аффинным преобразованием</title>
+    <title>Омонофонный шифр с CBC-режимом</title>
     <style>
-        /* Стили остаются без изменений */
         :root {
             --primary-color: #2c3e50;
             --secondary-color: #3498db;
@@ -190,8 +189,8 @@
 <body>
     <div class="container">
         <header>
-            <h1>Омонофонный шифр с аффинным преобразованием</h1>
-            <p class="description">Профессиональная реализация шифра с нелинейным преобразованием на основе решётки Z₂₆</p>
+            <h1>Омонофонный шифр с CBC-режимом</h1>
+            <p class="description">Усиленная версия с зависимостью от предыдущего шифртекста</p>
         </header>
         
         <div class="main-content">
@@ -248,32 +247,32 @@
         
         // ПОСТОЯННАЯ таблица омонофонов (уникальные двузначные числа 00-99)
         const homophoneMap = {
-    'E': ['00', '01', '02', '03', '04', '05', '06', '07'],
-    'T': ['08', '09', '10', '11', '12', '13', '14'],  
-    'A': ['15', '16', '17', '18', '19', '20'],
-    'O': ['21', '22', '23', '24', '25', '26'],
-    'I': ['27', '28', '29', '30', '31'],
-    'N': ['32', '33', '34', '35', '36'],
-    'S': ['37', '38', '39', '40'],
-    'H': ['41', '42', '43', '44'],
-    'R': ['45', '46', '47', '48'],
-    'D': ['49', '50', '51'],
-    'L': ['52', '53', '54'],
-    'C': ['55', '56', '57'],
-    'U': ['58', '59', '60'],
-    'M': ['61', '62', '63'],
-    'W': ['64', '65', '66'],
-    'F': ['67', '68', '69'],
-    'G': ['70', '71', '72'],
-    'Y': ['73', '74', '75'],
-    'P': ['76', '77', '78'],
-    'B': ['79', '80', '81'],
-    'V': ['82', '83', '84'],
-    'K': ['85', '86', '87'],
-    'J': ['88', '89', '90'],
-    'X': ['91', '92', '93'],
-    'Q': ['94', '95', '96'],
-    'Z': ['97', '98', '99']
+            'E': ['00', '01', '02', '03', '04', '05', '06', '07'],
+            'T': ['08', '09', '10', '11', '12', '13', '14'],  
+            'A': ['15', '16', '17', '18', '19', '20'],
+            'O': ['21', '22', '23', '24', '25', '26'],
+            'I': ['27', '28', '29', '30', '31'],
+            'N': ['32', '33', '34', '35', '36'],
+            'S': ['37', '38', '39', '40'],
+            'H': ['41', '42', '43', '44'],
+            'R': ['45', '46', '47', '48'],
+            'D': ['49', '50', '51'],
+            'L': ['52', '53', '54'],
+            'C': ['55', '56', '57'],
+            'U': ['58', '59', '60'],
+            'M': ['61', '62', '63'],
+            'W': ['64', '65', '66'],
+            'F': ['67', '68', '69'],
+            'G': ['70', '71', '72'],
+            'Y': ['73', '74', '75'],
+            'P': ['76', '77', '78'],
+            'B': ['79', '80', '81'],
+            'V': ['82', '83', '84'],
+            'K': ['85', '86', '87'],
+            'J': ['88', '89', '90'],
+            'X': ['91', '92', '93'],
+            'Q': ['94', '95', '96'],
+            'Z': ['97', '98', '99']
         };
         
         // Обратное отображение (омонофон → буква)
@@ -281,6 +280,24 @@
         for (const [letter, numbers] of Object.entries(homophoneMap)) {
             for (const number of numbers) {
                 reverseHomophoneMap[number] = letter;
+            }
+        }
+        
+        // Виженер с CBC-режимом
+        function vigenereCBC(letter, key, position, prevCipherNum = 0, encrypt = true) {
+            const keyChar = key[position % key.length];
+            const keyNum = ALPHABET.indexOf(keyChar);
+            const letterNum = ALPHABET.indexOf(letter);
+            
+            if (encrypt) {
+                // Шифрование: (x + k + prev) mod 26
+                const cipherNum = (letterNum + keyNum + prevCipherNum) % ALPHABET_SIZE;
+                return { char: ALPHABET[cipherNum], num: cipherNum };
+            } else {
+                // Расшифрование: (c - k - prev) mod 26
+                let plainNum = (letterNum - keyNum - prevCipherNum) % ALPHABET_SIZE;
+                if (plainNum < 0) plainNum += ALPHABET_SIZE;
+                return { char: ALPHABET[plainNum], num: plainNum };
             }
         }
         
@@ -316,38 +333,6 @@
             }
         }
         
-        // Аффинное преобразование (нелинейная замена на решётке Z₂₆)
-        function affineTransform(letter, key, position, encrypt = true) {
-            const a = 15; // Взаимно простое с 26 (15 и 26 взаимно просты)
-            const aInverse = 7; // Обратное к a mod 26 (15*7=105≡1 mod 26)
-            
-            // Преобразование ключа в числовое значение
-            let keyValue = 0;
-            if (key && key.length > 0) {
-                for (let i = 0; i < key.length; i++) {
-                    const keyCharIndex = ALPHABET.indexOf(key[i]);
-                    if (keyCharIndex !== -1) {
-                        keyValue = (keyValue + keyCharIndex) % ALPHABET_SIZE;
-                    }
-                }
-            }
-            
-            const letterIndex = ALPHABET.indexOf(letter);
-            if (letterIndex === -1) return letter; // Не буква
-            
-            // Добавляем влияние позиции и ключа
-            const b = (keyValue + position) % ALPHABET_SIZE;
-            
-            if (encrypt) {
-                // Шифрование: E(x) = (ax + b) mod 26
-                return ALPHABET[(a * letterIndex + b) % ALPHABET_SIZE];
-            } else {
-                // Расшифрование: D(x) = a⁻¹(x - b) mod 26
-                let result = aInverse * (letterIndex - b + ALPHABET_SIZE);
-                return ALPHABET[result % ALPHABET_SIZE];
-            }
-        }
-        
         // Шифрование текста
         function encryptText() {
             const key = document.getElementById('encryption-key').value.toUpperCase().replace(/[^A-Z]/g, '');
@@ -365,20 +350,22 @@
             }
             
             let ciphertext = [];
+            let prevCipherNum = 0;
             
             try {
                 let position = 0;
                 for (let char of plaintext) {
                     if (ALPHABET.includes(char)) {
-                        // 1. Аффинное преобразование: буква → другая буква
-                        const transformedChar = affineTransform(char, key, position, true);
+                        // 1. Виженер с CBC-режимом
+                        const transformed = vigenereCBC(char, key, position, prevCipherNum, true);
                         
                         // 2. Случайный выбор омонофона из целевой буквы
-                        const homophones = homophoneMap[transformedChar];
+                        const homophones = homophoneMap[transformed.char];
                         if (homophones && homophones.length > 0) {
                             const randomIndex = Math.floor(Math.random() * homophones.length);
                             const homophone = homophones[randomIndex];
                             ciphertext.push(homophone);
+                            prevCipherNum = transformed.num;
                         } else {
                             ciphertext.push('??');
                         }
@@ -414,6 +401,7 @@
             
             let plaintext = [];
             const cipherNumbers = ciphertext.split(/\s+/);
+            let prevCipherNum = 0;
             
             try {
                 let position = 0;
@@ -425,11 +413,13 @@
                     if (/^\d{2}$/.test(numStr)) {
                         // 1. Находим букву по омонофону
                         if (reverseHomophoneMap.hasOwnProperty(numStr)) {
-                            const transformedChar = reverseHomophoneMap[numStr];
+                            const cipherChar = reverseHomophoneMap[numStr];
+                            const cipherNum = ALPHABET.indexOf(cipherChar);
                             
-                            // 2. Обратное аффинное преобразование
-                            const originalChar = affineTransform(transformedChar, key, position, false);
-                            plaintext.push(originalChar);
+                            // 2. Обратное преобразование Виженера с CBC-режимом
+                            const originalChar = vigenereCBC(cipherChar, key, position, prevCipherNum, false);
+                            plaintext.push(originalChar.char);
+                            prevCipherNum = cipherNum;
                             position++;
                         } else {
                             plaintext.push('?');
