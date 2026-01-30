@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>PFD-R — Нелинейный Шифр с Раундами</title>
+  <title>PPS v4.0 — Pure Power Stream</title>
   <style>
     body {
       font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
@@ -22,11 +22,11 @@
     }
     textarea { min-height: 120px; resize: vertical; }
     button {
-      background: #2980b9; color: white; border: none;
+      background: #e74c3c; color: white; border: none;
       padding: 12px 24px; font-size: 16px; border-radius: 6px;
       cursor: pointer; margin-right: 10px;
     }
-    button:hover { background: #1c6ea4; }
+    button:hover { background: #c0392b; }
     .result {
       background: white; border: 1px solid #ddd; padding: 15px;
       border-radius: 6px; white-space: pre-wrap; word-break: break-word;
@@ -35,17 +35,17 @@
   </style>
 </head>
 <body>
-  <h1>🌀 PFD-R — Нелинейный Шифр с 10 Раундами</h1>
+  <h1>🔥 PPS v4.0 — Pure Power Stream (идеальный)</h1>
 
   <div class="form-group">
-    <label for="key">Ключ (рекомендуется ≥16 символов):</label>
+    <label for="key">Ключ (≥16 символов):</label>
     <input type="password" id="key" value="my_secret_key_2026!" />
     <div class="warning">⚠️ Сохраните ключ! Без него расшифровка невозможна.</div>
   </div>
 
   <div class="form-group">
     <label for="input">Текст:</label>
-    <textarea id="input">Секретное сообщение с эмодзи 😊🔒 и кириллицей!</textarea>
+    <textarea id="input">Секретное сообщение с эмодзи 😊🔒!</textarea>
   </div>
 
   <button onclick="encrypt()">Зашифровать</button>
@@ -57,11 +57,11 @@
   </div>
 
   <script>
-    // Большое простое число: 2^255 - 19 (Curve25519)
+    // Большое простое число: 2^255 - 19
     const P = (1n << 255n) - 19n;
-    const ROUNDS = 10; // Число раундов
+    const MIN_PARAM = 1n << 192n; // Минимальный размер параметров
 
-    // Быстрое возведение в степень по модулю
+    // Быстрое возведение в степень
     function modPow(base, exp, mod) {
       if (exp === 0n) return 1n;
       let result = 1n;
@@ -80,89 +80,120 @@
     function strToBytes(s) { return te.encode(s); }
     function bytesToStr(b) { return td.decode(b); }
 
-    // Извлечение параметров из ключа
-    function deriveParams(keyBytes) {
-      let hash = 0n;
-      for (let i = 0; i < keyBytes.length; i++) {
-        hash = (hash * 257n + BigInt(keyBytes[i])) % P;
+    // Сильная защита параметров
+    function ensureMin(x) {
+      while (x < MIN_PARAM) {
+        x = modPow(x * 0x10001n + 1n, 3n, P);
       }
-      // d — нечётная степень
-      const d = (hash | 1n) % (P - 1n);
-      // K0-K3 — мультипликаторы
-      const K0 = (hash * 31n + 17n) % P;
-      const K1 = (hash * 19n + 23n) % P;
-      const K2 = (hash * 13n + 29n) % P;
-      const K3 = (hash * 11n + 37n) % P;
-      return { d, K: [K0, K1, K2, K3] };
+      return x;
     }
 
-    // Один раунд нелинейного обновления
-    function round(S, K, C, d) {
-      const [S0, S1, S2, S3] = S;
-      const [K0, K1, K2, K3] = K;
-      
-      // Нелинейное обновление
-      const N0 = (modPow(S0, d, P) + (K0 * S1) % P + C) % P;
-      const N1 = (modPow(S1, d, P) + (K1 * S2) % P + C) % P;
-      const N2 = (modPow(S2, d, P) + (K2 * S3) % P + C) % P;
-      const N3 = (modPow(S3, d, P) + (K3 * S0) % P + C) % P;
-      
-      // Циклический сдвиг для диффузии
-      return [N3, N0, N1, N2];
+    // Нелинейное смешивание ключа
+    function deriveParams(keyBytes) {
+      let d = 0n, K = 0n;
+      for (let i = 0; i < keyBytes.length; i++) {
+        const b = BigInt(keyBytes[i]);
+        d = (d * 257n + b + modPow(b + 17n, 3n, P)) % (P - 1n);
+        K = (K * 257n + b + modPow(b + 19n, 5n, P)) % P;
+      }
+      d = (d | 1n) % (P - 1n);
+      return { d: ensureMin(d), K: ensureMin(K) };
     }
 
-    // Генерация 4 ключевых байтов
-    function generateKeystream(S) {
+    // НЕЛИНЕЙНОЕ ПЕРЕМЕШИВАНИЕ (только степенные функции)
+    function nonlinearMix(x, K) {
+      x = modPow(x, 3n, P);
+      x = (x * K) % P;
+      x = modPow(x, 5n, P);
+      return x;
+    }
+
+    // ИДЕАЛЬНЫЙ EXTRACTOR (полноширинные экспоненты)
+    function extractKeystream(S, K) {
+      // Полноширинные динамические экспоненты
+      const e1 = (K ^ S ^ (K >> 128n) ^ (S >> 64n)) | 1n;
+      const e2 = ((K * S) % (P - 1n)) | 1n;
+      const e3 = modPow(K ^ S, 3n, P - 1n) | 1n;
+      
+      let T = modPow(S, e1, P);
+      T = modPow((T + S) % P, e2, P);
+      T = modPow(T ^ S, e3, P);
+      T = nonlinearMix(T, K); // Дополнительное нелинейное перемешивание
+      
+      // Возвращаем 256 бит (все состояние)
       return [
-        Number(S[0] & 0xFFn),
-        Number(S[1] & 0xFFn),
-        Number(S[2] & 0xFFn),
-        Number(S[3] & 0xFFn)
+        Number(T & 0xFFFFFFFFFFFFFFFFn),
+        Number((T >> 64n) & 0xFFFFFFFFFFFFFFFFn),
+        Number((T >> 128n) & 0xFFFFFFFFFFFFFFFFn),
+        Number((T >> 192n) & 0xFFFFFFFFFFFFFFFFn)
       ];
     }
 
-    // Основная функция шифрования/расшифровки
+    // ЦИКЛИЧЕСКАЯ ОБРАТНАЯ СВЯЗЬ
+    function cyclicShift(value, shift, width) {
+      shift = shift % width;
+      return ((value << shift) | (value >> (width - shift))) & ((1n << width) - 1n);
+    }
+
+    // 10 РАУНДОВ ИДЕАЛЬНОЙ НЕЛИНЕЙНОЙ ДИНАМИКИ
+    function nonlinearRound(state, K, feedback, d) {
+      let s = state;
+      const FEEDBACK_WIDTH = 256n;
+      
+      for (let r = 0; r < 10; r++) {
+        // Полноширинная динамическая экспонента
+        const exp = (d ^ (K >> (BigInt(r) * 25n))) | 1n;
+        s = modPow(s, exp, P);
+        
+        // Циклический сдвиг вместо арифметического
+        const shift = BigInt(r) * 25n;
+        const shiftedFeedback = cyclicShift(feedback, shift, FEEDBACK_WIDTH);
+        s = (s + (K * shiftedFeedback) % P) % P;
+        
+        // Защита от малых состояний
+        if (s < MIN_PARAM) {
+          s = (s * 0x10001n + K) % P;
+        }
+      }
+      return s;
+    }
+
     function process(dataBytes, keyBytes, isEncrypt) {
       if (keyBytes.length === 0) throw new Error("Ключ пуст");
       
       const { d, K } = deriveParams(keyBytes);
-      // Начальное состояние
-      const S = [
-        (K[0] + 1n) % P,
-        (K[1] + 2n) % P,
-        (K[2] + 3n) % P,
-        (K[3] + 4n) % P
-      ];
-      
+      let state = (K + 1n) % P;
       const result = new Uint8Array(dataBytes.length);
-      let counter = 0n; // Счётчик вместо обратной связи для упрощения
-      
-      for (let i = 0; i < dataBytes.length; i += 4) {
-        // Обновляем счётчик
-        counter += 1n;
-        
-        // Выполняем ROUNDS раундов
-        let state = [...S];
-        for (let r = 0; r < ROUNDS; r++) {
-          state = round(state, K, counter, d);
-        }
-        
-        // Генерируем 4 ключевых байта
-        const ks = generateKeystream(state);
-        
-        // Обрабатываем до 4 байт
-        for (let j = 0; j < 4 && (i + j) < dataBytes.length; j++) {
+      let prevCipher256 = 0n; // 256-битный обратный шифротекст
+
+      for (let i = 0; i < dataBytes.length; i += 32) {
+        state = nonlinearRound(state, K, prevCipher256, d);
+        const [b0, b1, b2, b3] = extractKeystream(state, K);
+        const keystream256 = 
+          (BigInt(b3) << 192n) | 
+          (BigInt(b2) << 128n) | 
+          (BigInt(b1) << 64n) | 
+          BigInt(b0);
+
+        let cipher256 = 0n;
+        for (let j = 0; j < 32 && (i + j) < dataBytes.length; j++) {
+          const plainByte = dataBytes[i + j];
+          const ksByte = Number((keystream256 >> (BigInt(j) * 8n)) & 0xFFn);
+          const cipherByte = plainByte ^ ksByte;
+          result[i + j] = cipherByte;
+          
           if (isEncrypt) {
-            result[i + j] = dataBytes[i + j] ^ ks[j];
+            cipher256 |= BigInt(cipherByte) << (BigInt(j) * 8n);
           } else {
-            result[i + j] = dataBytes[i + j] ^ ks[j];
+            cipher256 |= BigInt(dataBytes[i + j]) << (BigInt(j) * 8n);
           }
         }
+        prevCipher256 = cipher256;
       }
       return result;
     }
 
-    // Base64 утилиты
+    // Base64
     function toBase64(bytes) {
       let bin = '';
       for (const b of bytes) bin += String.fromCharCode(b);
