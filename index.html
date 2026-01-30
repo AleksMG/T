@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>NCFB Шифратор</title>
+  <title>PFD-R — Нелинейный Шифр с Раундами</title>
   <style>
     body {
       font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
@@ -13,69 +13,39 @@
       background: #f9f9f9;
       color: #333;
     }
-    h1 {
-      text-align: center;
-      color: #2c3e50;
-    }
-    .form-group {
-      margin-bottom: 20px;
-    }
-    label {
-      display: block;
-      margin-bottom: 6px;
-      font-weight: 600;
-    }
+    h1 { text-align: center; color: #2c3e50; }
+    .form-group { margin-bottom: 20px; }
+    label { display: block; margin-bottom: 6px; font-weight: 600; }
     input, textarea {
-      width: 100%;
-      padding: 10px;
-      border: 1px solid #ccc;
-      border-radius: 6px;
-      font-size: 15px;
-      box-sizing: border-box;
+      width: 100%; padding: 10px; border: 1px solid #ccc;
+      border-radius: 6px; font-size: 15px; box-sizing: border-box;
     }
-    textarea {
-      min-height: 120px;
-      resize: vertical;
-    }
+    textarea { min-height: 120px; resize: vertical; }
     button {
-      background: #3498db;
-      color: white;
-      border: none;
-      padding: 12px 24px;
-      font-size: 16px;
-      border-radius: 6px;
-      cursor: pointer;
-      margin-right: 10px;
+      background: #2980b9; color: white; border: none;
+      padding: 12px 24px; font-size: 16px; border-radius: 6px;
+      cursor: pointer; margin-right: 10px;
     }
-    button:hover {      background: #2980b9;
-    }
+    button:hover { background: #1c6ea4; }
     .result {
-      background: white;
-      border: 1px solid #ddd;
-      padding: 15px;
-      border-radius: 6px;
-      white-space: pre-wrap;
-      word-break: break-word;
+      background: white; border: 1px solid #ddd; padding: 15px;
+      border-radius: 6px; white-space: pre-wrap; word-break: break-word;
     }
-    .warning {
-      color: #e74c3c;
-      font-size: 14px;
-      margin-top: 5px;
-    }
+    .warning { color: #e74c3c; font-size: 14px; margin-top: 5px; }
   </style>
 </head>
 <body>
-  <h1>🔐 NCFB — Нелинейный Шифр с Обратной Связью</h1>
+  <h1>🌀 PFD-R — Нелинейный Шифр с 10 Раундами</h1>
 
   <div class="form-group">
-    <label for="key">Ключ (минимум 8 символов рекомендуется):</label>
-    <input type="password" id="key" placeholder="Введите секретный ключ" value="mysecretkey123" />
+    <label for="key">Ключ (рекомендуется ≥16 символов):</label>
+    <input type="password" id="key" value="my_secret_key_2026!" />
     <div class="warning">⚠️ Сохраните ключ! Без него расшифровка невозможна.</div>
   </div>
 
   <div class="form-group">
-    <label for="input">Исходный текст:</label>
-    <textarea id="input" placeholder="Введите текст для шифрования или расшифровки">Привет, мир! 😊 Это секретное сообщение.</textarea>
+    <label for="input">Текст:</label>
+    <textarea id="input">Секретное сообщение с эмодзи 😊🔒 и кириллицей!</textarea>
   </div>
 
   <button onclick="encrypt()">Зашифровать</button>
@@ -83,87 +53,138 @@
 
   <div class="form-group">
     <label>Результат:</label>
-    <div class="result" id="output">Результат появится здесь...</div>
+    <div class="result" id="output">...</div>
   </div>
 
   <script>
-    // Модуль 2^256
-    const MOD = 1n << 256n;
+    // Большое простое число: 2^255 - 19 (Curve25519)
+    const P = (1n << 255n) - 19n;
+    const ROUNDS = 10; // Число раундов
 
-    // Преобразование строки в Uint8Array (UTF-8)
-    function strToBytes(str) {
-      return new TextEncoder().encode(str);
-    }
-
-    // Преобразование Uint8Array в строку
-    function bytesToStr(bytes) {      return new TextDecoder().decode(bytes);
-    }
-
-    // Хеширование ключа в начальное состояние (нелинейно)
-    function initStateFromKey(keyBytes) {
-      let state = 0n;
-      for (let i = 0; i < keyBytes.length; i++) {
-        const val = BigInt(keyBytes[i] + 1);
-        // Нелинейность: степень = i+2
-        let power = val;
-        for (let p = 1; p < i + 2; p++) {
-          power = (power * val) % MOD;
-        }
-        state = (state + power) % MOD;
+    // Быстрое возведение в степень по модулю
+    function modPow(base, exp, mod) {
+      if (exp === 0n) return 1n;
+      let result = 1n;
+      base %= mod;
+      while (exp > 0n) {
+        if (exp & 1n) result = (result * base) % mod;
+        exp >>= 1n;
+        base = (base * base) % mod;
       }
-      return state;
+      return result;
     }
 
-    // NCFB шифрование
-    function ncrypt(dataBytes, keyBytes, isEncrypt = true) {
-      if (keyBytes.length === 0) throw new Error("Ключ не может быть пустым");
+    // Преобразование
+    const te = new TextEncoder();
+    const td = new TextDecoder();
+    function strToBytes(s) { return te.encode(s); }
+    function bytesToStr(b) { return td.decode(b); }
+
+    // Извлечение параметров из ключа
+    function deriveParams(keyBytes) {
+      let hash = 0n;
+      for (let i = 0; i < keyBytes.length; i++) {
+        hash = (hash * 257n + BigInt(keyBytes[i])) % P;
+      }
+      // d — нечётная степень
+      const d = (hash | 1n) % (P - 1n);
+      // K0-K3 — мультипликаторы
+      const K0 = (hash * 31n + 17n) % P;
+      const K1 = (hash * 19n + 23n) % P;
+      const K2 = (hash * 13n + 29n) % P;
+      const K3 = (hash * 11n + 37n) % P;
+      return { d, K: [K0, K1, K2, K3] };
+    }
+
+    // Один раунд нелинейного обновления
+    function round(S, K, C, d) {
+      const [S0, S1, S2, S3] = S;
+      const [K0, K1, K2, K3] = K;
       
-      let state = initStateFromKey(keyBytes);
-      const result = new Uint8Array(dataBytes.length);
-      let prevCipher = 0; // C_{-1} = 0
-
-      for (let i = 0; i < dataBytes.length; i++) {
-        // a_i = (prevCipher + 1) mod 256
-        const a = BigInt((prevCipher + 1) & 0xFF);
-        // b_i = key[i mod L] + 1
-        const b = BigInt(keyBytes[i % keyBytes.length] + 1);
-
-        // Нелинейное обновление состояния: S = S^3 + a*S + b (mod 2^256)
-        const S_sq = (state * state) % MOD;
-        const S_cu = (S_sq * state) % MOD;
-        const aS = (a * state) % MOD;
-        state = (S_cu + aS + b) % MOD;
-
-        // Извлекаем i-й байт состояния (младшие байты)
-        const keystreamByte = Number((state >> BigInt(8n * BigInt(i % 32n))) & 0xFFn);
-
-        if (isEncrypt) {
-          result[i] = dataBytes[i] ^ keystreamByte;
-          prevCipher = result[i];
-        } else {
-          const plainByte = dataBytes[i] ^ keystreamByte;
-          result[i] = plainByte;
-          prevCipher = dataBytes[i]; // важно: используем входной шифротекст!
-        }
-      }      return result;
+      // Нелинейное обновление
+      const N0 = (modPow(S0, d, P) + (K0 * S1) % P + C) % P;
+      const N1 = (modPow(S1, d, P) + (K1 * S2) % P + C) % P;
+      const N2 = (modPow(S2, d, P) + (K2 * S3) % P + C) % P;
+      const N3 = (modPow(S3, d, P) + (K3 * S0) % P + C) % P;
+      
+      // Циклический сдвиг для диффузии
+      return [N3, N0, N1, N2];
     }
 
+    // Генерация 4 ключевых байтов
+    function generateKeystream(S) {
+      return [
+        Number(S[0] & 0xFFn),
+        Number(S[1] & 0xFFn),
+        Number(S[2] & 0xFFn),
+        Number(S[3] & 0xFFn)
+      ];
+    }
+
+    // Основная функция шифрования/расшифровки
+    function process(dataBytes, keyBytes, isEncrypt) {
+      if (keyBytes.length === 0) throw new Error("Ключ пуст");
+      
+      const { d, K } = deriveParams(keyBytes);
+      // Начальное состояние
+      const S = [
+        (K[0] + 1n) % P,
+        (K[1] + 2n) % P,
+        (K[2] + 3n) % P,
+        (K[3] + 4n) % P
+      ];
+      
+      const result = new Uint8Array(dataBytes.length);
+      let counter = 0n; // Счётчик вместо обратной связи для упрощения
+      
+      for (let i = 0; i < dataBytes.length; i += 4) {
+        // Обновляем счётчик
+        counter += 1n;
+        
+        // Выполняем ROUNDS раундов
+        let state = [...S];
+        for (let r = 0; r < ROUNDS; r++) {
+          state = round(state, K, counter, d);
+        }
+        
+        // Генерируем 4 ключевых байта
+        const ks = generateKeystream(state);
+        
+        // Обрабатываем до 4 байт
+        for (let j = 0; j < 4 && (i + j) < dataBytes.length; j++) {
+          if (isEncrypt) {
+            result[i + j] = dataBytes[i + j] ^ ks[j];
+          } else {
+            result[i + j] = dataBytes[i + j] ^ ks[j];
+          }
+        }
+      }
+      return result;
+    }
+
+    // Base64 утилиты
+    function toBase64(bytes) {
+      let bin = '';
+      for (const b of bytes) bin += String.fromCharCode(b);
+      return btoa(bin);
+    }
+    function fromBase64(b64) {
+      const bin = atob(b64);
+      const bytes = new Uint8Array(bin.length);
+      for (let i = 0; i < bin.length; i++) bytes[i] = bin.charCodeAt(i);
+      return bytes;
+    }
+
+    // Интерфейс
     function encrypt() {
       try {
         const key = document.getElementById('key').value;
         const input = document.getElementById('input').value;
-        if (!key) {
-          alert("Введите ключ!");
-          return;
-        }
-        const keyBytes = strToBytes(key);
-        const dataBytes = strToBytes(input);
-        const encryptedBytes = ncrypt(dataBytes, keyBytes, true);
-        
-        // Кодируем в Base64 для удобного отображения
-        const encryptedB64 = btoa(String.fromCharCode(...encryptedBytes));
-        document.getElementById('output').textContent = encryptedB64;
+        if (!key.trim()) return alert("Введите ключ!");
+        const out = toBase64(process(strToBytes(input), strToBytes(key), true));
+        document.getElementById('output').textContent = out;
       } catch (e) {
+        console.error(e);
         document.getElementById('output').textContent = "Ошибка: " + e.message;
       }
     }
@@ -171,20 +192,15 @@
     function decrypt() {
       try {
         const key = document.getElementById('key').value;
-        const inputB64 = document.getElementById('input').value;
-        if (!key) {
-          alert("Введите ключ!");
-          return;
-        }
-        const keyBytes = strToBytes(key);
-        // Декодируем из Base64
-        const binary = atob(inputB64);
-        const dataBytes = new Uint8Array(binary.split('').map(c => c.charCodeAt(0)));
-        const decryptedBytes = ncrypt(dataBytes, keyBytes, false);
-        const decryptedText = bytesToStr(decryptedBytes);
-        document.getElementById('output').textContent = decryptedText;
+        const b64 = document.getElementById('input').value.trim();
+        if (!key.trim() || !b64) return alert("Введите ключ и шифротекст!");
+        const out = bytesToStr(process(fromBase64(b64), strToBytes(key), false));
+        document.getElementById('output').textContent = out;
       } catch (e) {
-        document.getElementById('output').textContent = "Ошибка расшифровки: " + e.message + "\n\nУбедитесь, что введён корректный шифротекст (Base64) и правильный ключ.";
+        console.error(e);
+        document.getElementById('output').textContent = 
+          "Ошибка расшифровки:\n" + e.message +
+          "\n\nУбедитесь, что ключ и шифротекст верны.";
       }
     }
   </script>
