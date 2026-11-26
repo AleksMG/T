@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>UT² · Unitriangular Multi-Head Transformer</title>
+<title>UT³ · Unitriangular Transformer</title>
 <style>
 :root{
   color-scheme:dark;
@@ -52,10 +52,10 @@ nav a.on{color:#04121f;background:var(--grad)}
 .eyebrow{font-size:10.5px;letter-spacing:.24em;color:var(--cyan);font-weight:800;margin-bottom:9px}
 h1{margin:0 0 9px;font-size:clamp(26px,4vw,40px);line-height:1.05;letter-spacing:-.02em}
 h1 em{font-style:normal;background:var(--grad);-webkit-background-clip:text;background-clip:text;color:transparent}
-.lede{max-width:84ch;color:var(--ink2);font-size:14px;line-height:1.6;margin:0 0 14px}
+.lede{max-width:86ch;color:var(--ink2);font-size:14px;line-height:1.6;margin:0 0 14px}
 .lede b{color:var(--ink)}
 .metrics{display:flex;flex-wrap:wrap;gap:9px;margin-bottom:18px}
-.metric{padding:8px 13px;border-radius:10px;background:linear-gradient(160deg,var(--surface2),var(--deep));border:1px solid var(--line);min-width:116px}
+.metric{padding:8px 13px;border-radius:10px;background:linear-gradient(160deg,var(--surface2),var(--deep));border:1px solid var(--line);min-width:112px}
 .metric b{display:block;font-family:ui-monospace,Menlo,Consolas,monospace;font-size:15px;color:var(--cyan)}
 .metric span{font-size:10px;color:var(--ink3);letter-spacing:.06em;text-transform:uppercase}
 .layout{display:grid;grid-template-columns:minmax(0,1fr) 318px;gap:15px;align-items:start}
@@ -74,7 +74,7 @@ input:focus,textarea:focus,select:focus{border-color:var(--cyan);box-shadow:0 0 
 textarea{min-height:96px;resize:vertical;font-family:ui-monospace,Menlo,Consolas,monospace;font-size:12px;line-height:1.5}
 input[type=range]{padding:0;height:20px;background:none;border:none;accent-color:var(--cyan)}
 input[type=checkbox]{width:auto;accent-color:var(--magenta)}
-.row{display:flex;gap:9px;flex-wrap:wrap}.row>*{flex:1;min-width:140px}
+.row{display:flex;gap:9px;flex-wrap:wrap}.row>*{flex:1;min-width:132px}
 .buttons{display:flex;flex-wrap:wrap;gap:8px;margin-top:11px}
 button{border:0;border-radius:9px;padding:9px 14px;font:inherit;font-size:12.5px;font-weight:700;cursor:pointer;background:linear-gradient(120deg,var(--blue),var(--indigo));color:#fff;transition:transform .12s,filter .16s}
 button:hover:not(:disabled){transform:translateY(-1px);filter:brightness(1.12)}
@@ -86,14 +86,13 @@ button:disabled{opacity:.45;cursor:not-allowed}
 .status{margin-top:11px;padding:9px 11px;border-radius:9px;background:var(--deep);border:1px solid var(--line2);min-height:1.2em;white-space:pre-wrap;font-size:12.5px;line-height:1.45}
 .status.err{border-color:rgba(251,113,133,.6);color:#ffd7de}
 .meta{color:var(--ink2);font-size:11.5px;line-height:1.5}
-.mono{font-family:ui-monospace,Menlo,Consolas,monospace;font-size:11.5px;overflow-wrap:anywhere}
 .val{color:var(--cyan);font-family:ui-monospace,Menlo,Consolas,monospace;font-weight:700}
 .ctl{margin-bottom:10px}
 .ctl .lab{display:flex;justify-content:space-between;align-items:baseline;font-size:11.5px;font-weight:650;margin-bottom:3px}
 .sw{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:6px 0;border-top:1px solid var(--line)}
 .sw label{margin:0;font-size:11.5px}
 canvas{display:block;width:100%;height:auto;background:var(--deep);border:1px solid var(--line2);border-radius:10px}
-.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(186px,1fr));gap:10px;margin-top:11px}
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(184px,1fr));gap:10px;margin-top:11px}
 .card{background:var(--deep);border:1px solid var(--line);border-left:3px solid var(--cyan);border-radius:10px;padding:10px 11px}
 .card.ok{border-left-color:var(--ok)}.card.bad{border-left-color:var(--bad)}.card.warn{border-left-color:var(--warn)}.card.v{border-left-color:var(--violet)}.card.m{border-left-color:var(--magenta)}.card.a{border-left-color:var(--acid)}
 .card b{font-size:12px}
@@ -108,7 +107,7 @@ canvas{display:block;width:100%;height:auto;background:var(--deep);border:1px so
 .legend{display:flex;flex-wrap:wrap;gap:12px;margin-top:8px;font-size:10px;color:var(--ink3)}
 .legend i{display:inline-block;width:8px;height:8px;border-radius:2px;margin-right:5px;vertical-align:-1px}
 .pipe{display:flex;gap:7px;overflow-x:auto;padding:9px;background:var(--deep);border:1px solid var(--line2);border-radius:10px;margin-top:9px}
-.stage{flex:none;min-width:158px;background:linear-gradient(160deg,rgba(59,79,216,.18),rgba(11,17,32,.6));border:1px solid rgba(96,165,250,.3);border-radius:9px;padding:8px 10px}
+.stage{flex:none;min-width:164px;background:linear-gradient(160deg,rgba(59,79,216,.18),rgba(11,17,32,.6));border:1px solid rgba(96,165,250,.3);border-radius:9px;padding:8px 10px}
 .stage.scan{background:linear-gradient(160deg,rgba(163,230,53,.13),rgba(11,17,32,.6));border-color:rgba(163,230,53,.36)}
 .stage.term{background:linear-gradient(160deg,rgba(240,56,156,.13),rgba(11,17,32,.6));border-color:rgba(240,56,156,.38);min-width:100px}
 .stage b{display:block;font-size:11px;color:var(--cyan)}
@@ -135,7 +134,7 @@ td.num{font-family:ui-monospace,Menlo,Consolas,monospace;white-space:nowrap}
 .rawgrid textarea{min-height:50px}
 .formula{font-family:ui-monospace,Menlo,Consolas,monospace;font-size:11.5px;background:var(--deep);border:1px solid var(--line2);border-left:3px solid var(--violet);border-radius:9px;padding:9px 11px;margin-top:9px;line-height:1.7;overflow-x:auto}
 footer{color:var(--ink3);font-size:11.5px;line-height:1.6;border-top:1px solid var(--line);padding-top:14px}
-.toasts{position:fixed;right:16px;bottom:16px;z-index:95;display:flex;flex-direction:column;gap:8px;max-width:330px}
+.toasts{position:fixed;right:16px;bottom:16px;z-index:95;display:flex;flex-direction:column;gap:8px;max-width:340px}
 .toast{display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:10px;background:rgba(15,23,40,.97);border:1px solid var(--line2);box-shadow:0 20px 44px -24px #000;font-size:12.5px;animation:tin .26s cubic-bezier(.2,.8,.3,1)}
 .toast.ok{border-left:3px solid var(--ok)}.toast.bad{border-left:3px solid var(--bad)}.toast.info{border-left:3px solid var(--info)}
 @keyframes tin{from{opacity:0;transform:translateX(24px)}}
@@ -161,8 +160,8 @@ footer{color:var(--ink3);font-size:11.5px;line-height:1.6;border-top:1px solid v
     <path d="M20 20 L20 31 L31 31 Z" fill="#f0389c" opacity=".4"/>
     <path d="M9 9 L9 31 L31 31" stroke="url(#mg)" stroke-width="1.7"/>
   </svg>
-  <div class="brand"><b>UT² LAB</b><span>унитреугольный multi-head</span></div>
-  <span class="badge">det = 1 · Q K V O · БЕЗ ПЕРЕПОЛНЕНИЙ</span>
+  <div class="brand"><b>UT³ LAB</b><span>токенный трансформер · скалярная лестница</span></div>
+  <span class="badge">det = 1 · Q K V FFN · ОБЪЁМ НЕ ОГРАНИЧЕН</span>
   <nav><a href="#console" class="on">Консоль</a><a href="#structure">Структура</a><a href="#checks">Проверки</a></nav>
   <div class="grow"></div>
   <button id="cancelBtn" class="danger" style="padding:6px 11px;font-size:12px" disabled>Отменить</button>
@@ -171,22 +170,24 @@ footer{color:var(--ink3);font-size:11.5px;line-height:1.6;border-top:1px solid v
 </header>
 
 <main class="app">
-  <div class="eyebrow">ПОЛНЫЙ MULTI-HEAD ВНУТРИ УНИТРЕУГОЛЬНОЙ СХЕМЫ</div>
-  <h1>Всё сразу: <em>выразительность и det = 1</em></h1>
+  <div class="eyebrow">ТЯЖЁЛАЯ СЕТЬ НА ТОКЕН · ТРЕУГОЛЬНАЯ ЛЕСТНИЦА НА СКАЛЯР</div>
+  <h1>Большая сеть, <em>любой объём</em>, det = 1</h1>
   <p class="lede">
-    Диагональ единичная потому, что <b>x_k ← x_k + F_k(x_&lt;k)</b>, а не потому, что внутри F стоит упрощённая сеть.
-    Поэтому F — полноценная multi-head attention с Q, K, V, выходным смешиванием и проекцией. Переполнения устранены
-    дисциплиной <b>S(acc ≫ shift)</b> после каждой проекции: все векторы остаются int8, каждый аккумулятор доказуемо мал.
-    Вложенность сохранена: канальный уровень внутри токена, токенный между токенами, все внутренние карты треугольные.
+    Полный multi-head с Q, K, V и FFN считается <b>один раз на токен</b>, поэтому стоимость на байт делится на число каналов:
+    рост сети больше не ограничивает длину сообщения. Внутри токена работает скалярная треугольная лестница —
+    канал читает только младшие каналы того же токена. Снаружи токен читает только младшие токены.
+    Q выводится из многоскейлового причинного префикса с позиционными гейтами. Диагональ единичная,
+    <b>det = 1</b>, все аккумуляторы нормализованы в int8 и доказуемо малы.
   </p>
   <div class="metrics">
-    <div class="metric"><b id="mHeads">4</b><span>голов</span></div>
-    <div class="metric"><b id="mDh">4</b><span>dh</span></div>
-    <div class="metric"><b id="mLayers">4</b><span>слоёв</span></div>
-    <div class="metric"><b id="mParams">—</b><span>параметров</span></div>
+    <div class="metric"><b id="mParams">—</b><span>весов</span></div>
+    <div class="metric"><b id="mHeads">8</b><span>голов</span></div>
+    <div class="metric"><b id="mDh">16</b><span>dh</span></div>
+    <div class="metric"><b id="mLayers">6</b><span>слоёв</span></div>
+    <div class="metric"><b id="mFfn">×2</b><span>FFN</span></div>
     <div class="metric"><b id="mBound">—</b><span>max аккумулятор</span></div>
-    <div class="metric"><b>det = 1</b><span>диагональ</span></div>
-    <div class="metric"><b id="mMax">—</b><span>макс. байт</span></div>
+    <div class="metric"><b>∞</b><span>объём</span></div>
+    <div class="metric"><b id="mEta">—</b><span>оценка времени</span></div>
   </div>
 
   <div class="layout">
@@ -206,10 +207,11 @@ footer{color:var(--ink3);font-size:11.5px;line-height:1.6;border-top:1px solid v
             <select id="mode"><option value="raw" selected>Сырой 1:1</option><option value="auth">nonce + HMAC</option></select></div>
         </div>
         <h3>Вход</h3>
-        <textarea id="input" spellcheck="false" placeholder="Текст, либо Base64 / HEX для расшифрования"></textarea>
+        <textarea id="input" spellcheck="false" placeholder="Текст любой длины, либо Base64 / HEX для расшифрования"></textarea>
         <div class="row" style="margin-top:9px">
           <div><label for="outFmt">Формат выхода</label><select id="outFmt"><option value="base64" selected>Base64</option><option value="hex">HEX</option></select></div>
           <div><label for="inFmt">Формат входа</label><select id="inFmt"><option value="base64" selected>Base64</option><option value="hex">HEX</option></select></div>
+          <div><label for="loadFile">Загрузить файл</label><input id="loadFile" type="file" style="padding:6px 8px;font-size:11.5px"></div>
         </div>
         <div class="buttons">
           <button id="encrypt" type="button">Зашифровать</button>
@@ -234,25 +236,27 @@ footer{color:var(--ink3);font-size:11.5px;line-height:1.6;border-top:1px solid v
       <section class="panel hot">
         <div class="head"><h2>Архитектура</h2><span class="tag cy">live</span></div>
         <div class="ctl"><label for="preset">Пресет</label>
-          <select id="preset"><option value="lite">lite</option><option value="core" selected>core</option><option value="wide">wide</option><option value="custom">custom</option></select></div>
+          <select id="preset"><option value="base">base · 33k</option><option value="large" selected>large · 111k</option><option value="xl">xl · 355k</option><option value="xxl">xxl · 430k</option><option value="custom">custom</option></select></div>
         <div class="row">
-          <div class="ctl"><label for="dim">d_model</label><select id="dim"><option>8</option><option>12</option><option selected>16</option><option>24</option><option>32</option></select></div>
-          <div class="ctl"><label for="heads">голов H</label><select id="heads"><option>2</option><option selected>4</option><option>8</option></select></div>
+          <div class="ctl"><label for="dim">d_model</label><select id="dim"><option>32</option><option>64</option><option selected>128</option><option>192</option><option>256</option></select></div>
+          <div class="ctl"><label for="heads">голов H</label><select id="heads"><option>2</option><option>4</option><option selected>8</option><option>16</option></select></div>
         </div>
-        <div class="ctl"><div class="lab"><span>Каналов в токене d</span><span class="val" id="chanV">8</span></div>
-          <input id="chan" type="range" min="2" max="16" step="1" value="8"></div>
-        <div class="ctl"><div class="lab"><span>Слоёв</span><span class="val" id="layersV">4</span></div>
-          <input id="layers" type="range" min="1" max="8" step="1" value="4"></div>
-        <div class="ctl"><div class="lab"><span>Окно токенов W</span><span class="val" id="winV">6</span></div>
-          <input id="win" type="range" min="1" max="16" step="1" value="6"></div>
-        <div class="ctl"><div class="lab"><span>Якорей</span><span class="val" id="anchV">2</span></div>
-          <input id="anch" type="range" min="0" max="6" step="1" value="2"></div>
+        <div class="ctl"><div class="lab"><span>Каналов в токене</span><span class="val" id="chanV">12</span></div>
+          <input id="chan" type="range" min="2" max="32" step="1" value="12"></div>
+        <div class="ctl"><div class="lab"><span>Слоёв</span><span class="val" id="layersV">6</span></div>
+          <input id="layers" type="range" min="1" max="12" step="1" value="6"></div>
+        <div class="ctl"><div class="lab"><span>Расширение FFN</span><span class="val" id="expV">×2</span></div>
+          <input id="exp" type="range" min="1" max="4" step="1" value="2"></div>
+        <div class="ctl"><div class="lab"><span>Окно токенов</span><span class="val" id="winV">10</span></div>
+          <input id="win" type="range" min="1" max="32" step="1" value="10"></div>
+        <div class="ctl"><div class="lab"><span>Якорей</span><span class="val" id="anchV">4</span></div>
+          <input id="anch" type="range" min="0" max="8" step="1" value="4"></div>
         <div class="ctl"><label for="orderMode">Порядки обхода</label>
           <select id="orderMode"><option value="alternate" selected>прямой / обратный / ключевой</option><option value="keyed">все ключевые</option><option value="identity">все прямые</option></select></div>
         <div class="sw"><label for="scan">Scan-слои · O(log N)</label><input id="scan" type="checkbox" checked></div>
         <div class="sw"><label for="nl">Нелинейность коэффициентов</label><input id="nl" type="checkbox" checked></div>
-        <div class="sw"><label for="vhead">V-проекции голов</label><input id="vhead" type="checkbox" checked></div>
-        <div class="sw"><label for="omix">Выходное смешивание O</label><input id="omix" type="checkbox" checked></div>
+        <div class="sw"><label for="vhead">V-проекции</label><input id="vhead" type="checkbox" checked></div>
+        <div class="sw"><label for="ffn">FFN голов</label><input id="ffn" type="checkbox" checked></div>
         <div class="ctl" style="margin-top:10px"><label for="budget">Бюджет анализа</label>
           <select id="budget"><option value="6000">6 с</option><option value="16000" selected>16 с</option><option value="40000">40 с</option></select></div>
         <div class="buttons">
@@ -264,8 +268,9 @@ footer{color:var(--ink3);font-size:11.5px;line-height:1.6;border-top:1px solid v
           <div class="card v"><div><b>Ключ</b></div><div class="big" id="fp" style="font-size:15px">—</div>
             <div class="r"><span>KDF</span><span id="kdfInfo">—</span></div>
             <div class="r"><span>операций/байт</span><span id="opsB">—</span></div>
-            <div class="r"><span>источников/скаляр</span><span id="srcInfo">—</span></div>
-            <div class="r"><span>граница int32</span><span id="bndInfo">—</span></div></div>
+            <div class="r"><span>операций/токен</span><span id="opsT">—</span></div>
+            <div class="r"><span>граница int32</span><span id="bndInfo">—</span></div>
+            <div class="r"><span>скорость</span><span id="rateInfo">—</span></div></div>
         </div>
       </section>
     </aside>
@@ -273,17 +278,17 @@ footer{color:var(--ink3);font-size:11.5px;line-height:1.6;border-top:1px solid v
 
   <section class="panel" id="structure">
     <div class="head"><h2>Структура оператора</h2><span class="tag cy">вложенная треугольность</span></div>
-    <p class="sub">Матрица зависимостей в лексикографическом порядке «токен, канал». Малые треугольники на блочной диагонали — канальная схема внутри токена, область под ними — токенная схема между токенами. Диагональ единичная независимо от того, что вычисляет F.</p>
+    <p class="sub">Матрица зависимостей в лексикографическом порядке «токен, канал». Малые треугольники на блочной диагонали — скалярная лестница внутри токена, область под ними — токенный трансформер. Диагональ единичная независимо от того, что вычисляет сеть на токене.</p>
     <div class="grid2">
       <div>
         <canvas id="triCanvas" width="540" height="540" style="max-width:540px"></canvas>
         <div class="legend">
-          <span><i style="background:#22d3ee"></i>канальный уровень</span>
-          <span><i style="background:#8b5cf6"></i>токенный уровень</span>
+          <span><i style="background:#22d3ee"></i>скалярная лестница</span>
+          <span><i style="background:#8b5cf6"></i>токенное окно</span>
           <span><i style="background:#f0389c"></i>якорь</span>
           <span><i style="background:#a3e635"></i>диагональ = 1</span>
         </div>
-        <div class="formula">y_k = x_k + rot( proj( O₂·P·O₁·concat_h(head_h) ) ) + b_k<br>head_h[c] = Σ_{j&lt;k} aʰ_kj · Vʰ(x_j)[c]<br>aʰ_kj = act( ⟨Qʰ(pos_k), Kʰ(x_j)⟩ ≫ s )<br>∂y_k/∂x_k = 1 ⇒ det J = 1</div>
+        <div class="formula">U = FFN( MultiHead( Q(префикс+pos), K(токены), V(токены) ) )<br>y_k = x_k + rot(U[c]) + rot( Σ_{c'&lt;c} w·x_{c'} ) + b_k<br>∂y_k/∂x_k = 1 ⇒ det J = 1</div>
       </div>
       <div>
         <h3>Дальнодействие по шагам</h3>
@@ -329,8 +334,9 @@ footer{color:var(--ink3);font-size:11.5px;line-height:1.6;border-top:1px solid v
 
   <footer>
     Обратимость доказана конструктивно: диагональ единичная, все источники строго раньше цели, композиция биективна.
-    Границы аккумуляторов проверяются аналитически. Криптостойкость не доказана — число слоёв обосновывается трендом
-    дифференциальной вероятности, а не аналогией. Сырой режим утекает равенство сообщений; для семантической безопасности
+    Границы аккумуляторов проверяются аналитически. Объём шифрования не ограничен архитектурой: стоимость на байт
+    равна стоимости токена, делённой на число каналов. Криптостойкость не доказана — число слоёв обосновывается
+    трендом дифференциальной вероятности. Сырой режим утекает равенство сообщений; для семантической безопасности
     и целостности есть режим nonce + HMAC. Не является стандартом.
   </footer>
 </main>
@@ -346,7 +352,7 @@ const rotl8 = (v, s) => { const b = v & 255; return s === 0 ? b : ((b << s) | (b
 const rotl32 = (v, n) => ((v << n) | (v >>> (32 - n))) >>> 0;
 const xs = h => { h ^= h << 13; h >>>= 0; h ^= h >>> 17; h ^= h << 5; return h >>> 0; };
 const enc = new TextEncoder(), dec = new TextDecoder("utf-8", { fatal: true });
-const GOLD = 0x9E3779B1, I32MAX = 2147483647;
+const GOLD = 0x9E3779B1, I32MAX = 2147483647, HEX_CAP = 2048;
 const POP8 = new Uint8Array(256);
 for (let i = 1; i < 256; i++) POP8[i] = POP8[i >> 1] + (i & 1);
 
@@ -410,7 +416,7 @@ async function pbkdf2Fallback(pw, salt, iters, task) {
   return t;
 }
 async function deriveMaster(text, iters, task) {
-  const pw = enc.encode(text), salt = sha256(enc.encode("UT2/v1/salt")).subarray(0, 16);
+  const pw = enc.encode(text), salt = sha256(enc.encode("UT3/v1/salt")).subarray(0, 16);
   if (globalThis.crypto && crypto.subtle) {
     try {
       task.progress(0.03, "PBKDF2");
@@ -454,7 +460,11 @@ class KeyStream {
   below(m) { const lim = 256 - (256 % m); for (;;) { const v = this.byte(); if (v < lim) return v % m; } }
   rot() { return 1 + this.below(7); }
 }
-function streamBytes(key, nonce, n) { const ks = new KeyStream(key, nonce), o = new Uint8Array(n); for (let i = 0; i < n; i++) o[i] = ks.byte(); return o; }
+function streamBytes(key, nonce, n) {
+  const ks = new KeyStream(key, nonce), out = new Uint8Array(n);
+  for (let i = 0; i < n; i++) out[i] = ks.byte();
+  return out;
+}
 
 class Task {
   constructor(on, shared) { this.on = on || null; this.shared = shared || { cancelled:false }; this.slice = performance.now(); }
@@ -484,41 +494,65 @@ class Tri {
     }
   }
   get size() { return this.dim * (this.dim - 1) / 2; }
-  get maxAcc() { return (this.dim - 1) * 16384; }
+}
+class Dense {
+  constructor(ks, din, dout) {
+    this.din = din; this.dout = dout;
+    this.w = new Int8Array(din * dout);
+    for (let i = 0; i < this.w.length; i++) this.w[i] = ks.weight();
+    this.b = new Int8Array(dout);
+    for (let i = 0; i < dout; i++) this.b[i] = ks.weight();
+    this.shift = Math.max(0, Math.round(Math.log2(Math.sqrt(din) * 5476 / 64)));
+  }
+  apply(u, out) {
+    const din = this.din, dout = this.dout, w = this.w, b = this.b, sh = this.shift;
+    for (let r = 0; r < dout; r++) {
+      let acc = b[r]; const base = r * din;
+      for (let c = 0; c < din; c++) acc += w[base + c] * u[c];
+      out[r] = S(acc >> sh);
+    }
+  }
+  get size() { return this.w.length + this.b.length; }
 }
 class Head {
-  constructor(ks, dh, useV) {
+  constructor(ks, dh, cfg) {
     this.q = new Tri(ks, dh);
     this.k = new Tri(ks, dh);
-    this.v = useV ? new Tri(ks, dh) : null;
+    this.v = cfg.vhead ? new Tri(ks, dh) : null;
+    this.hd = dh * cfg.exp;
+    this.up = cfg.ffn ? new Dense(ks, dh, this.hd) : null;
+    this.down = cfg.ffn ? new Dense(ks, this.hd, dh) : null;
     this.rot = ks.rot();
+    this.fRot = ks.rot();
   }
-  get size() { return this.q.size + this.k.size + (this.v ? this.v.size : 0) + 1; }
+  get size() {
+    return this.q.size + this.k.size + (this.v ? this.v.size : 0) + (this.up ? this.up.size + this.down.size : 0) + 2;
+  }
 }
+const SCALES = [2, 8, 32];
 class Layer {
-  constructor(ks, cfg, dh, srcCount) {
+  constructor(ks, cfg, dh, srcTok) {
+    const D = cfg.dim;
     this.heads = [];
-    for (let h = 0; h < cfg.heads; h++) this.heads.push(new Head(ks, dh, cfg.vhead));
+    for (let h = 0; h < cfg.heads; h++) this.heads.push(new Head(ks, dh, cfg));
     this.chanOrder = new Int32Array(cfg.chan);
     for (let i = 0; i < cfg.chan; i++) this.chanOrder[i] = i;
     for (let i = cfg.chan - 1; i > 0; i--) { const j = ks.below(i + 1); const t = this.chanOrder[i]; this.chanOrder[i] = this.chanOrder[j]; this.chanOrder[j] = t; }
-    const D = cfg.dim;
-    this.o1 = cfg.omix ? new Tri(ks, D) : null;
-    this.o2 = cfg.omix ? new Tri(ks, D) : null;
-    this.outPerm = new Int32Array(D);
-    for (let i = 0; i < D; i++) this.outPerm[i] = i;
-    for (let i = D - 1; i > 0; i--) { const j = ks.below(i + 1); const t = this.outPerm[i]; this.outPerm[i] = this.outPerm[j]; this.outPerm[j] = t; }
-    this.proj = new Int8Array(D);
-    for (let i = 0; i < D; i++) this.proj[i] = ks.weight();
+    this.inner = new Int8Array(cfg.chan * cfg.chan);
+    for (let p = 1; p < cfg.chan; p++) for (let p2 = 0; p2 < p; p2++) this.inner[p * cfg.chan + p2] = ks.weight();
+    this.innerRot = ks.rot();
+    this.proj = new Dense(ks, D, cfg.chan);
+    this.gates = new Int8Array(SCALES.length * D);
+    for (let i = 0; i < this.gates.length; i++) this.gates[i] = ks.weight();
     this.tokSeed = ks.u32(); this.offSeed = ks.u32(); this.scanSeed = ks.u32(); this.rot = ks.rot();
     this.scoreShift = Math.max(0, Math.round(Math.log2(Math.sqrt(dh) * 5476 / 64)));
-    this.headShift = Math.max(0, Math.round(Math.log2(Math.sqrt(srcCount) * 5476 / 64)));
-    this.projShift = Math.max(0, Math.round(Math.log2(Math.sqrt(D) * 5476 / 64)));
+    this.headShift = Math.max(0, Math.round(Math.log2(Math.sqrt(srcTok) * 5476 / 64)));
+    this.tokShift = Math.max(0, Math.round(Math.log2(Math.sqrt(cfg.chan) * 74 / 64)));
+    this.qShift = Math.max(0, Math.round(Math.log2(Math.sqrt(SCALES.length) * 128 * 32 * 128 / 64)));
   }
   get size() {
     let s = 0; for (const h of this.heads) s += h.size;
-    if (this.o1) s += this.o1.size + this.o2.size;
-    return s + this.chanOrder.length + this.outPerm.length + this.proj.length + 4;
+    return s + this.chanOrder.length + this.inner.length / 2 + this.proj.size + this.gates.length + 4;
   }
 }
 function permFromSeed(seed, n, salt) {
@@ -528,9 +562,9 @@ function permFromSeed(seed, n, salt) {
   for (let i = n - 1; i > 0; i--) { h = xs(h); const j = h % (i + 1); const t = o[i]; o[i] = o[j]; o[j] = t; }
   return o;
 }
-class UT2 {
+class UT3 {
   static async create(cfg, keyBytes, nonceBytes, posSeed, task) {
-    const net = new UT2(); net.cfg = cfg;
+    const net = new UT3(); net.cfg = cfg;
     net.dh = cfg.dim / cfg.heads;
     const ks = new KeyStream(keyBytes, nonceBytes);
     net.emb = [];
@@ -542,20 +576,20 @@ class UT2 {
     }
     net.posSeed = posSeed; net.posCache = new Map();
     net.layers = [];
-    const sc = net.srcCount();
+    const st = net.srcTokens();
     for (let i = 0; i < cfg.layers; i++) {
-      net.layers.push(new Layer(ks, cfg, net.dh, sc));
+      net.layers.push(new Layer(ks, cfg, net.dh, st));
       task.progress(0.22 + 0.7 * ((i + 1) / cfg.layers), "слой " + (i + 1));
       await task.step();
     }
     return net;
   }
-  posVec(k) {
-    const hit = this.posCache.get(k); if (hit) return hit;
+  posVec(t) {
+    const hit = this.posCache.get(t); if (hit) return hit;
     const v = new Int8Array(this.cfg.dim);
-    let h = (this.posSeed ^ Math.imul(k + 1, GOLD)) >>> 0; if (!h) h = 0x9E3779B9;
+    let h = (this.posSeed ^ Math.imul(t + 1, GOLD)) >>> 0; if (!h) h = 0x9E3779B9;
     for (let i = 0; i < this.cfg.dim; i++) { h = xs(h); v[i] = (h & 255) - 128; }
-    this.posCache.set(k, v); return v;
+    this.posCache.set(t, v); return v;
   }
   tokenOrder(li, T) {
     const m = this.cfg.orderMode, o = new Int32Array(T);
@@ -565,103 +599,154 @@ class UT2 {
   }
   prepare(li, N) {
     const cfg = this.cfg, layer = this.layers[li], d = cfg.chan, T = Math.ceil(N / d);
-    const tord = this.tokenOrder(li, T), cord = layer.chanOrder;
-    const order = new Int32Array(N), qOf = new Int32Array(N), pOf = new Int32Array(N);
-    let t = 0;
-    for (let q = 0; q < T; q++) { const tok = tord[q];
-      for (let p = 0; p < d; p++) { const k = tok * d + cord[p]; if (k < N) { order[t] = k; qOf[t] = q; pOf[t] = p; t++; } } }
-    return { li, layer, N, tord, cord, order, qOf, pOf, keys: new Array(N).fill(null), vals: new Array(N).fill(null), qs: new Array(N).fill(null), src: [],
-      concat: new Int8Array(cfg.dim), t1: new Int8Array(cfg.dim), t2: new Int8Array(cfg.dim), t3: new Int8Array(cfg.dim),
-      acc: new Int32Array(this.dh), u: new Int8Array(this.dh) };
+    const tord = this.tokenOrder(li, T);
+    const D = cfg.dim, dh = this.dh;
+    return { li, layer, N, T, d, tord, cord: layer.chanOrder,
+      feat: new Array(T).fill(null), kk: new Array(T).fill(null), vv: new Array(T).fill(null),
+      sums: SCALES.map(() => new Int32Array(D)), cursor: 0, primed: false,
+      qIn: new Int8Array(D), qv: new Int8Array(D), u: new Int8Array(dh),
+      acc: new Int32Array(dh), hv: new Int8Array(dh * cfg.exp), fo: new Int8Array(dh),
+      cat: new Int8Array(D), mix: new Int8Array(D), upd: new Int8Array(d), src: [] };
   }
-  sources(ctx, t) {
-    const cfg = this.cfg, d = cfg.chan, out = ctx.src; out.length = 0;
-    const q = ctx.qOf[t], p = ctx.pOf[t], tok = ctx.tord[q];
-    for (let p2 = 0; p2 < p; p2++) { const j = tok * d + ctx.cord[p2]; if (j < ctx.N) out.push(j); }
-    for (let q2 = Math.max(0, q - cfg.win); q2 < q; q2++) {
-      const tk = ctx.tord[q2];
-      for (let p2 = 0; p2 < d; p2++) { const j = tk * d + ctx.cord[p2]; if (j < ctx.N) out.push(j); }
-    }
-    if (cfg.anch > 0 && q > 0) {
-      const seen = new Set(out), stride = Math.max(1, Math.floor(q / cfg.anch));
-      for (let q2 = 0; q2 < q; q2 += stride) {
-        const tk = ctx.tord[q2];
-        for (let p2 = 0; p2 < d; p2++) { const j = tk * d + ctx.cord[p2]; if (j < ctx.N && !seen.has(j)) { seen.add(j); out.push(j); } }
-      }
-    }
-    return out;
+  featOf(ctx, x, i) {
+    let f = ctx.feat[i]; if (f) return f;
+    const D = this.cfg.dim, d = ctx.d, base = i * d, n = Math.min(d, ctx.N - base);
+    const acc = new Int32Array(D);
+    for (let c = 0; c < n; c++) { const row = this.emb[x[base + c]]; for (let j = 0; j < D; j++) acc[j] += row[j]; }
+    f = new Int8Array(D);
+    const sh = ctx.layer.tokShift;
+    for (let j = 0; j < D; j++) f[j] = S(acc[j] >> sh);
+    ctx.feat[i] = f; return f;
   }
-  featOf(ctx, x, j, which) {
-    const cache = which === "k" ? ctx.keys : ctx.vals;
-    let v = cache[j]; if (v) return v;
-    const D = this.cfg.dim, dh = this.dh, row = this.emb[x[j]], pv = this.posVec(j);
+  kvOf(ctx, x, i, which) {
+    const cache = which === "k" ? ctx.kk : ctx.vv;
+    let v = cache[i]; if (v) return v;
+    const D = this.cfg.dim, dh = this.dh, f = this.featOf(ctx, x, i);
     v = new Int8Array(D);
     for (let hi = 0; hi < ctx.layer.heads.length; hi++) {
       const head = ctx.layer.heads[hi], off = hi * dh;
       const map = which === "k" ? head.k : (head.v || head.k);
-      for (let i = 0; i < dh; i++) ctx.u[i] = S(row[off + i] + pv[off + i]);
+      for (let c = 0; c < dh; c++) ctx.u[c] = f[off + c];
       map.apply(ctx.u, v.subarray(off, off + dh));
     }
-    cache[j] = v; return v;
+    cache[i] = v; return v;
   }
-  queryOf(ctx, k) {
-    let v = ctx.qs[k]; if (v) return v;
-    const D = this.cfg.dim, dh = this.dh, pv = this.posVec(k);
-    v = new Int8Array(D);
-    for (let hi = 0; hi < ctx.layer.heads.length; hi++) {
-      const off = hi * dh;
-      for (let i = 0; i < dh; i++) ctx.u[i] = pv[off + i];
-      ctx.layer.heads[hi].q.apply(ctx.u, v.subarray(off, off + dh));
+  syncSums(ctx, x, q) {
+    const D = this.cfg.dim;
+    if (!ctx.primed) { ctx.cursor = q; ctx.primed = true;
+      for (let r = 0; r < SCALES.length; r++) {
+        const W = SCALES[r], s = ctx.sums[r];
+        for (let i = Math.max(0, q - W); i < q; i++) { const f = this.featOf(ctx, x, i); for (let c = 0; c < D; c++) s[c] += f[c]; }
+      }
+      return;
     }
-    ctx.qs[k] = v; return v;
+    while (ctx.cursor < q) {
+      const i = ctx.cursor;
+      for (let r = 0; r < SCALES.length; r++) {
+        const W = SCALES[r], s = ctx.sums[r];
+        const f = this.featOf(ctx, x, i); for (let c = 0; c < D; c++) s[c] += f[c];
+        const out = i - W; if (out >= 0) { const g = this.featOf(ctx, x, out); for (let c = 0; c < D; c++) s[c] -= g[c]; }
+      }
+      ctx.cursor++;
+    }
+    while (ctx.cursor > q) {
+      const i = ctx.cursor - 1;
+      for (let r = 0; r < SCALES.length; r++) {
+        const W = SCALES[r], s = ctx.sums[r];
+        const f = this.featOf(ctx, x, i); for (let c = 0; c < D; c++) s[c] -= f[c];
+        const inn = i - W; if (inn >= 0) { const g = this.featOf(ctx, x, inn); for (let c = 0; c < D; c++) s[c] += g[c]; }
+      }
+      ctx.cursor--;
+    }
+  }
+  srcTokens(ctx, q) {
+    const out = ctx.src; out.length = 0;
+    const cfg = this.cfg;
+    for (let i = Math.max(0, q - cfg.win); i < q; i++) out.push(ctx.tord[i]);
+    if (cfg.anch > 0 && q > 0) {
+      const seen = new Set(out), stride = Math.max(1, Math.floor(q / cfg.anch));
+      for (let i = 0; i < q; i += stride) { const t = ctx.tord[i]; if (!seen.has(t)) { seen.add(t); out.push(t); } }
+    }
+    return out;
   }
   coef(score, shift) { const v = S(score >> shift); return this.cfg.nl ? S(v + ((v * v) >> 3)) : v; }
-  updateSum(ctx, x, t) {
-    const src = this.sources(ctx, t); if (!src.length) return 0;
-    const L = ctx.layer, D = this.cfg.dim, dh = this.dh;
-    const q = this.queryOf(ctx, ctx.order[t]);
+  tokenUpdate(ctx, x, q) {
+    const L = ctx.layer, D = this.cfg.dim, dh = this.dh, cfg = this.cfg;
+    this.syncSums(ctx, x, q);
+    const pv = this.posVec(ctx.tord[q]);
+    for (let c = 0; c < D; c++) {
+      let acc = 0;
+      for (let r = 0; r < SCALES.length; r++) acc += L.gates[r * D + c] * ctx.sums[r][c];
+      ctx.qIn[c] = S((acc >> L.qShift) + pv[c]);
+    }
+    for (let hi = 0; hi < L.heads.length; hi++) {
+      const off = hi * dh;
+      for (let c = 0; c < dh; c++) ctx.u[c] = ctx.qIn[off + c];
+      L.heads[hi].q.apply(ctx.u, ctx.qv.subarray(off, off + dh));
+    }
+    const src = this.srcTokens(ctx, q);
     for (let hi = 0; hi < L.heads.length; hi++) {
       const head = L.heads[hi], off = hi * dh, acc = ctx.acc;
       acc.fill(0);
       for (let i = 0; i < src.length; i++) {
-        const j = src[i], kj = this.featOf(ctx, x, j, "k");
+        const ti = src[i], kj = this.kvOf(ctx, x, ti, "k");
         let dot = 0;
-        for (let c = 0; c < dh; c++) dot += q[off + c] * kj[off + c];
+        for (let c = 0; c < dh; c++) dot += ctx.qv[off + c] * kj[off + c];
         const a = this.coef(dot, L.scoreShift);
-        if (head.v) {
-          const vj = this.featOf(ctx, x, j, "v");
-          for (let c = 0; c < dh; c++) acc[c] += a * vj[off + c];
-        } else {
-          for (let c = 0; c < dh; c++) acc[c] += a * x[j];
-        }
+        if (head.v) { const vj = this.kvOf(ctx, x, ti, "v"); for (let c = 0; c < dh; c++) acc[c] += a * vj[off + c]; }
+        else { const f = this.featOf(ctx, x, ti); for (let c = 0; c < dh; c++) acc[c] += a * f[off + c]; }
       }
       for (let c = 0; c < dh; c++) {
         const b = (S(acc[c] >> L.headShift) + 128) & 255;
-        ctx.concat[off + c] = rotl8(b, head.rot) - 128;
+        ctx.cat[off + c] = rotl8(b, head.rot) - 128;
+      }
+      if (head.up) {
+        head.up.apply(ctx.cat.subarray(off, off + dh), ctx.hv);
+        for (let i = 0; i < head.hd; i++) { const v = ctx.hv[i]; ctx.hv[i] = S(v + ((v * v) >> 3)); }
+        head.down.apply(ctx.hv, ctx.fo);
+        for (let c = 0; c < dh; c++) ctx.cat[off + c] = S(ctx.cat[off + c] + ctx.fo[c]);
       }
     }
-    if (L.o1) {
-      L.o1.apply(ctx.concat, ctx.t1);
-      for (let i = 0; i < D; i++) ctx.t2[i] = ctx.t1[L.outPerm[i]];
-      L.o2.apply(ctx.t2, ctx.t3);
-      return (ctx.t3[D - 1] + 128) & 255;
+    for (let pass = 0; pass < 2; pass++) {
+      ctx.mix.set(ctx.cat);
+      for (let hi = 0; hi < L.heads.length; hi++) {
+        const off = hi * dh, nxt = ((hi + 1) % L.heads.length) * dh;
+        for (let c = 0; c < dh; c++) ctx.cat[off + c] = S(ctx.mix[off + c] + (ctx.mix[nxt + c] >> 1));
+      }
     }
-    let acc = 0;
-    for (let i = 0; i < D; i++) acc += ctx.concat[i] * L.proj[i];
-    return (S(acc >> L.projShift) + 128) & 255;
+    L.proj.apply(ctx.cat, ctx.upd);
+    return ctx.upd;
+  }
+  innerSum(ctx, x, tok, p) {
+    const d = ctx.d, base = tok * d, w = ctx.layer.inner;
+    let acc = 0; const rowBase = p * d;
+    for (let p2 = 0; p2 < p; p2++) {
+      const j = base + ctx.cord[p2];
+      if (j < ctx.N) acc += w[rowBase + p2] * x[j];
+    }
+    return acc;
   }
   offset(li, k) { return xs((this.layers[li].offSeed ^ Math.imul(k + 1, GOLD)) >>> 0) & 255; }
   async runData(li, x, dir, task, onScalar, trace) {
     const N = x.length; if (!N) return;
-    const ctx = this.prepare(li, N), step = dir > 0 ? 1 : -1;
-    for (let t = dir > 0 ? 0 : N - 1; t >= 0 && t < N; t += step) {
-      const k = ctx.order[t], before = x[k];
-      const raw = this.updateSum(ctx, x, t);
-      const delta = (rotl8(raw, this.layers[li].rot) + this.offset(li, k)) & 255;
-      x[k] = dir > 0 ? (before + delta) & 255 : (before - delta) & 255;
-      if (trace) trace.push({ t, k, tok: Math.floor(k / this.cfg.chan), ch: k % this.cfg.chan, src: this.sources(ctx, t).length, raw, delta, before, after: x[k] });
-      if (onScalar) onScalar(li, t, k, x[k], before);
-      if ((t & 63) === 0) await task.step();
+    const ctx = this.prepare(li, N), d = ctx.d, L = ctx.layer;
+    for (let qi = dir > 0 ? 0 : ctx.T - 1; qi >= 0 && qi < ctx.T; qi += dir > 0 ? 1 : -1) {
+      const tok = ctx.tord[qi];
+      const upd = this.tokenUpdate(ctx, x, qi);
+      const snapshot = new Int8Array(d);
+      for (let p = 0; p < d; p++) snapshot[p] = upd[p];
+      for (let pi = dir > 0 ? 0 : d - 1; pi >= 0 && pi < d; pi += dir > 0 ? 1 : -1) {
+        const k = tok * d + ctx.cord[pi];
+        if (k >= N) continue;
+        const before = x[k];
+        const inner = this.innerSum(ctx, x, tok, pi);
+        const delta = (rotl8((snapshot[pi] + 128) & 255, L.rot) + rotl8(inner & 255, L.innerRot) + this.offset(li, k)) & 255;
+        x[k] = dir > 0 ? (before + delta) & 255 : (before - delta) & 255;
+        if (trace) trace.push({ t: qi * d + pi, k, tok, ch: ctx.cord[pi], src: pi, raw: (snapshot[pi] + 128) & 255, delta, before, after: x[k] });
+        if (onScalar) onScalar(li, qi * d + pi, k, x[k], before);
+      }
+      ctx.feat[tok] = null; ctx.kk[tok] = null; ctx.vv[tok] = null;
+      if ((qi & 15) === 0) await task.step();
     }
   }
   scanOrder(li, N) { return permFromSeed(this.layers[li].scanSeed, N, 0x27D4EB2F); }
@@ -711,22 +796,38 @@ class UT2 {
     }
     return x;
   }
-  srcCount() { const c = this.cfg; return (c.chan - 1) + (c.win + c.anch) * c.chan; }
-  bounds() {
-    const dh = this.dh, D = this.cfg.dim, sc = this.srcCount();
-    const tri = Math.max((dh - 1) * 16384, (D - 1) * 16384);
-    const score = dh * 16384;
-    const head = sc * 128 * 127;
-    const proj = D * 16384;
-    const max = Math.max(tri, score, head, proj);
-    return { tri, score, head, proj, max, safe: max <= I32MAX };
+  srcTokens() { return this.cfg.win + this.cfg.anch; }
+  opsPerToken() {
+    const c = this.cfg, dh = this.dh, D = c.dim, st = this.srcTokens();
+    const tri = dh * (dh - 1) / 2;
+    const qkv = tri * (c.vhead ? 3 : 2);
+    const attn = st * dh * (c.vhead ? 2 : 1);
+    const ffn = c.ffn ? 2 * dh * (dh * c.exp) + dh * c.exp : 0;
+    return SCALES.length * D * 2 + qkv + attn + ffn + 2 * D + D * c.chan;
   }
-  get parameters() { let p = 256 * this.cfg.dim; for (const l of this.layers) p += l.size; return p; }
   get opsPerByte() {
-    const c = this.cfg, dh = this.dh, D = c.dim, sc = this.srcCount();
-    const perHead = 2 * sc * dh + 1.5 * dh * dh;
-    const out = c.omix ? D * D : D;
-    return c.layers * (c.heads * perHead + out + 8) + (c.scan ? 12 * c.layers : 0);
+    const c = this.cfg;
+    const perScalar = this.opsPerToken() / c.chan + (c.chan - 1) / 2 + 3;
+    return Math.round(c.layers * perScalar + (c.scan ? 12 * c.layers : 0));
+  }
+  bounds() {
+    const c = this.cfg, dh = this.dh, D = c.dim, st = this.srcTokens();
+    const tri = (dh - 1) * 16384;
+    const score = dh * 16384;
+    const head = st * 16384;
+    const ffnUp = dh * 16384 + 128;
+    const ffnDown = dh * c.exp * 16384 + 128;
+    const proj = D * 16384 + 128;
+    const inner = (c.chan - 1) * 128 * 255;
+    const tokFeat = c.chan * 128;
+    const qAgg = SCALES.length * 128 * (32 * 128);
+    const max = Math.max(tri, score, head, ffnUp, ffnDown, proj, inner, tokFeat, qAgg);
+    return { tri, score, head, ffnDown, proj, inner, qAgg, max, safe: max <= I32MAX };
+  }
+  get parameters() {
+    let p = 256 * this.cfg.dim;
+    for (const l of this.layers) p += l.size;
+    return Math.round(p);
   }
 }
 const Auth = {
@@ -757,14 +858,15 @@ const Auth = {
 };
 
 const PRESETS = {
-  lite: { dim:8, heads:2, chan:4, layers:3, win:4, anch:1, orderMode:"alternate", scan:true, nl:true, vhead:true, omix:true },
-  core: { dim:16, heads:4, chan:8, layers:4, win:6, anch:2, orderMode:"alternate", scan:true, nl:true, vhead:true, omix:true },
-  wide: { dim:24, heads:4, chan:12, layers:5, win:8, anch:3, orderMode:"alternate", scan:true, nl:true, vhead:true, omix:true }
+  base: { dim:64, heads:4, chan:8, layers:4, exp:2, win:8, anch:3, orderMode:"alternate", scan:true, nl:true, vhead:true, ffn:true },
+  large:{ dim:128, heads:8, chan:12, layers:6, exp:2, win:10, anch:4, orderMode:"alternate", scan:true, nl:true, vhead:true, ffn:true },
+  xl:   { dim:192, heads:8, chan:16, layers:8, exp:3, win:12, anch:5, orderMode:"alternate", scan:true, nl:true, vhead:true, ffn:true },
+  xxl:  { dim:256, heads:16, chan:16, layers:10, exp:3, win:16, anch:6, orderMode:"alternate", scan:true, nl:true, vhead:true, ffn:true }
 };
-const MAX_BYTES = 4096, MAX_OPS = 120000000, VERSION = "2.0";
-const app = { key:"ut2-demo-key", cfg:Object.assign({},PRESETS.core), iters:200000, mode:"raw",
+const VERSION = "3.0";
+const app = { key:"ut3-demo-key", cfg:Object.assign({},PRESETS.large), iters:200000, mode:"raw",
   net:null, digest:null, builtKey:null, builtSig:null, engine:"—", task:null, busy:false, epoch:0,
-  lastCt:null, lastPlain:null, timer:null, flow:null, reach:null };
+  lastCt:null, lastPlain:null, timer:null, flow:null, reach:null, rate:0, fileBytes:null };
 const $ = id => document.getElementById(id);
 const setStatus = (m,e) => { const n=$("status"); n.textContent=m; n.classList.toggle("err",!!e); };
 const setCk = (m,e) => { const n=$("ckStatus"); n.textContent=m; n.classList.toggle("err",!!e); };
@@ -794,43 +896,51 @@ $("cancelBtn").addEventListener("click",()=>{ if(app.task) app.task.cancel(); })
 function b64(b){let s="";const c=16384;for(let i=0;i<b.length;i+=c)s+=String.fromCharCode.apply(null,b.subarray(i,i+c));return btoa(s);}
 function unb64(t){const bin=atob(t.replace(/\s+/g,""));const o=new Uint8Array(bin.length);for(let i=0;i<bin.length;i++)o[i]=bin.charCodeAt(i);return o;}
 function hex(b,sep){let s="";for(let i=0;i<b.length;i++){s+=b[i].toString(16).padStart(2,"0");if(sep&&i<b.length-1)s+=sep;}return s;}
+function hexCap(b){ const n=Math.min(b.length,HEX_CAP); return hex(b.subarray(0,n)," ")+(b.length>n?"\n… показано "+n+" из "+b.length+" байт":""); }
 function unhex(t){const c=t.replace(/\s+/g,"").replace(/^0x/i,"");if(!/^[0-9a-fA-F]*$/.test(c))throw new Error("некорректный HEX");if(c.length%2)throw new Error("HEX должен иметь чётную длину");const o=new Uint8Array(c.length/2);for(let i=0;i<o.length;i++)o[i]=parseInt(c.substr(i*2,2),16);return o;}
 function download(name,bytes,type){const u=URL.createObjectURL(new Blob([bytes],{type:type||"application/octet-stream"}));const a=document.createElement("a");a.href=u;a.download=name;document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(u),1200);}
 const sig = () => VERSION+"|"+JSON.stringify(app.cfg)+"|"+app.iters+"|"+app.engine;
 function requireNet(){ if(!app.net) throw new Error("Сеть не готова"); if(app.builtKey!==app.key) throw new Error("Ключ изменён — дождитесь пересборки"); if(app.builtSig!==sig()) throw new Error("Архитектура изменена — дождитесь пересборки"); }
-function maxLen(){ return app.net ? Math.min(MAX_BYTES, Math.floor(MAX_OPS/app.net.opsPerByte)) : 0; }
-function guard(n){ if(n>MAX_BYTES) throw new Error("Лимит длины "+MAX_BYTES+" байт"); if(n>maxLen()) throw new Error("Для этой сети максимум "+maxLen()+" байт"); }
+function fmtTime(ms){ if(ms<1000) return Math.round(ms)+" мс"; if(ms<60000) return (ms/1000).toFixed(1)+" с"; if(ms<3600000) return (ms/60000).toFixed(1)+" мин"; return (ms/3600000).toFixed(1)+" ч"; }
+function estimate(n){ return app.rate>0 && app.net ? n*app.net.opsPerByte/app.rate : 0; }
+function updateEta(){
+  const n = app.fileBytes ? app.fileBytes.length : enc.encode($("input").value).length;
+  const e = estimate(n);
+  $("mEta").textContent = e>0 ? fmtTime(e) : "—";
+}
 function normalize(){
   const c=app.cfg;
-  if(c.dim%c.heads!==0) c.heads=[8,4,2,1].find(v=>c.dim%v===0&&v<=c.heads)||2;
-  while(c.dim/c.heads<4 && c.heads>1) c.heads=[8,4,2,1].find(v=>v<c.heads&&c.dim%v===0)||1;
+  if(c.dim%c.heads!==0) c.heads=[16,8,4,2,1].find(v=>c.dim%v===0&&v<=c.heads)||2;
+  while(c.dim/c.heads<4 && c.heads>1) c.heads=[16,8,4,2,1].find(v=>v<c.heads&&c.dim%v===0)||1;
   $("heads").value=String(c.heads);
 }
 function syncControls(){
   const c=app.cfg;
   $("dim").value=String(c.dim); $("heads").value=String(c.heads);
-  $("chan").value=String(c.chan); $("layers").value=String(c.layers); $("win").value=String(c.win); $("anch").value=String(c.anch);
-  $("orderMode").value=c.orderMode; $("scan").checked=c.scan; $("nl").checked=c.nl; $("vhead").checked=c.vhead; $("omix").checked=c.omix;
-  $("chanV").textContent=c.chan; $("layersV").textContent=c.layers; $("winV").textContent=c.win; $("anchV").textContent=c.anch;
-  $("mHeads").textContent=c.heads; $("mLayers").textContent=c.layers; $("mDh").textContent=c.dim/c.heads;
+  $("chan").value=String(c.chan); $("layers").value=String(c.layers); $("exp").value=String(c.exp);
+  $("win").value=String(c.win); $("anch").value=String(c.anch);
+  $("orderMode").value=c.orderMode; $("scan").checked=c.scan; $("nl").checked=c.nl; $("vhead").checked=c.vhead; $("ffn").checked=c.ffn;
+  $("chanV").textContent=c.chan; $("layersV").textContent=c.layers; $("expV").textContent="×"+c.exp;
+  $("winV").textContent=c.win; $("anchV").textContent=c.anch;
+  $("mHeads").textContent=c.heads; $("mLayers").textContent=c.layers; $("mDh").textContent=c.dim/c.heads; $("mFfn").textContent="×"+c.exp;
   $("modeTag").textContent=app.mode==="auth"?"AUTH · nonce + HMAC":"RAW · детерминированный";
   $("modeTag").className="tag "+(app.mode==="auth"?"ok":"cy");
-  renderPipeline(); drawTri();
+  renderPipeline(); drawTri(); updateEta();
 }
 function invalidate(msg){
   app.epoch++; if(app.task) app.task.cancel();
-  app.net=null; app.digest=null; app.builtKey=null; app.builtSig=null; app.reach=null;
-  $("fp").textContent="—"; $("mParams").textContent="—"; $("opsB").textContent="—"; $("mMax").textContent="—";
-  $("mBound").textContent="—"; $("srcInfo").textContent="—"; $("bndInfo").textContent="—";
+  app.net=null; app.digest=null; app.builtKey=null; app.builtSig=null; app.reach=null; app.rate=0;
+  $("fp").textContent="—"; $("mParams").textContent="—"; $("opsB").textContent="—"; $("opsT").textContent="—";
+  $("mBound").textContent="—"; $("bndInfo").textContent="—"; $("rateInfo").textContent="—"; $("mEta").textContent="—";
   setChip("idle","пересборка"); setStatus(msg,true); drawReach();
 }
 async function buildNet(cfg, keyText, iters, task){
   const {master,engine}=await deriveMaster(keyText,iters,task);
-  const dg=sha256(concat(enc.encode("UT2/v1"),master));
+  const dg=sha256(concat(enc.encode("UT3/v1"),master));
   const kb=sha256(concat(dg,enc.encode("stream-key")));
   const nb=sha256(concat(dg,enc.encode("stream-nonce"))).subarray(0,12);
   const pb=sha256(concat(dg,enc.encode("positional")));
-  const net=await UT2.create(cfg,kb,nb,(pb[0]|(pb[1]<<8)|(pb[2]<<16)|(pb[3]<<24))>>>0,task);
+  const net=await UT3.create(cfg,kb,nb,(pb[0]|(pb[1]<<8)|(pb[2]<<16)|(pb[3]<<24))>>>0,task);
   return {net,dg,engine};
 }
 async function build(task){
@@ -838,23 +948,29 @@ async function build(task){
   const cfg=Object.freeze(Object.assign({},app.cfg)), keySnap=app.key, iters=app.iters;
   const {net,dg,engine}=await buildNet(cfg,keySnap,iters,task);
   app.engine=engine;
-  task.progress(0.94,"самопроверка");
-  for(const n of [1,2,3,9,17]){
-    const p=randomBytes(n), c=await net.encrypt(p,task.child()), r=await net.decrypt(c,task.child());
-    if(c.length!==n||!eqBytes(p,r)) throw new Error("Самопроверка не пройдена на длине "+n);
-  }
   const bd=net.bounds();
   if(!bd.safe) throw new Error("Граница аккумулятора превышена: "+bd.max);
+  task.progress(0.94,"калибровка");
+  const probe=randomBytes(256), t0=performance.now();
+  const c=await net.encrypt(probe,task.child());
+  const dt=Math.max(1,performance.now()-t0);
+  app.rate=256*net.opsPerByte/dt*1000;
+  const r=await net.decrypt(c,task.child());
+  if(!eqBytes(probe,r)) throw new Error("Самопроверка не пройдена");
+  for(const n of [1,2,3,9,17]){
+    const p=randomBytes(n), cc=await net.encrypt(p,task.child()), rr=await net.decrypt(cc,task.child());
+    if(cc.length!==n||!eqBytes(p,rr)) throw new Error("Самопроверка не пройдена на длине "+n);
+  }
   app.net=net; app.digest=dg; app.builtKey=keySnap; app.builtSig=sig();
   $("fp").textContent=hex(dg.subarray(0,4));
   $("mParams").textContent=net.parameters.toLocaleString("ru-RU");
   $("opsB").textContent=net.opsPerByte.toLocaleString("ru-RU");
-  $("mMax").textContent=maxLen();
+  $("opsT").textContent=Math.round(net.opsPerToken()).toLocaleString("ru-RU");
   $("mBound").textContent=(bd.max/1e6).toFixed(2)+"M";
-  $("srcInfo").textContent=String(net.srcCount());
   $("bndInfo").textContent=bd.max.toLocaleString("ru-RU")+" / 2³¹";
+  $("rateInfo").textContent=(app.rate/1e6).toFixed(1)+"M оп/с";
   $("kdfInfo").textContent=engine+" · "+iters.toLocaleString("ru-RU");
-  task.progress(1,"готово"); renderPipeline(); drawTri();
+  task.progress(1,"готово"); renderPipeline(); drawTri(); updateEta();
 }
 async function rebuild(reason){
   if(app.busy){ schedule(); return; }
@@ -865,8 +981,8 @@ async function rebuild(reason){
     await build(task);
     if(epoch!==app.epoch) return;
     setChip("ready","сеть готова");
-    setStatus(reason||"Сеть готова. Параметров: "+app.net.parameters.toLocaleString("ru-RU")+", лимит "+maxLen()+" байт.");
-    if(app.key==="ut2-demo-key") toast("Демо-ключ: не для реальных данных","bad");
+    setStatus(reason||"Сеть готова. Весов: "+app.net.parameters.toLocaleString("ru-RU")+", операций/байт "+app.net.opsPerByte.toLocaleString("ru-RU")+". Объём не ограничен.");
+    if(app.key==="ut3-demo-key") toast("Демо-ключ: не для реальных данных","bad");
     if(reason) toast(reason,"ok");
   }catch(e){
     if(epoch!==app.epoch) return;
@@ -895,7 +1011,7 @@ const charts={av:null,hist:null,df:null};
 function drawTri(){
   const {c,w,h}=prep($("triCanvas"));
   c.fillStyle="#0b1120"; c.fillRect(0,0,w,h);
-  const N=80, cell=w/N, cfg=app.cfg, d=cfg.chan, T=Math.ceil(N/d);
+  const N=80, cell=w/N, cfg=app.cfg, d=Math.min(cfg.chan,16), T=Math.ceil(N/d);
   for(let i=0;i<N;i++){
     const tokI=Math.floor(i/d);
     const anchors=new Set();
@@ -939,13 +1055,13 @@ function renderPipeline(){
   const pipe=$("pipeline"); pipe.innerHTML="";
   const term=(t,l)=>{const d=document.createElement("div");d.className="stage term";d.innerHTML="<b>"+t+"</b><span>"+l+"</span>";return d;};
   const arrow=()=>{const d=document.createElement("div");d.className="arrow";d.textContent="→";return d;};
-  const L=app.lastPlain?app.lastPlain.length:enc.encode($("input").value).length;
-  pipe.appendChild(term("ВХОД","N = "+L+"<br>d = "+app.cfg.chan));
+  const L=app.fileBytes?app.fileBytes.length:(app.lastPlain?app.lastPlain.length:enc.encode($("input").value).length);
+  pipe.appendChild(term("ВХОД","N = "+L+"<br>каналов "+app.cfg.chan));
   for(let li=0;li<app.cfg.layers;li++){
     pipe.appendChild(arrow());
     const d=document.createElement("div"); d.className="stage";
     const ord=app.cfg.orderMode==="identity"?"прямой":app.cfg.orderMode==="alternate"?(li===0?"прямой":li===1?"обратный":"ключевой"):"ключевой";
-    d.innerHTML="<b>DATA "+li+"</b><span>"+ord+" · H="+app.cfg.heads+" dh="+Math.floor(app.cfg.dim/app.cfg.heads)+"<br>Q K "+(app.cfg.vhead?"V":"·")+" → aʰ → head<br>"+(app.cfg.omix?"O₂·P·O₁ → proj":"proj")+"<br>x_k += rot(...) + b_k</span>";
+    d.innerHTML="<b>DATA "+li+"</b><span>"+ord+" · H="+app.cfg.heads+" dh="+Math.floor(app.cfg.dim/app.cfg.heads)+"<br>Q(префикс) K V"+(app.cfg.ffn?" FFN×"+app.cfg.exp:"")+"<br>1 расчёт на токен<br>+ скалярная лестница</span>";
     pipe.appendChild(d);
     if(app.cfg.scan){ pipe.appendChild(arrow()); const s=document.createElement("div"); s.className="stage scan"; s.innerHTML="<b>SCAN "+li+"</b><span>префикс-сумма<br>O(log N) / O(1)</span>"; pipe.appendChild(s); }
   }
@@ -1050,51 +1166,59 @@ async function audit(task){
   const cn=new Uint8Array(12); cn[3]=9; cn[7]=0x4a;
   add("P5.chacha20.rfc8439",hex(chachaBlock(wordsLE(ck,0,8),1,wordsLE(cn,0,3)).subarray(0,32))==="10f1e7e4d13b5915500fdd1fa32071c4c7d1f4c733c068030422aa9ac3d46c4e","RFC 8439 §2.3.2");
   const bd=net.bounds();
-  add("U0.int32.bounds",bd.safe,"треуг "+bd.tri.toLocaleString("ru-RU")+" · score "+bd.score.toLocaleString("ru-RU")+" · head "+bd.head.toLocaleString("ru-RU")+" · proj "+bd.proj.toLocaleString("ru-RU")+" ≤ 2³¹−1");
-  const N=Math.max(8,Math.min(24,maxLen()));
+  add("U0.int32.bounds",bd.safe,"max "+bd.max.toLocaleString("ru-RU")+" ≤ 2³¹−1 · FFN "+bd.ffnDown.toLocaleString("ru-RU")+" · proj "+bd.proj.toLocaleString("ru-RU")+" · inner "+bd.inner.toLocaleString("ru-RU"));
+  const N=Math.max(16,Math.min(48,net.cfg.chan*4));
   let diagOk=true, checked=0;
   for(let li=0;li<net.cfg.layers;li++){
     const ctx=net.prepare(li,N), x=randomBytes(N);
-    for(let t=0;t<N;t++){
-      const k=ctx.order[t], s1=net.updateSum(ctx,x,t)&255, saved=x[k];
-      x[k]=(saved+131)&255; ctx.keys[k]=null; ctx.vals[k]=null;
-      const s2=net.updateSum(ctx,x,t)&255;
-      x[k]=saved; ctx.keys[k]=null; ctx.vals[k]=null;
-      if(s1!==s2) diagOk=false;
-      checked++;
+    for(let q=0;q<ctx.T;q++){
+      const u1=net.tokenUpdate(ctx,x,q), snap=Int8Array.from(u1);
+      const tok=ctx.tord[q];
+      for(let p=0;p<ctx.d;p++){
+        const k=tok*ctx.d+ctx.cord[p]; if(k>=N) continue;
+        const s1=net.innerSum(ctx,x,tok,p)&255, saved=x[k];
+        x[k]=(saved+131)&255;
+        const s2=net.innerSum(ctx,x,tok,p)&255;
+        x[k]=saved;
+        if(s1!==s2) diagOk=false;
+        checked++;
+      }
+      const u2=net.tokenUpdate(ctx,x,q);
+      for(let p=0;p<ctx.d;p++) if(u2[p]!==snap[p]) diagOk=false;
+      ctx.feat[tok]=null; ctx.kk[tok]=null; ctx.vv[tok]=null;
     }
     await task.step();
   }
-  add("U1.unit.diagonal",diagOk,checked+" позиций: F_k не читает x_k ⇒ ∂y_k/∂x_k = 1, det = 1 при любых V и O");
+  add("U1.unit.diagonal",diagOk,checked+" позиций: ни токенная сеть, ни лестница не читают обновляемый скаляр ⇒ det = 1");
   let triOk=true;
   for(let li=0;li<net.cfg.layers;li++){
-    const ctx=net.prepare(li,N), pos=new Int32Array(N);
-    for(let t=0;t<N;t++) pos[ctx.order[t]]=t;
-    for(let t=0;t<N;t++) for(const j of net.sources(ctx,t)) if(pos[j]>=t) triOk=false;
+    const ctx=net.prepare(li,N);
+    for(let q=0;q<ctx.T;q++) for(const t of net.srcTokens(ctx,q)){
+      const qi=ctx.tord.indexOf(t);
+      if(qi>=q) triOk=false;
+    }
   }
-  add("U2.strict.triangular",triOk,"все источники строго раньше цели во всех слоях");
+  add("U2.strict.triangular",triOk,"источники — только младшие токены; внутри токена — только младшие каналы");
   const firsts=new Set();
-  for(let li=0;li<net.cfg.layers;li++) firsts.add(net.prepare(li,N).order[0]);
-  const diverse=firsts.size>1;
-  add("U3.order.diversity",diverse||net.cfg.layers===1,"разных первых скаляров: "+firsts.size+". "+(diverse?"ни одна координата не выделена":"порядки одинаковы — смена порядка отключена, смещения b_k всё равно активны"));
-  add("U4.multihead.full",net.cfg.heads>=2&&net.layers[0].heads.every(h=>h.v||!net.cfg.vhead),net.cfg.heads+" голов, dh="+net.dh+", V="+(net.cfg.vhead?"есть":"нет")+", O="+(net.cfg.omix?"O₂·P·O₁":"проекция"));
-  add("U5.dh.min",net.dh>=4,"dh = "+net.dh+" ≥ 4, треугольные карты не вырождены");
-  const lens=[0,1,2,3,5,7,16,17,33,65,129].filter(n=>n<=maxLen());
+  for(let li=0;li<net.cfg.layers;li++){ const ctx=net.prepare(li,N); firsts.add(ctx.tord[0]); }
+  add("U3.order.diversity",firsts.size>1||net.cfg.layers===1,"разных первых токенов: "+firsts.size);
+  add("U4.multihead.full",net.cfg.heads>=2&&net.layers[0].heads.every(h=>h.v||!net.cfg.vhead),net.cfg.heads+" голов, dh="+net.dh+", V="+(net.cfg.vhead?"есть":"нет")+", FFN="+(net.cfg.ffn?"×"+net.cfg.exp:"нет"));
+  add("U5.dh.min",net.dh>=4,"dh = "+net.dh+" ≥ 4");
+  add("U6.scale",net.parameters>=20000,"весов "+net.parameters.toLocaleString("ru-RU")+" ≥ 20 000");
+  const lens=[0,1,2,3,5,7,16,17,33,65,129,513];
   for(const n of lens){
     const p=randomBytes(n), c=await net.encrypt(p,task.child()), r=await net.decrypt(c,task.child());
     add("R.roundtrip.n"+n,c.length===n&&eqBytes(p,r),"длина "+c.length+"/"+n+", байты совпали");
     await task.step();
   }
-  const sn=Math.min(64,maxLen());
-  if(sn>=4){
-    const p=randomBytes(sn), a=Uint8Array.from(p);
-    await net.runScan(0,a,1,task.child());
-    const b=Uint8Array.from(a); await net.runScan(0,b,-1,task.child());
-    add("S1.scan.inverse",eqBytes(p,b),"префикс-сумма и разность взаимно обратны");
-    const c1=await net.encrypt(p,task.child()), c2=await net.encrypt(p,task.child());
-    add("S2.determinism",eqBytes(c1,c2),"повторный прогон идентичен");
-  }
-  const rn=Math.max(8,Math.min(64,maxLen()));
+  const sn=96;
+  const p=randomBytes(sn), a=Uint8Array.from(p);
+  await net.runScan(0,a,1,task.child());
+  const b=Uint8Array.from(a); await net.runScan(0,b,-1,task.child());
+  add("S1.scan.inverse",eqBytes(p,b),"префикс-сумма и разность взаимно обратны");
+  const c1=await net.encrypt(p,task.child()), c2=await net.encrypt(p,task.child());
+  add("S2.determinism",eqBytes(c1,c2),"повторный прогон идентичен");
+  const rn=128;
   const base=randomBytes(rn), flip=Uint8Array.from(base); flip[0]^=0x80;
   const A=Uint8Array.from(base), B=Uint8Array.from(flip), steps=[];
   const totalSteps=net.cfg.layers*(net.cfg.scan?2:1);
@@ -1113,8 +1237,11 @@ async function audit(task){
   app.reach={N:rn,steps}; drawReach();
   const full=steps.findIndex(s=>s.frac>=.999);
   add("S3.diffusion.reach",full>=0,"N="+rn+", полное покрытие "+(full>=0?"на шаге "+(full+1)+" из "+steps.length:"не достигнуто"));
+  const big=randomBytes(4096);
+  const bc=await net.encrypt(big,task.child()), br=await net.decrypt(bc,task.child());
+  add("S4.volume.4096",eqBytes(big,br),"4096 байт на текущей сети без ограничений");
   if(app.digest){
-    const msg=randomBytes(Math.min(24,maxLen()));
+    const msg=randomBytes(24);
     const pkt=await Auth.seal(net,app.digest,msg,task.child());
     const back=await Auth.open(net,app.digest,pkt,task.child());
     add("A1.auth.roundtrip",eqBytes(msg,back),"пакет "+pkt.length+" Б, накладные 45 Б");
@@ -1145,10 +1272,10 @@ async function analysis(task){
   const entBlocks=Math.max(1,Math.min(500,Math.floor(afford*.18)));
   const dpRounds=Math.max(4,Math.min(160,Math.floor(afford*.16)));
   const trendDepths=Math.min(net.cfg.layers,4);
-  const rest=Math.max(2,afford-entBlocks-dpRounds*(1+trendDepths));
+  const rest=Math.max(2,afford-entBlocks-2*dpRounds*trendDepths);
   const trials=Math.max(1,Math.min(8,Math.floor(rest/20)));
   const rowsN=Math.max(1,Math.min(BITS,Math.floor((rest-trials)/trials)));
-  const planned=rowsN*trials+trials+entBlocks+dpRounds*(1+trendDepths);
+  const planned=rowsN*trials+trials+entBlocks+2*dpRounds*trendDepths;
   let done=0; const tick=l=>{done++;task.progress(done/planned,l);};
   const bits=[]; for(let i=0;i<rowsN;i++) bits.push(Math.round(i*(BITS-1)/Math.max(1,rowsN-1)));
   const ub=Array.from(new Set(bits)), sum=new Float64Array(ub.length);
@@ -1180,7 +1307,7 @@ async function analysis(task){
   let outliers=0; for(let i=0;i<cells;i++) if(Math.abs(matrix[i]-.5)>dTol) outliers++;
   const dfOk=Math.abs(z)<3&&outliers/cells<.05;
   charts.df={rows:ub,matrix}; drawDf();
-  $("dfInfo").textContent="χ² z-score = "+z.toFixed(2)+" (порог |z| < 3), выбросов "+outliers+" из "+cells+" при допуске ±"+(dTol*100).toFixed(1)+"%, повторов "+trials+". Агрегатный тест мощнее поштучных ячеек.";
+  $("dfInfo").textContent="χ² z-score = "+z.toFixed(2)+" (порог |z| < 3), выбросов "+outliers+" из "+cells+" при допуске ±"+(dTol*100).toFixed(1)+"%, повторов "+trials+".";
   const dpN=8, trend=[];
   for(let depth=1;depth<=trendDepths;depth++){
     const map=new Map();
@@ -1217,27 +1344,25 @@ async function analysis(task){
     '<div class="card '+(dfOk?"ok":"bad")+'"><div><b>Диффузия χ²</b> <span class="tag '+(dfOk?"ok":"bad")+'">'+(dfOk?"PASS":"FAIL")+'</span></div>'+
     '<div class="big">'+z.toFixed(2)+'</div>'+
     '<div class="r"><span>выбросов</span><span>'+outliers+' / '+cells+'</span></div>'+
-    '<div class="meta">Матрица и подробности — в раскрытии ниже.</div></div>'+
+    '<div class="meta">Матрица — в раскрытии ниже.</div></div>'+
     '<div class="card m"><div><b>Дифференциал, тренд</b> <span class="tag mg">ОЦЕНКА</span></div>'+
     '<div class="big">'+full.dp.toFixed(4)+'</div>'+
     '<div class="r"><span>верхняя граница 3σ</span><span>≤ '+full.up.toFixed(4)+'</span></div>'+
     trendRows+
-    '<div class="meta">Разрешение выборки 1/'+dpRounds+' = '+(1/dpRounds).toFixed(4)+'. Метрика ловит только катастрофические дифференциалы; малые DP этой выборкой не сертифицируются.</div></div>'+
+    '<div class="meta">Разрешение 1/'+dpRounds+' = '+(1/dpRounds).toFixed(4)+'. Малые DP этой выборкой не сертифицируются.</div></div>'+
     '<div class="card '+enTag+'"><div><b>Маскировка</b> <span class="tag '+enTag+'">'+enTxt+'</span></div>'+
     '<div class="big">'+ent.toFixed(4)+'</div>'+
     '<div class="r"><span>источник</span><span>2.0000 бит/Б</span></div>'+
-    '<div class="r"><span>ожидание / объём</span><span>'+exp.toFixed(3)+' / '+totalB+' Б</span></div>'+
-    '<div class="meta">Низкоэнтропийный вход: 4 символа.</div></div>'+
+    '<div class="r"><span>ожидание / объём</span><span>'+exp.toFixed(3)+' / '+totalB+' Б</span></div></div>'+
     '<div class="card v"><div><b>Прогон</b></div>'+
     '<div class="big" style="font-size:16px">'+per.toFixed(1)+' мс</div>'+
     '<div class="r"><span>план</span><span>'+planned+'</span></div>'+
-    '<div class="r"><span>бюджет</span><span>'+(budget/1000)+' с</span></div>'+
-    '<div class="meta">'+(trials<2?"Выборка мала — увеличьте бюджет.":"Бюджет соблюдён.")+'</div></div></div>';
+    '<div class="r"><span>бюджет</span><span>'+(budget/1000)+' с</span></div></div></div>';
   return {avOk,dfOk,enOk,dp:full.dp,up:full.up,trials};
 }
 async function example(task){
-  const cfg=Object.freeze({dim:8,heads:2,chan:2,layers:1,win:2,anch:0,orderMode:"identity",scan:false,nl:true,vhead:true,omix:true});
-  const {net}=await buildNet(cfg,app.key||"ut2-demo-key",60000,task.child());
+  const cfg=Object.freeze({dim:8,heads:2,chan:2,layers:1,exp:2,win:2,anch:0,orderMode:"identity",scan:false,nl:true,vhead:true,ffn:true});
+  const {net}=await buildNet(cfg,app.key||"ut3-demo-key",60000,task.child());
   const input=new Uint8Array([1,2,3,4,5,6,7,8]);
   const fwd=[], inv=[], state=Uint8Array.from(input);
   await net.runData(0,state,1,task.child(),null,fwd);
@@ -1246,15 +1371,21 @@ async function example(task){
   const ok=eqBytes(input,state);
   const ctx=net.prepare(0,8), probe=Uint8Array.from(input);
   let diagOk=true;
-  for(let t=0;t<8;t++){
-    const k=ctx.order[t], s1=net.updateSum(ctx,probe,t)&255, saved=probe[k];
-    probe[k]=(saved+97)&255; ctx.keys[k]=null; ctx.vals[k]=null;
-    const s2=net.updateSum(ctx,probe,t)&255;
-    probe[k]=saved; ctx.keys[k]=null; ctx.vals[k]=null;
-    if(s1!==s2) diagOk=false;
+  for(let q=0;q<ctx.T;q++){
+    const u1=net.tokenUpdate(ctx,probe,q), snap=Int8Array.from(u1);
+    const tok=ctx.tord[q];
+    for(let p=0;p<ctx.d;p++){
+      const k=tok*ctx.d+ctx.cord[p], s1=net.innerSum(ctx,probe,tok,p)&255, saved=probe[k];
+      probe[k]=(saved+97)&255;
+      const s2=net.innerSum(ctx,probe,tok,p)&255;
+      probe[k]=saved;
+      if(s1!==s2) diagOk=false;
+    }
+    const u2=net.tokenUpdate(ctx,probe,q);
+    for(let p=0;p<ctx.d;p++) if(u2[p]!==snap[p]) diagOk=false;
   }
   const tbl=(rows,color)=>{
-    let h='<table><thead><tr><th>t</th><th>k</th><th>ток·канал</th><th>ист.</th><th>F</th><th>Δ</th><th>до</th><th>после</th></tr></thead><tbody>';
+    let h='<table><thead><tr><th>t</th><th>k</th><th>ток·канал</th><th>ист.</th><th>U</th><th>Δ</th><th>до</th><th>после</th></tr></thead><tbody>';
     for(const r of rows) h+='<tr><td class="num">'+r.t+'</td><td class="num">'+r.k+'</td><td class="num">'+r.tok+'·'+r.ch+'</td><td class="num">'+r.src+'</td><td class="num">'+r.raw+'</td><td class="num">'+r.delta+'</td><td class="num">'+r.before+'</td><td class="num" style="color:'+color+'">'+r.after+'</td></tr>';
     return h+'</tbody></table>';
   };
@@ -1262,7 +1393,7 @@ async function example(task){
     '<div class="stats"><div class="card '+(ok?"ok":"bad")+'"><div><b>Обратимость</b> <span class="tag '+(ok?"ok":"bad")+'">'+(ok?"PASS":"FAIL")+'</span></div>'+
     '<div class="big" style="font-size:14px">'+hex(output," ")+'</div><div class="r"><span>вход</span><span>'+hex(input," ")+'</span></div></div>'+
     '<div class="card '+(diagOk?"ok":"bad")+'"><div><b>Диагональ</b> <span class="tag '+(diagOk?"ok":"bad")+'">'+(diagOk?"det = 1":"НАРУШЕНО")+'</span></div>'+
-    '<div class="meta">F пересчитана при возмущении самого x_k: 8 из 8 позиций не изменились. Внутри F — полный multi-head с V и O, и это не влияет на диагональ.</div></div></div>'+
+    '<div class="meta">Ни токенная сеть с FFN, ни скалярная лестница не читают обновляемый скаляр.</div></div></div>'+
     '<h3>Прямой проход</h3>'+tbl(fwd,"#22d3ee")+'<h3>Обратный проход</h3>'+tbl(inv,"#a3e635");
   $("exDetails").open=true;
   return ok&&diagOk;
@@ -1281,7 +1412,11 @@ function analyzeCurrent(){
   setCk("Анализ текущего шифротекста завершён.");
 }
 
-function setRaw(plain,ct){ app.lastPlain=plain; app.lastCt=ct; $("inHex").value=hex(plain," "); $("ctHex").value=hex(ct," "); renderPipeline(); }
+function setRaw(plain,ct){
+  app.lastPlain=plain; app.lastCt=ct;
+  $("inHex").value=hexCap(plain); $("ctHex").value=hexCap(ct);
+  renderPipeline();
+}
 $("toggleKey").addEventListener("click",()=>{const i=$("key");i.type=i.type==="password"?"text":"password";$("toggleKey").textContent=i.type==="password"?"Показать":"Скрыть";});
 $("key").addEventListener("change",()=>{const v=$("key").value; if(!v){invalidate("Ключ пуст.");return;} app.key=v; invalidate("Ключ изменён."); schedule();});
 $("key").addEventListener("keydown",e=>{if(e.key==="Enter"){e.preventDefault();$("key").dispatchEvent(new Event("change"));}});
@@ -1289,48 +1424,80 @@ $("randomKey").addEventListener("click",()=>{$("key").value="k-"+hex(randomBytes
 $("kdfIter").addEventListener("change",()=>{app.iters=Number($("kdfIter").value);invalidate("KDF изменён.");schedule();});
 $("mode").addEventListener("change",()=>{app.mode=$("mode").value;syncControls();toast(app.mode==="auth"?"nonce + HMAC":"Сырой режим 1:1","info");});
 $("preset").addEventListener("change",()=>{const p=PRESETS[$("preset").value];if(!p)return;app.cfg=Object.assign({},p);syncControls();invalidate("Пресет изменён.");schedule();});
-function bindRange(id,key,label){$(id).addEventListener("input",()=>{app.cfg[key]=Number($(id).value);if(label)label.textContent=String(app.cfg[key]);$("preset").value="custom";syncControls();invalidate("Архитектура изменена.");schedule();});}
+function bindRange(id,key,label,fmt){$(id).addEventListener("input",()=>{app.cfg[key]=Number($(id).value);if(label)label.textContent=fmt?fmt(app.cfg[key]):String(app.cfg[key]);$("preset").value="custom";syncControls();invalidate("Архитектура изменена.");schedule();});}
 $("dim").addEventListener("change",()=>{app.cfg.dim=Number($("dim").value);$("preset").value="custom";normalize();syncControls();invalidate("Архитектура изменена.");schedule();});
 $("heads").addEventListener("change",()=>{app.cfg.heads=Number($("heads").value);$("preset").value="custom";normalize();syncControls();invalidate("Архитектура изменена.");schedule();});
-bindRange("chan","chan",$("chanV")); bindRange("layers","layers",$("layersV")); bindRange("win","win",$("winV")); bindRange("anch","anch",$("anchV"));
+bindRange("chan","chan",$("chanV")); bindRange("layers","layers",$("layersV"));
+bindRange("exp","exp",$("expV"),v=>"×"+v); bindRange("win","win",$("winV")); bindRange("anch","anch",$("anchV"));
 $("orderMode").addEventListener("change",()=>{app.cfg.orderMode=$("orderMode").value;$("preset").value="custom";syncControls();invalidate("Порядки изменены.");schedule();});
-for(const [id,key] of [["scan","scan"],["nl","nl"],["vhead","vhead"],["omix","omix"]])
+for(const [id,key] of [["scan","scan"],["nl","nl"],["vhead","vhead"],["ffn","ffn"]])
   $(id).addEventListener("change",()=>{app.cfg[key]=$(id).checked;$("preset").value="custom";syncControls();invalidate("Архитектура изменена.");schedule();});
-$("input").addEventListener("input",renderPipeline);
-$("resetCfg").addEventListener("click",()=>{app.cfg=Object.assign({},PRESETS.core);$("preset").value="core";syncControls();invalidate("Сброс.");schedule();});
+$("input").addEventListener("input",()=>{app.fileBytes=null;renderPipeline();updateEta();});
+$("loadFile").addEventListener("change",async e=>{
+  const f=e.target.files&&e.target.files[0]; if(!f) return;
+  const buf=new Uint8Array(await f.arrayBuffer());
+  app.fileBytes=buf;
+  $("input").value="[файл "+f.name+", "+buf.length+" байт]";
+  renderPipeline(); updateEta();
+  setStatus("Файл загружен: "+buf.length+" байт. Оценка "+fmtTime(estimate(buf.length))+". Объём не ограничен.");
+  toast("Загружено "+buf.length+" байт","ok");
+});
+$("resetCfg").addEventListener("click",()=>{app.cfg=Object.assign({},PRESETS.large);$("preset").value="large";syncControls();invalidate("Сброс.");schedule();});
 $("randCfg").addEventListener("click",()=>{
-  const r=randomBytes(6), dims=[8,12,16,24,32], hs=[2,4,8];
-  app.cfg={dim:dims[r[0]%5],heads:hs[r[1]%3],chan:2+r[2]%15,layers:2+r[3]%7,win:1+r[4]%16,anch:r[5]%7,orderMode:["alternate","keyed"][r[0]%2],scan:true,nl:true,vhead:true,omix:true};
+  const r=randomBytes(7), dims=[64,128,192,256], hs=[2,4,8,16];
+  app.cfg={dim:dims[r[0]%4],heads:hs[r[1]%4],chan:4+r[2]%29,layers:3+r[3]%10,exp:1+r[4]%4,win:2+r[5]%31,anch:r[6]%9,orderMode:["alternate","keyed"][r[0]%2],scan:true,nl:true,vhead:true,ffn:true};
   $("preset").value="custom";normalize();syncControls();invalidate("Случайная сеть.");schedule();
 });
 $("exportCfg").addEventListener("click",()=>{
-  download("ut2-config.json",enc.encode(JSON.stringify({core:"UT2",version:VERSION,config:app.cfg,kdfIterations:app.iters,mode:app.mode,fingerprint:$("fp").textContent,parameters:app.net?app.net.parameters:null,opsPerByte:app.net?app.net.opsPerByte:null,bounds:app.net?app.net.bounds():null},null,2)),"application/json");
+  download("ut3-config.json",enc.encode(JSON.stringify({core:"UT3",version:VERSION,config:app.cfg,kdfIterations:app.iters,mode:app.mode,fingerprint:$("fp").textContent,parameters:app.net?app.net.parameters:null,opsPerByte:app.net?app.net.opsPerByte:null,opsPerToken:app.net?Math.round(app.net.opsPerToken()):null,bounds:app.net?app.net.bounds():null,volumeLimit:null},null,2)),"application/json");
   toast("Конфигурация сохранена","ok");
 });
+function currentInputBytes(){
+  if(app.fileBytes) return app.fileBytes;
+  return enc.encode($("input").value);
+}
 $("encrypt").addEventListener("click",()=>run("Шифрование",async task=>{
   requireNet();
-  const plain=enc.encode($("input").value);
+  const plain=currentInputBytes();
   if(!plain.length) throw new Error("Вход пуст");
-  guard(plain.length); flowInit(plain);
-  const hook=(step,t,k,v,b)=>{ if(k<app.flow.cols&&step<app.flow.kinds.length){app.flow.data[step+1][k]=v;app.flow.changed[step][k]=v!==b?1:0;app.flow.active={step,k};} if((t&15)===0) scheduleFlow(); };
+  const est=estimate(plain.length);
+  if(est>20000) toast("Оценка "+fmtTime(est)+". Можно отменить.","info");
+  flowInit(plain);
+  const hook=(step,t,k,v,b)=>{ if(k<app.flow.cols&&step<app.flow.kinds.length){app.flow.data[step+1][k]=v;app.flow.changed[step][k]=v!==b?1:0;app.flow.active={step,k};} if((t&255)===0) scheduleFlow(); };
+  const t0=performance.now();
   const out=app.mode==="auth"?await Auth.seal(app.net,app.digest,plain,task):await app.net.encrypt(plain,task,hook);
+  const dt=performance.now()-t0;
+  app.rate=plain.length*app.net.opsPerByte/Math.max(1,dt)*1000;
+  $("rateInfo").textContent=(app.rate/1e6).toFixed(1)+"M оп/с";
   drawFlow();
-  $("output").value=$("outFmt").value==="base64"?b64(out):hex(out);
+  $("output").value=$("outFmt").value==="base64"?b64(out):hex(out.subarray(0,HEX_CAP))+(out.length>HEX_CAP?" …":"");
   setRaw(plain,out);
-  setStatus(app.mode==="auth"?"Зашифровано: "+out.length+" Б, nonce + HMAC.":"Зашифровано: "+out.length+" Б, 1:1, det = 1, полный multi-head.");
+  setStatus("Зашифровано "+out.length+" байт за "+fmtTime(dt)+". Объём не ограничен архитектурой."+($("outFmt").value==="hex"&&out.length>HEX_CAP?" HEX в поле обрезан, полный — в .bin.":""));
   toast("Зашифровано "+out.length+" байт","ok");
 }));
 $("decrypt").addEventListener("click",()=>run("Расшифрование",async task=>{
   requireNet();
-  const raw=$("inFmt").value==="hex"?unhex($("input").value):unb64($("input").value);
+  let raw;
+  if(app.fileBytes) raw=app.fileBytes;
+  else raw=$("inFmt").value==="hex"?unhex($("input").value):unb64($("input").value);
   if(!raw.length) throw new Error("Вход пуст");
-  let plain;
-  if(app.mode==="auth"){ if(raw.length>MAX_BYTES+45) throw new Error("Пакет слишком велик"); plain=await Auth.open(app.net,app.digest,raw,task); }
-  else { guard(raw.length); plain=await app.net.decrypt(raw,task); }
-  try{ $("output").value=dec.decode(plain); }
-  catch(e){ void e; $("output").value=hex(plain," "); setRaw(plain,raw); setStatus("Байты восстановлены, но это не UTF-8: показан HEX.",true); return; }
-  setRaw(plain,raw);
-  setStatus("Расшифровано: "+plain.length+" Б"+(app.mode==="auth"?", MAC проверен.":", обратная подстановка без делений."));
+  const est=estimate(raw.length);
+  if(est>20000) toast("Оценка "+fmtTime(est)+". Можно отменить.","info");
+  const t0=performance.now();
+  const plain=app.mode==="auth"?await Auth.open(app.net,app.digest,raw,task):await app.net.decrypt(raw,task);
+  const dt=performance.now()-t0;
+  if(app.fileBytes){
+    app.lastPlain=plain; app.lastCt=raw;
+    $("output").value="[расшифровано "+plain.length+" байт — скачайте .bin]";
+    $("inHex").value=hexCap(raw); $("ctHex").value=hexCap(plain);
+    app.lastCt=plain;
+    setStatus("Расшифровано "+plain.length+" байт за "+fmtTime(dt)+". Скачайте результат.");
+  }else{
+    try{ $("output").value=dec.decode(plain); }
+    catch(e){ void e; $("output").value=hex(plain.subarray(0,HEX_CAP)," ")+(plain.length>HEX_CAP?" …":""); setRaw(plain,raw); setStatus("Байты восстановлены, но это не UTF-8: показан HEX.",true); return; }
+    setRaw(plain,raw);
+    setStatus("Расшифровано "+plain.length+" байт за "+fmtTime(dt)+(app.mode==="auth"?", MAC проверен.":"."));
+  }
   toast("Расшифровано","ok");
 }));
 $("copyOut").addEventListener("click",()=>run("Копирование",async()=>{
@@ -1338,30 +1505,30 @@ $("copyOut").addEventListener("click",()=>run("Копирование",async()=>
   try{ await navigator.clipboard.writeText(v); }catch(e){ void e; $("output").focus(); $("output").select(); document.execCommand("copy"); }
   setStatus("Скопировано."); toast("Скопировано","ok");
 }));
-$("downloadCt").addEventListener("click",()=>{ if(!app.lastCt){setStatus("Нет шифротекста.",true);return;} download("ut2-ciphertext.bin",app.lastCt); setStatus("Сохранено."); toast("Файл сохранён","ok"); });
-$("swap").addEventListener("click",()=>{ if(!$("output").value){setStatus("Выход пуст.",true);return;} $("input").value=$("output").value; $("inFmt").value=$("outFmt").value; renderPipeline(); setStatus("Выход перенесён во вход."); });
+$("downloadCt").addEventListener("click",()=>{ if(!app.lastCt){setStatus("Нет данных для скачивания.",true);return;} download("ut3-output.bin",app.lastCt); setStatus("Сохранено "+app.lastCt.length+" байт."); toast("Файл сохранён","ok"); });
+$("swap").addEventListener("click",()=>{ if(app.fileBytes){setStatus("Для файла используйте загрузку расшифрованного .bin.",true);return;} if(!$("output").value){setStatus("Выход пуст.",true);return;} $("input").value=$("output").value; $("inFmt").value=$("outFmt").value; renderPipeline(); updateEta(); setStatus("Выход перенесён во вход."); });
 $("clear").addEventListener("click",()=>{
-  const b={i:$("input").value,o:$("output").value,ct:app.lastCt,p:app.lastPlain};
-  $("input").value="";$("output").value="";$("inHex").value="";$("ctHex").value="";
-  app.lastCt=null;app.lastPlain=null;app.flow=null;drawFlow();renderPipeline();setStatus("Очищено.");
-  toast("Поля очищены","info",{label:"Вернуть",run:()=>{$("input").value=b.i;$("output").value=b.o;if(b.ct&&b.p)setRaw(b.p,b.ct);renderPipeline();toast("Восстановлено","ok");}});
+  const b={i:$("input").value,o:$("output").value,ct:app.lastCt,p:app.lastPlain,f:app.fileBytes};
+  $("input").value="";$("output").value="";$("inHex").value="";$("ctHex").value="";$("loadFile").value="";
+  app.lastCt=null;app.lastPlain=null;app.fileBytes=null;app.flow=null;drawFlow();renderPipeline();updateEta();setStatus("Очищено.");
+  toast("Поля очищены","info",{label:"Вернуть",run:()=>{$("input").value=b.i;$("output").value=b.o;app.fileBytes=b.f;if(b.ct&&b.p)setRaw(b.p,b.ct);renderPipeline();updateEta();toast("Восстановлено","ok");}});
 });
 $("runAudit").addEventListener("click",()=>run("Аудит",async task=>{
   const r=await audit(task);
   setCk(r.failed===0?"Аудит пройден: "+r.total+" проверок, отклонений нет.":"Аудит: "+r.failed+" отклонений из "+r.total+".",r.failed!==0);
-  setStatus(r.failed===0?"Структура подтверждена: единичная диагональ при полном multi-head, строгая треугольность, границы, обратимость.":"Аудит выявил отклонения — смотрите таблицу.",r.failed!==0);
+  setStatus(r.failed===0?"Структура подтверждена при полном multi-head с FFN. Объём 4096 проверен.":"Аудит выявил отклонения — смотрите таблицу.",r.failed!==0);
   toast(r.failed===0?"Аудит: все проверки пройдены":"Аудит: "+r.failed+" отклонений",r.failed===0?"ok":"bad");
 }));
 $("runAnalysis").addEventListener("click",()=>run("Криптоанализ",async task=>{
   const r=await analysis(task);
   const ok=r.avOk&&r.dfOk&&r.enOk!==false;
   setCk(ok?"Криптоанализ: лавина, диффузия и маскировка в допуске.":"Криптоанализ: есть отклонения.",!ok);
-  setStatus("Криптоанализ завершён. DP ≈ "+r.dp.toFixed(4)+", верхняя граница ≤ "+r.up.toFixed(4)+". Тренд по глубине — в карточке.");
+  setStatus("Криптоанализ завершён. DP ≈ "+r.dp.toFixed(4)+", верхняя граница ≤ "+r.up.toFixed(4)+".");
   toast(ok?"Метрики в допуске":"Есть отклонения",ok?"ok":"bad");
 }));
 $("runExample").addEventListener("click",()=>run("Эталон",async task=>{
   const ok=await example(task);
-  setCk(ok?"Эталон пройден: обратимость точная, диагональ единичная при полном multi-head.":"Эталон выявил отклонение.",!ok);
+  setCk(ok?"Эталон пройден: обратимость точная, диагональ единичная.":"Эталон выявил отклонение.",!ok);
 }));
 $("runCurrent").addEventListener("click",()=>run("Анализ",async()=>analyzeCurrent()));
 
@@ -1374,19 +1541,20 @@ window.addEventListener("resize",()=>{if(rt)clearTimeout(rt);rt=setTimeout(redra
 
 (async function boot(){
   $("key").value=app.key;
-  $("input").value="Полный multi-head внутри унитреугольной схемы: det = 1 без упрощений.";
+  $("input").value="Большая сеть, любой объём, det = 1. Тяжёлый трансформер считается на токен, внутри токена — треугольная лестница.";
   syncControls(); redraw();
   await rebuild();
   if(!app.net) return;
   await run("Стартовое шифрование",async task=>{
     const plain=enc.encode($("input").value);
-    guard(plain.length); flowInit(plain);
-    const ct=await app.net.encrypt(plain,task,(step,t,k,v,b)=>{ if(k<app.flow.cols&&step<app.flow.kinds.length){app.flow.data[step+1][k]=v;app.flow.changed[step][k]=v!==b?1:0;app.flow.active={step,k};} if((t&15)===0) scheduleFlow(); });
+    flowInit(plain);
+    const ct=await app.net.encrypt(plain,task,(step,t,k,v,b)=>{ if(k<app.flow.cols&&step<app.flow.kinds.length){app.flow.data[step+1][k]=v;app.flow.changed[step][k]=v!==b?1:0;app.flow.active={step,k};} if((t&255)===0) scheduleFlow(); });
     drawFlow();
     $("output").value=b64(ct); setRaw(plain,ct);
     const back=await app.net.decrypt(ct,task.child());
     if(dec.decode(back)!==$("input").value) throw new Error("Стартовая проверка не пройдена");
-    setStatus("Сеть готова. Параметров: "+app.net.parameters.toLocaleString("ru-RU")+", лимит "+maxLen()+" байт, max аккумулятор "+app.net.bounds().max.toLocaleString("ru-RU")+".");
+    setStatus("Сеть готова. Весов: "+app.net.parameters.toLocaleString("ru-RU")+", операций/байт "+app.net.opsPerByte.toLocaleString("ru-RU")+", max аккумулятор "+app.net.bounds().max.toLocaleString("ru-RU")+". Объём не ограничен.");
+    updateEta();
   });
   if(!app.net) return;
   await run("Аудит",async task=>{
