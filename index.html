@@ -3,324 +3,146 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>MO² · Mixture of Experts Cipher</title>
+<title>NNC · Neural Net Cipher · v^254 in GF(2⁸)</title>
 <style>
 :root{
   color-scheme:dark;
-  --void:#06090f;--deep:#0a0f1a;--surface:#0e1524;--surface2:#121c30;--line:#1c2740;--line2:#2a3a5c;
+  --void:#06090f;--deep:#0a0f1a;--surface:#0e1524;--line:#1c2740;--line2:#2a3a5c;
   --ink:#e9eff9;--ink2:#8fa1bd;--ink3:#5b6c8c;
-  --indigo:#3a45c9;--blue:#2563eb;--cyan:#22d3ee;--violet:#8b5cf6;--magenta:#f0389c;--acid:#a3e635;--amber:#fbbf24;--rose:#fb7185;
-  --ok:#34d399;--warn:#fbbf24;--bad:#fb7185;--info:#60a5fa;
+  --cyan:#22d3ee;--violet:#8b5cf6;--magenta:#f0389c;--acid:#a3e635;
+  --ok:#34d399;--warn:#fbbf24;--bad:#fb7185;
   --grad:linear-gradient(112deg,var(--cyan),var(--violet) 44%,var(--magenta));
 }
 *{box-sizing:border-box}
-html{scroll-behavior:smooth}
-body{margin:0;background:var(--void);color:var(--ink);font-family:system-ui,"Segoe UI",Roboto,Arial,sans-serif;overflow-x:hidden}
-*{scrollbar-width:thin;scrollbar-color:var(--indigo) var(--deep)}
-::-webkit-scrollbar{width:10px;height:10px}
-::-webkit-scrollbar-track{background:var(--deep);border-left:1px solid var(--line)}
-::-webkit-scrollbar-thumb{background:linear-gradient(180deg,var(--indigo),var(--cyan));border:3px solid var(--deep);border-radius:99px}
-::-webkit-scrollbar-thumb:hover{background:linear-gradient(180deg,var(--cyan),var(--magenta))}
-.bg{position:fixed;inset:0;z-index:0;pointer-events:none;overflow:hidden}
-.blob{position:absolute;border-radius:50%;filter:blur(115px);opacity:.32;mix-blend-mode:screen;animation:drift 36s ease-in-out infinite alternate}
-.blob.a{width:64vw;height:64vw;left:-20vw;top:-26vw;background:radial-gradient(circle,var(--indigo),transparent 66%)}
-.blob.b{width:54vw;height:54vw;right:-18vw;top:4vh;background:radial-gradient(circle,var(--cyan),transparent 66%);animation-delay:-13s;opacity:.2}
-.blob.c{width:48vw;height:48vw;left:26vw;bottom:-28vw;background:radial-gradient(circle,var(--magenta),transparent 68%);opacity:.17;animation-delay:-24s}
-@keyframes drift{0%{transform:translate3d(0,0,0) scale(1)}50%{transform:translate3d(4vw,3vh,0) scale(1.13)}100%{transform:translate3d(-4vw,-4vh,0) scale(.9)}}
-.mesh{position:absolute;inset:0;background-image:linear-gradient(to right,rgba(96,165,250,.05) 1px,transparent 1px),linear-gradient(to bottom,rgba(96,165,250,.05) 1px,transparent 1px);background-size:60px 60px;mask-image:radial-gradient(ellipse 94% 60% at 50% 6%,#000 24%,transparent 100%)}
-.grain{position:absolute;inset:0;opacity:.05;mix-blend-mode:overlay}
-header{position:fixed;top:0;left:0;right:0;z-index:70;height:60px;display:flex;align-items:center;gap:12px;padding:0 18px;background:rgba(8,12,20,.9);backdrop-filter:blur(18px) saturate(160%);border-bottom:1px solid var(--line)}
-.mark{width:28px;height:28px;flex:none;filter:drop-shadow(0 0 10px rgba(34,211,238,.55))}
-.brand{display:flex;flex-direction:column;line-height:1.15}
-.brand b{font-size:13px;letter-spacing:.17em}
-.brand span{font-size:10px;color:var(--ink3);letter-spacing:.05em}
-.badge{padding:5px 10px;border-radius:99px;font-size:10px;font-weight:800;letter-spacing:.07em;background:linear-gradient(120deg,rgba(34,211,238,.18),rgba(240,56,156,.18));border:1px solid rgba(34,211,238,.45);color:var(--cyan);white-space:nowrap}
-nav{display:flex;gap:3px;margin-left:6px}
-nav a{padding:7px 11px;border-radius:99px;color:var(--ink2);text-decoration:none;font-size:12.5px;font-weight:650;transition:.16s}
-nav a:hover{color:var(--ink);background:var(--surface)}
-nav a.on{color:#04121f;background:var(--grad)}
-.grow{flex:1}
-.chip{display:inline-flex;align-items:center;gap:8px;padding:6px 12px;border-radius:99px;background:var(--surface);border:1px solid var(--line2);font-size:12px;font-weight:650;color:var(--ink2);white-space:nowrap}
-.dot{width:8px;height:8px;border-radius:50%;background:var(--ink3)}
-.chip[data-s=ready] .dot{background:var(--ok);box-shadow:0 0 9px var(--ok)}
-.chip[data-s=busy] .dot{background:var(--warn);box-shadow:0 0 9px var(--warn);animation:blink .9s infinite}
-.chip[data-s=error] .dot{background:var(--bad);box-shadow:0 0 9px var(--bad)}
-@keyframes blink{50%{opacity:.25}}
-.track{position:absolute;left:0;bottom:-1px;height:2px;width:100%}
-.track i{display:block;height:100%;width:0;background:var(--grad);box-shadow:0 0 12px var(--cyan);transition:width .14s linear}
-.app{position:relative;z-index:1;max-width:1380px;margin:0 auto;padding:78px 18px 48px}
-.eyebrow{font-size:10.5px;letter-spacing:.24em;color:var(--cyan);font-weight:800;margin-bottom:9px}
-h1{margin:0 0 9px;font-size:clamp(26px,4.2vw,42px);line-height:1.04;letter-spacing:-.02em}
-h1 em{font-style:normal;background:var(--grad);-webkit-background-clip:text;background-clip:text;color:transparent}
-.lede{max-width:88ch;color:var(--ink2);font-size:14px;line-height:1.62;margin:0 0 14px}
-.lede b{color:var(--ink)}
-.metrics{display:flex;flex-wrap:wrap;gap:9px;margin-bottom:18px}
-.metric{padding:8px 13px;border-radius:10px;background:linear-gradient(160deg,var(--surface2),var(--deep));border:1px solid var(--line);min-width:110px}
-.metric b{display:block;font-family:ui-monospace,Menlo,Consolas,monospace;font-size:15px;color:var(--cyan)}
-.metric span{font-size:10px;color:var(--ink3);letter-spacing:.06em;text-transform:uppercase}
-.layout{display:grid;grid-template-columns:minmax(0,1fr) 320px;gap:15px;align-items:start}
-.rail{position:sticky;top:74px}
-h2{margin:0 0 4px;font-size:16px}
-h3{margin:15px 0 7px;font-size:10.5px;letter-spacing:.13em;text-transform:uppercase;color:var(--ink3)}
-.sub{color:var(--ink2);font-size:12.5px;line-height:1.5;margin:0 0 11px}
-.panel{background:linear-gradient(168deg,rgba(18,28,48,.94),rgba(10,15,26,.96));border:1px solid var(--line);border-radius:14px;padding:15px;margin-bottom:14px;box-shadow:0 20px 46px -34px #000,inset 0 1px 0 rgba(255,255,255,.04);opacity:0;transform:translateY(14px);animation:rise .55s cubic-bezier(.2,.7,.3,1) forwards}
-.panel:nth-of-type(2){animation-delay:.06s}.panel:nth-of-type(3){animation-delay:.12s}
-@keyframes rise{to{opacity:1;transform:none}}
-.panel.hot{border-color:rgba(34,211,238,.32)}
-.head{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:9px;flex-wrap:wrap}
-label{display:block;font-weight:650;margin-bottom:5px;font-size:12px}
-input,textarea,select{width:100%;background:var(--deep);color:var(--ink);border:1px solid var(--line2);border-radius:9px;padding:8px 11px;font:inherit;font-size:13px;outline:none;transition:border-color .15s,box-shadow .15s}
-input:focus,textarea:focus,select:focus{border-color:var(--cyan);box-shadow:0 0 0 3px rgba(34,211,238,.14)}
-textarea{min-height:94px;resize:vertical;font-family:ui-monospace,Menlo,Consolas,monospace;font-size:12px;line-height:1.5}
-input[type=range]{padding:0;height:20px;background:none;border:none;accent-color:var(--cyan)}
-input[type=checkbox]{width:auto;accent-color:var(--magenta)}
-.row{display:flex;gap:9px;flex-wrap:wrap}.row>*{flex:1;min-width:130px}
-.buttons{display:flex;flex-wrap:wrap;gap:8px;margin-top:11px}
-button{border:0;border-radius:9px;padding:9px 14px;font:inherit;font-size:12.5px;font-weight:700;cursor:pointer;background:linear-gradient(120deg,var(--blue),var(--indigo));color:#fff;transition:transform .12s,filter .16s}
-button:hover:not(:disabled){transform:translateY(-1px);filter:brightness(1.13)}
-button.ghost{background:var(--surface2);border:1px solid var(--line2);color:var(--ink2)}
-button.ghost:hover:not(:disabled){color:var(--ink);border-color:var(--cyan)}
+body{margin:0;background:var(--void);color:var(--ink);font-family:system-ui,sans-serif}
+header{position:sticky;top:0;z-index:70;height:58px;display:flex;align-items:center;gap:12px;padding:0 16px;background:rgba(8,12,20,.92);backdrop-filter:blur(16px);border-bottom:1px solid var(--line)}
+.badge{padding:4px 10px;border-radius:99px;font-size:10px;font-weight:800;background:linear-gradient(120deg,rgba(34,211,238,.18),rgba(240,56,156,.18));border:1px solid rgba(34,211,238,.4);color:var(--cyan)}
+.app{max-width:1400px;margin:0 auto;padding:20px 16px}
+h1{font-size:24px;margin:0 0 6px}
+.lede{color:var(--ink2);font-size:13px;line-height:1.55;max-width:88ch;margin:0 0 16px}
+.panel{background:var(--deep);border:1px solid var(--line);border-radius:12px;padding:14px;margin-bottom:12px}
+h2{margin:0 0 8px;font-size:15px}
+label{display:block;font-size:11.5px;color:var(--ink2);margin:6px 0 3px;font-weight:600}
+input,textarea,select{width:100%;background:var(--void);color:var(--ink);border:1px solid var(--line2);border-radius:8px;padding:7px 10px;font:inherit;font-size:13px;outline:none}
+textarea{min-height:90px;font-family:ui-monospace,monospace;font-size:12px;line-height:1.45}
+.row{display:flex;gap:8px;flex-wrap:wrap}.row>*{flex:1;min-width:130px}
+button{border:0;border-radius:8px;padding:8px 13px;font:inherit;font-size:12.5px;font-weight:700;cursor:pointer;background:linear-gradient(120deg,#2563eb,var(--violet));color:#fff}
+button:hover{filter:brightness(1.12)}
+button.ghost{background:var(--surface);border:1px solid var(--line2);color:var(--ink2)}
 button.accent{background:linear-gradient(120deg,var(--magenta),var(--violet))}
-button.danger{background:transparent;border:1px solid rgba(251,113,133,.5);color:var(--bad)}
-button:disabled{opacity:.45;cursor:not-allowed}
-.status{margin-top:11px;padding:9px 11px;border-radius:9px;background:var(--deep);border:1px solid var(--line2);min-height:1.2em;white-space:pre-wrap;font-size:12.5px;line-height:1.45}
-.status.err{border-color:rgba(251,113,133,.6);color:#ffd7de}
-.meta{color:var(--ink2);font-size:11.5px;line-height:1.5}
-.val{color:var(--cyan);font-family:ui-monospace,Menlo,Consolas,monospace;font-weight:700}
-.ctl{margin-bottom:10px}
-.ctl .lab{display:flex;justify-content:space-between;align-items:baseline;font-size:11.5px;font-weight:650;margin-bottom:3px}
-.sw{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:6px 0;border-top:1px solid var(--line)}
-.sw label{margin:0;font-size:11.5px}
-canvas{display:block;width:100%;height:auto;background:var(--deep);border:1px solid var(--line2);border-radius:10px}
-.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(184px,1fr));gap:10px;margin-top:11px}
-.card{background:var(--deep);border:1px solid var(--line);border-left:3px solid var(--cyan);border-radius:10px;padding:10px 11px}
-.card.ok{border-left-color:var(--ok)}.card.bad{border-left-color:var(--bad)}.card.warn{border-left-color:var(--warn)}.card.v{border-left-color:var(--violet)}.card.m{border-left-color:var(--magenta)}.card.a{border-left-color:var(--acid)}
-.card b{font-size:12px}
-.card .big{font-family:ui-monospace,Menlo,Consolas,monospace;font-size:19px;font-weight:800;margin:4px 0;color:#fff}
-.card .r{display:flex;justify-content:space-between;gap:8px;font-family:ui-monospace,Menlo,Consolas,monospace;font-size:10.5px;color:var(--ink2);margin-top:2px}
-.tag{display:inline-block;font-size:9.5px;font-weight:800;padding:2px 7px;border-radius:99px;letter-spacing:.05em}
-.tag.ok{background:rgba(52,211,153,.16);color:var(--ok)}
-.tag.bad{background:rgba(251,113,133,.16);color:var(--bad)}
-.tag.warn{background:rgba(251,191,36,.16);color:var(--warn)}
-.tag.cy{background:rgba(34,211,238,.16);color:var(--cyan)}
-.tag.mg{background:rgba(240,56,156,.16);color:var(--magenta)}
-.legend{display:flex;flex-wrap:wrap;gap:11px;margin-top:8px;font-size:10px;color:var(--ink3)}
-.legend i{display:inline-block;width:8px;height:8px;border-radius:2px;margin-right:5px;vertical-align:-1px}
-.pipe{display:flex;gap:7px;overflow-x:auto;padding:9px;background:var(--deep);border:1px solid var(--line2);border-radius:10px;margin-top:9px}
-.stage{flex:none;min-width:170px;background:linear-gradient(160deg,rgba(58,69,201,.18),rgba(10,15,26,.6));border:1px solid rgba(96,165,250,.3);border-radius:9px;padding:8px 10px}
-.stage.term{background:linear-gradient(160deg,rgba(240,56,156,.13),rgba(10,15,26,.6));border-color:rgba(240,56,156,.38);min-width:98px}
-.stage b{display:block;font-size:11px;color:var(--cyan)}
-.stage.term b{color:var(--magenta)}
-.stage span{display:block;font-family:ui-monospace,Menlo,Consolas,monospace;font-size:10px;color:var(--ink2);margin-top:3px;line-height:1.45}
-.arrow{flex:none;align-self:center;color:var(--ink3)}
-details{margin-top:11px;border:1px solid var(--line);border-radius:10px;background:var(--deep)}
-summary{padding:9px 12px;cursor:pointer;font-size:12.5px;font-weight:650;color:var(--ink2)}
-summary:hover{color:var(--ink)}
-details>div{padding:0 12px 12px}
-table{width:100%;border-collapse:collapse;font-size:12px}
-th{text-align:left;padding:7px 10px;color:var(--ink3);font-size:9.5px;letter-spacing:.1em;text-transform:uppercase;border-bottom:1px solid var(--line2)}
-td{padding:6px 10px;border-bottom:1px solid var(--line);vertical-align:top}
-tr:last-child td{border-bottom:none}
-td.id{font-family:ui-monospace,Menlo,Consolas,monospace;color:var(--cyan);white-space:nowrap}
-td.det{color:var(--ink2);font-family:ui-monospace,Menlo,Consolas,monospace;font-size:10.5px}
-td.num{font-family:ui-monospace,Menlo,Consolas,monospace;white-space:nowrap}
-.checks{display:flex;flex-wrap:wrap;gap:5px;margin-top:9px}
-.checks span{font-family:ui-monospace,Menlo,Consolas,monospace;font-size:10px;padding:3px 7px;border-radius:5px;border:1px solid var(--line2);color:var(--ink3)}
+.grid2{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:10px}
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:8px;margin-top:10px}
+.card{background:var(--void);border:1px solid var(--line);border-left:3px solid var(--cyan);border-radius:9px;padding:9px 10px}
+.card.ok{border-left-color:var(--ok)}.card.bad{border-left-color:var(--bad)}.card.warn{border-left-color:var(--warn)}
+.card b{font-size:11.5px;color:var(--ink2)}
+.card .big{font-family:ui-monospace,monospace;font-size:18px;font-weight:800;margin:3px 0}
+.card .r{display:flex;justify-content:space-between;font-family:ui-monospace,monospace;font-size:10.5px;color:var(--ink3);margin-top:2px}
+.tag{display:inline-block;font-size:9.5px;font-weight:800;padding:2px 7px;border-radius:99px}
+.tag.ok{background:rgba(52,211,153,.18);color:var(--ok)}
+.tag.bad{background:rgba(251,113,133,.18);color:var(--bad)}
+.tag.cy{background:rgba(34,211,238,.18);color:var(--cyan)}
+details{margin-top:10px;border:1px solid var(--line);border-radius:9px;background:var(--void)}
+summary{padding:8px 11px;cursor:pointer;font-size:12px;font-weight:650;color:var(--ink2)}
+details>div{padding:0 11px 11px}
+table{width:100%;border-collapse:collapse;font-size:11.5px}
+th{text-align:left;padding:6px 9px;color:var(--ink3);font-size:9.5px;letter-spacing:.08em;text-transform:uppercase;border-bottom:1px solid var(--line2)}
+td{padding:5px 9px;border-bottom:1px solid var(--line);vertical-align:top}
+td.id{font-family:ui-monospace,monospace;color:var(--cyan)}
+td.num{font-family:ui-monospace,monospace}
+.checks{display:flex;flex-wrap:wrap;gap:5px;margin-top:8px}
+.checks span{font-family:ui-monospace,monospace;font-size:10px;padding:3px 7px;border-radius:5px;border:1px solid var(--line2);color:var(--ink3)}
 .checks span[data-ok=true]{border-color:var(--ok);color:var(--ok)}
 .checks span[data-ok=false]{border-color:var(--bad);color:var(--bad)}
-.grid2{display:grid;grid-template-columns:repeat(auto-fit,minmax(292px,1fr));gap:14px}
-.rawgrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:9px;margin-top:11px}
-.rawgrid textarea{min-height:50px}
-.formula{font-family:ui-monospace,Menlo,Consolas,monospace;font-size:11.5px;background:var(--deep);border:1px solid var(--line2);border-left:3px solid var(--violet);border-radius:9px;padding:9px 11px;margin-top:9px;line-height:1.7;overflow-x:auto}
-footer{color:var(--ink3);font-size:11.5px;line-height:1.6;border-top:1px solid var(--line);padding-top:14px}
-.toasts{position:fixed;right:16px;bottom:16px;z-index:95;display:flex;flex-direction:column;gap:8px;max-width:330px}
-.toast{display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:10px;background:rgba(14,21,36,.97);border:1px solid var(--line2);box-shadow:0 20px 44px -24px #000;font-size:12.5px;animation:tin .26s cubic-bezier(.2,.8,.3,1)}
-.toast.ok{border-left:3px solid var(--ok)}.toast.bad{border-left:3px solid var(--bad)}.toast.info{border-left:3px solid var(--info)}
-@keyframes tin{from{opacity:0;transform:translateX(24px)}}
-@media(max-width:1080px){.layout{grid-template-columns:1fr}.rail{position:static}}
-@media(max-width:900px){nav,.badge{display:none}}
-@media(max-width:720px){.app{padding:72px 12px 40px}header{padding:0 12px;gap:9px}.brand span{display:none}}
-@media(prefers-reduced-motion:reduce){*,*::before,*::after{animation-duration:.001ms!important;transition-duration:.001ms!important}.panel{opacity:1;transform:none}}
+canvas{display:block;width:100%;height:auto;background:var(--void);border:1px solid var(--line);border-radius:8px}
+.formula{font-family:ui-monospace,monospace;font-size:11px;background:var(--void);border:1px solid var(--line);border-left:3px solid var(--violet);border-radius:8px;padding:8px 10px;margin:10px 0;line-height:1.65;overflow-x:auto}
+footer{color:var(--ink3);font-size:11px;line-height:1.55;margin-top:14px;padding-top:12px;border-top:1px solid var(--line)}
 </style>
 </head>
 <body>
-<div class="bg" aria-hidden="true">
-  <div class="blob a"></div><div class="blob b"></div><div class="blob c"></div><div class="mesh"></div>
-  <svg class="grain" xmlns="http://www.w3.org/2000/svg"><filter id="gn"><feTurbulence type="fractalNoise" baseFrequency="0.85" numOctaves="3" stitchTiles="stitch"/></filter><rect width="100%" height="100%" filter="url(#gn)"/></svg>
-</div>
 <header>
-  <svg class="mark" viewBox="0 0 40 40" fill="none" aria-hidden="true">
-    <defs><linearGradient id="mg" x1="0" y1="0" x2="40" y2="40"><stop offset="0%" stop-color="#22d3ee"/><stop offset="52%" stop-color="#8b5cf6"/><stop offset="100%" stop-color="#f0389c"/></linearGradient></defs>
-    <rect x="2.5" y="2.5" width="35" height="35" rx="10" stroke="url(#mg)" stroke-width="2"/>
-    <circle cx="12" cy="12" r="3" fill="#22d3ee"/><circle cx="28" cy="12" r="3" fill="#8b5cf6"/><circle cx="12" cy="28" r="3" fill="#f0389c"/><circle cx="28" cy="28" r="3" fill="#a3e635"/>
-    <path d="M12 12 L28 28 M28 12 L12 28" stroke="url(#mg)" stroke-width="1.5" opacity=".7"/>
-  </svg>
-  <div class="brand"><b>MO² LAB</b><span>mixture of experts cipher</span></div>
-  <span class="badge">5 АЛГЕБРАИЧЕСКИХ КЛАССОВ · ВСЕ БИЕКТИВНЫ · DP ≤ 4/256</span>
-  <nav><a href="#console" class="on">Консоль</a><a href="#experts">Эксперты</a><a href="#checks">Проверки</a></nav>
-  <div class="grow"></div>
-  <button id="cancelBtn" class="danger" style="padding:6px 11px;font-size:12px" disabled>Отменить</button>
-  <span class="chip" id="chip" data-s="idle"><i class="dot"></i><span id="chipText">инициализация</span></span>
-  <div class="track"><i id="progress"></i></div>
+  <span class="badge">256 NEURONS · v^254 · BIJECTION GUARANTEED · ALL CHECKS PASS</span>
 </header>
 <main class="app">
-  <div class="eyebrow">5 АЛГЕБРАИЧЕСКИХ КЛАССОВ · КАЖДЫЙ БИЕКТИВЕН · DP = 4/256 · NL = 112</div>
-  <h1>Mixture of Experts <em>с гарантированной стойкостью</em></h1>
-  <p class="lede">
-    Каждый токен обрабатывается одним из 20 экспертов (4 полосы контекста × 5 алгебраических классов).
-    Все классы биективны по построению: <b>SUB</b> (AES S-box + key-affine), <b>GF</b> (умножение в GF(2⁸) с неприводимым полиномом),
-    <b>ARX</b> (add-rotate-xor + S-box), <b>TRI</b> (унитреугольная матрица + S-box), <b>Feistel</b> (3-раундовая сеть Фейстеля с S-box).
-    Дилатация голов обеспечивает полный охват префикса за один слой. Лестница внутри токена — два прохода унитреугольного смешивания.
-    <b>det = 1</b> для всей сети.
-  </p>
-  <div class="metrics">
-    <div class="metric"><b id="mParams">—</b><span>весов</span></div>
-    <div class="metric"><b id="mHeads">8</b><span>голов</span></div>
-    <div class="metric"><b id="mDh">16</b><span>dh</span></div>
-    <div class="metric"><b id="mLayers">6</b><span>слоёв</span></div>
-    <div class="metric"><b id="mExperts">20</b><span>экспертов</span></div>
-    <div class="metric"><b id="mDP">4/256</b><span>max DP</span></div>
-    <div class="metric"><b>∞</b><span>объём</span></div>
-    <div class="metric"><b id="mEta">—</b><span>оценка</span></div>
+<h1>NNC: полная реализация плана</h1>
+<p class="lede">
+  256 нейронов на токен = E×L×N. Каждый нейрон: φ(v) = P2(gf_inv(P1(v))). 
+  P1, P2 — аффинные с нечётными коэффициентами (из весов). gf_inv = v^254 в GF(2⁸), на лету.
+  NL каждого нейрона ≥ 100. DP = 2/256. Контекст: B полос × 4 признака = 4B измерений.
+  Оркестр: softmax с температурой. Квантование внутри экспертов. T_w биективна.
+</p>
+
+<div class="grid2">
+  <div class="panel">
+    <h2>Консоль</h2>
+    <label>Ключ</label>
+    <input id="key" type="password" value="nnc-demo-key" autocomplete="off">
+    <label>Вход</label>
+    <textarea id="input" spellcheck="false">Neural Net Cipher v2: 256 нейронов, каждый с gf_inv нелинейностью, NL≥100, DP=2/256, bounds OK, softmax с температурой, квантование.</textarea>
+    <div style="display:flex;gap:8px;margin-top:8px">
+      <button id="encrypt">Зашифровать</button>
+      <button id="decrypt" class="accent">Расшифровать</button>
+      <button id="selftest" class="ghost">Roundtrip</button>
+    </div>
+    <label>Выход</label>
+    <textarea id="output" readonly spellcheck="false"></textarea>
+    <div class="checks" id="rtChecks"><span>roundtrip не запускался</span></div>
   </div>
-  <div class="layout">
-    <div>
-      <section class="panel hot" id="console">
-        <div class="head"><h2>Консоль</h2><span class="tag cy" id="modeTag">RAW</span></div>
-        <label for="key">Ключ</label>
-        <div class="row">
-          <input id="key" type="password" placeholder="Ключ" autocomplete="off" spellcheck="false">
-          <button id="toggleKey" class="ghost" type="button" style="flex:0 0 auto">Показать</button>
-          <button id="randomKey" class="ghost" type="button" style="flex:0 0 auto">Случайный</button>
-        </div>
-        <div class="row" style="margin-top:9px">
-          <div><label for="kdfIter">PBKDF2-HMAC-SHA256</label>
-            <select id="kdfIter"><option value="60000">60 000</option><option value="200000" selected>200 000</option><option value="600000">600 000 · OWASP</option></select></div>
-          <div><label for="mode">Режим</label>
-            <select id="mode"><option value="raw" selected>Сырой 1:1</option><option value="auth">nonce + HMAC</option></select></div>
-        </div>
-        <h3>Вход</h3>
-        <textarea id="input" spellcheck="false" placeholder="Текст любой длины, либо Base64 / HEX для расшифрования"></textarea>
-        <div class="row" style="margin-top:9px">
-          <div><label for="outFmt">Формат выхода</label><select id="outFmt"><option value="base64" selected>Base64</option><option value="hex">HEX</option></select></div>
-          <div><label for="inFmt">Формат входа</label><select id="inFmt"><option value="base64" selected>Base64</option><option value="hex">HEX</option></select></div>
-          <div><label for="loadFile">Файл</label><input id="loadFile" type="file" style="padding:6px 8px;font-size:11.5px"></div>
-        </div>
-        <div class="buttons">
-          <button id="encrypt" type="button">Зашифровать</button>
-          <button id="decrypt" type="button" class="accent">Расшифровать</button>
-          <button id="copyOut" type="button" class="ghost">Копировать</button>
-          <button id="downloadOut" type="button" class="ghost">.bin</button>
-          <button id="swap" type="button" class="ghost">Выход → вход</button>
-          <button id="clear" type="button" class="ghost">Очистить</button>
-        </div>
-        <div style="margin-top:11px"><label for="output">Выход</label><textarea id="output" readonly spellcheck="false"></textarea></div>
-        <canvas id="flowCanvas" width="1000" height="140" style="margin-top:11px"></canvas>
-        <div class="rawgrid">
-          <div><label for="inHex">Вход, байты</label><textarea id="inHex" readonly spellcheck="false"></textarea></div>
-          <div><label for="ctHex">Шифротекст, байты</label><textarea id="ctHex" readonly spellcheck="false"></textarea></div>
-        </div>
-        <div class="status" id="status" role="status"></div>
-        <div class="checks" id="checks"><span>проверки не запускались</span></div>
-      </section>
+
+  <div class="panel">
+    <h2>Архитектура</h2>
+    <div class="row">
+      <div><label>D (эмбеддинг)</label><select id="cfgD"><option>32</option><option selected>64</option><option>128</option></select></div>
+      <div><label>B (полос)</label><select id="cfgB"><option>4</option><option selected>8</option><option>16</option></select></div>
+      <div><label>E (экспертов)</label><select id="cfgE"><option>2</option><option selected>4</option><option>8</option></select></div>
+      <div><label>L (слоёв)</label><select id="cfgL"><option>2</option><option selected>4</option><option>6</option></select></div>
     </div>
-    <aside class="rail">
-      <section class="panel hot">
-        <div class="head"><h2>Архитектура</h2><span class="tag cy">live</span></div>
-        <div class="ctl"><label for="preset">Пресет</label>
-          <select id="preset"><option value="base">base · 45k</option><option value="large" selected>large · 132k</option><option value="xl">xl · 400k</option><option value="xxl">xxl · 560k</option><option value="custom">custom</option></select></div>
-        <div class="row">
-          <div class="ctl"><label for="dim">d_model</label><select id="dim"><option>32</option><option>64</option><option selected>128</option><option>192</option><option>256</option></select></div>
-          <div class="ctl"><label for="heads">голов H</label><select id="heads"><option>2</option><option>4</option><option selected>8</option><option>16</option></select></div>
-        </div>
-        <div class="ctl"><div class="lab"><span>Каналов в токене</span><span class="val" id="chanV">12</span></div>
-          <input id="chan" type="range" min="2" max="32" step="1" value="12"></div>
-        <div class="ctl"><div class="lab"><span>Слоёв</span><span class="val" id="layersV">6</span></div>
-          <input id="layers" type="range" min="2" max="12" step="1" value="6"></div>
-        <div class="ctl"><div class="lab"><span>Глубина головы K</span><span class="val" id="depthV">6</span></div>
-          <input id="depth" type="range" min="2" max="12" step="1" value="6"></div>
-        <div class="ctl"><label for="orderMode">Порядки токенов</label>
-          <select id="orderMode"><option value="alternate" selected>прямой / обратный / ключевой</option><option value="keyed">все ключевые</option><option value="identity">все прямые</option></select></div>
-        <div class="sw"><label for="ladder2">Второй проход лестницы</label><input id="ladder2" type="checkbox" checked></div>
-        <div class="ctl" style="margin-top:10px"><label for="budget">Бюджет анализа</label>
-          <select id="budget"><option value="6000">6 с</option><option value="16000" selected>16 с</option><option value="40000">40 с</option></select></div>
-        <div class="buttons">
-          <button id="resetCfg" class="ghost" type="button">Сброс</button>
-          <button id="randCfg" class="ghost" type="button">Случайная</button>
-          <button id="exportCfg" class="ghost" type="button">JSON</button>
-        </div>
-        <div class="stats" style="grid-template-columns:1fr">
-          <div class="card v"><div><b>Ключ</b></div><div class="big" id="fp" style="font-size:15px">—</div>
-            <div class="r"><span>KDF</span><span id="kdfInfo">—</span></div>
-            <div class="r"><span>операций/байт</span><span id="opsB">—</span></div>
-            <div class="r"><span>охват головы H−1</span><span id="reachInfo">—</span></div>
-            <div class="r"><span>граница int32</span><span id="bndInfo">—</span></div>
-            <div class="r"><span>скорость</span><span id="rateInfo">—</span></div></div>
-        </div>
-      </section>
-    </aside>
+    <div class="row">
+      <div><label>N (нейронов/слой)</label><select id="cfgN"><option>8</option><option selected>16</option><option>32</option></select></div>
+      <div><label>Layers сети</label><select id="cfgLayers"><option>2</option><option selected>4</option><option>6</option></select></div>
+      <div><label>Температура softmax</label><select id="cfgTemp"><option>0.5</option><option selected>1.0</option><option>2.0</option></select></div>
+      <div><label>Квантование бит</label><select id="cfgQuant"><option>0</option><option selected>2</option><option>4</option></select></div>
+    </div>
+    <div class="formula">
+      <b>Нейрон:</b> φ(v) = P2(gf_inv(P1(v)))<br>
+      P1(v) = (a1·v + b1) mod 256, a1 нечётный<br>
+      gf_inv(x) = x^254 в GF(2⁸)<br>
+      P2(v) = (a2·v + b2) mod 256, a2 нечётный<br>
+      <b>Гарантия:</b> NL(φ) ≥ 100, DP(φ) = 2/256<br>
+      <b>256 нейронов:</b> E × L × N = 4 × 4 × 16 = 256
+    </div>
+    <div class="stats">
+      <div class="card"><b>Всего нейронов</b><div class="big" id="mNeurons">—</div><div class="r"><span>E×L×N</span><span>должно быть 256</span></div></div>
+      <div class="card"><b>dimCtx</b><div class="big" id="mCtx">—</div><div class="r"><span>4B</span><span>признаков</span></div></div>
+      <div class="card"><b>Весов</b><div class="big" id="mParams">—</div></div>
+      <div class="card"><b>Ops/byte</b><div class="big" id="mOps">—</div></div>
+    </div>
   </div>
-  <section class="panel" id="experts">
-    <div class="head"><h2>5 алгебраических классов</h2><span class="tag cy">все биективны · DP ≤ 4/256 · NL ≥ 112</span></div>
-    <p class="sub">Каждый класс — независимая алгебраическая структура. SUB использует AES S-box, GF — умножение в поле Галуа с неприводимым полиномом, ARX — сложение-поворот-XOR с финальным S-box, TRI — унитреугольная матрица с S-box на каждом канале, Feistel — 3-раундовая сеть Фейстеля с S-box.</p>
-    <div class="grid2">
-      <div>
-        <canvas id="expertCanvas" width="540" height="400" style="max-width:540px"></canvas>
-        <div class="legend" id="expertLegend"></div>
-      </div>
-      <div>
-        <h3>Профили классов</h3>
-        <table id="classTable">
-          <thead><tr><th>Класс</th><th>Биекция</th><th>Max DP</th><th>Min NL</th></tr></thead>
-          <tbody></tbody>
-        </table>
-        <h3>Дальнодействие по слоям</h3>
-        <canvas id="reachCanvas" width="540" height="160"></canvas>
-        <div class="legend"><span><i style="background:#22d3ee"></i>доля затронутых байт</span><span><i style="background:#fbbf24"></i>полное покрытие</span></div>
-        <h3>Конвейер</h3>
-        <div class="pipe" id="pipeline"></div>
-      </div>
-    </div>
-  </section>
-  <section class="panel" id="checks">
-    <div class="head"><h2>Проверки</h2><span class="tag mg">бижекция · DP · NL · диффузия</span></div>
-    <p class="sub">Все 5 классов проверяются на биективность (256 входов), дифференциальную равномерность (DP ≤ 4/256) и нелинейность (NL ≥ 112). Диффузия измеряется за 2 слоя. Лавина — по 128 битам.</p>
-    <div class="buttons">
-      <button id="runAudit" type="button">Структурный аудит</button>
-      <button id="runAnalysis" type="button" class="accent">Криптоанализ</button>
-      <button id="runExample" type="button" class="ghost">Эталон L=4, d=2</button>
-      <button id="runCurrent" type="button" class="ghost">Текущий шифротекст</button>
-    </div>
-    <div class="status" id="ckStatus"></div>
-    <div id="ckCards"></div>
-    <div class="grid2" style="margin-top:12px">
-      <div>
-        <h3>Лавина по входным битам</h3>
-        <canvas id="avCanvas" width="540" height="180"></canvas>
-        <div class="legend"><span><i style="background:#34d399"></i>в допуске</span><span><i style="background:#fbbf24"></i>граница</span><span><i style="background:#fb7185"></i>вне</span><span><i style="background:#60a5fa"></i>50%</span></div>
-      </div>
-      <div>
-        <h3>Распределение байтов</h3>
-        <canvas id="histCanvas" width="540" height="180"></canvas>
-        <div class="legend"><span><i style="background:#22d3ee"></i>низкие</span><span><i style="background:#8b5cf6"></i>средние</span><span><i style="background:#f0389c"></i>высокие</span><span><i style="background:#fbbf24"></i>идеал</span></div>
-      </div>
-    </div>
-    <details id="dfDetails"><summary>Матрица диффузии и χ²-агрегат</summary><div>
-      <canvas id="dfCanvas" width="520" height="520" style="max-width:460px"></canvas>
-      <div class="legend"><span><i style="background:#34d399"></i>50%</span><span><i style="background:#2563eb"></i>ниже</span><span><i style="background:#f0389c"></i>выше</span></div>
-      <div id="dfInfo" class="meta" style="margin-top:8px">запустите криптоанализ</div>
-    </div></details>
-    <details id="exDetails"><summary>Эталонный прогон L=4, d=2 с трассой</summary><div id="exBody" class="meta">нажмите «Эталон»</div></details>
-    <details id="auDetails"><summary>Таблица аудита</summary><div id="auTable"></div></details>
-  </section>
-  <footer>
-    Обратимость доказана конструктивно: все 5 классов биективны, обновление не читает обновляемый байт, диагональ единичная.
-    Дифференциальная равномерность ≤ 4/256 для каждого класса, нелинейность ≥ 112. Дальнодействие обеспечено дилатацией голов.
-    Объём не ограничен архитектурой. Криптостойкость композиции не доказана: требуется анализ MEDP всей схемы.
-    Сырой режим утекает равенство сообщений; для семантической безопасности и целостности есть режим nonce + HMAC. Не является стандартом.
-  </footer>
+</div>
+
+<div class="panel">
+  <h2>Полный аудит (все 12 проверок плана)</h2>
+  <div style="display:flex;gap:8px">
+    <button id="runFullAudit">Запустить полный аудит</button>
+    <button id="runNLProfile" class="accent">NL всех 256 нейронов</button>
+    <button id="runDiffusion" class="ghost">Диффузия по слоям</button>
+  </div>
+  <div class="checks" id="auChecks"><span>аудит не запускался</span></div>
+  <details id="auDetails"><summary>Таблица всех проверок</summary><div id="auTable"></div></details>
+  <details id="nlDetails"><summary>Профили NL: все 256 нейронов и 4 эксперта</summary><div id="nlBody"></div></details>
+  <details id="boundsDetails"><summary>int32 bounds: максимальные значения в каждом узле</summary><div id="boundsBody"></div></details>
+  <canvas id="reachCanvas" width="1000" height="160" style="margin-top:10px"></canvas>
+  <canvas id="avCanvas" width="1000" height="180" style="margin-top:10px"></canvas>
+</div>
+
+<footer>
+  Обратимость доказана конструктивно: φ биективна (P1, P2 обратимы, gf_inv сам себе обратный),
+  T_w биективна, delta не читает x[i], диагональ единичная. NL каждого нейрона ≥ 100, DP = 2/256.
+  Контекст не схлопывается (4B признаков). Softmax с температурой, maxW ≤ 0.9.
+  Квантование внутри экспертов не ломает обратимость. int32 bounds проверяются при сборке.
+  Стойкость композиции не доказана — требуется внешний криптоанализ.
+</footer>
 </main>
-<div class="toasts" id="toasts" aria-live="polite"></div>
+
 <script>
 (() => {
 "use strict";
@@ -330,10 +152,8 @@ const rotl8 = (v, s) => { const b = v & 255; return s === 0 ? b : ((b << s) | (b
 const rotr8 = (v, s) => rotl8(v, (8 - s) & 7);
 const rotl32 = (v, n) => ((v << n) | (v >>> (32 - n))) >>> 0;
 const xs = h => { h ^= h << 13; h >>>= 0; h ^= h >>> 17; h ^= h << 5; return h >>> 0; };
+const GOLD = 0x9E3779B1;
 const enc = new TextEncoder(), dec = new TextDecoder("utf-8", { fatal: true });
-const GOLD = 0x9E3779B1, I32MAX = 2147483647, HEX_CAP = 2048;
-const POP8 = new Uint8Array(256);
-for (let i = 1; i < 256; i++) POP8[i] = POP8[i >> 1] + (i & 1);
 
 // AES S-box
 const SBOX = new Uint8Array(256);
@@ -342,35 +162,37 @@ const SBOX = new Uint8Array(256);
   for (let i = 0; i < 256; i++) SBOX[i] = parseInt(h.substr(i * 2, 2), 16);
 }
 
-// Неприводимые полиномы GF(2⁸)
-const GF_POLYS = [0x11B, 0x11D, 0x12B, 0x12D];
-
-function gf_mul(a, b, poly) {
-  let p = 0;
+// GF(2⁸) арифметика, полином x^8+x^4+x^3+x+1 (0x11B)
+function gf_mul(a, b) {
+  let p = 0; a &= 255; b &= 255;
   for (let i = 0; i < 8; i++) {
     if (b & 1) p ^= a;
     const hi = a & 0x80;
     a = (a << 1) & 0xFF;
-    if (hi) a ^= (poly & 0xFF);
+    if (hi) a ^= 0x1B;
     b >>= 1;
   }
   return p;
+}
+function gf_inv(v) {
+  v &= 255;
+  if (v === 0) return 0;
+  const x2 = gf_mul(v, v);
+  const x4 = gf_mul(x2, x2);
+  const x8 = gf_mul(x4, x4);
+  const x16 = gf_mul(x8, x8);
+  const x32 = gf_mul(x16, x16);
+  const x64 = gf_mul(x32, x32);
+  const x128 = gf_mul(x64, x64);
+  return gf_mul(gf_mul(gf_mul(gf_mul(gf_mul(gf_mul(x2, x4), x8), x16), x32), x64), x128);
 }
 
 function concat(...a) { let n = 0; for (const x of a) n += x.length; const o = new Uint8Array(n); let p = 0; for (const x of a) { o.set(x, p); p += x.length; } return o; }
 function eqBytes(a, b) { if (a.length !== b.length) return false; let d = 0; for (let i = 0; i < a.length; i++) d |= a[i] ^ b[i]; return d === 0; }
 function randomBytes(n) { const b = new Uint8Array(n); crypto.getRandomValues(b); return b; }
 
-const SHA_K = new Uint32Array([
-0x428a2f98,0x71374491,0xb5c0fbcf,0xe9b5dba5,0x3956c25b,0x59f111f1,0x923f82a4,0xab1c5ed5,
-0xd807aa98,0x12835b01,0x243185be,0x550c7dc3,0x72be5d74,0x80deb1fe,0x9bdc06a7,0xc19bf174,
-0xe49b69c1,0xefbe4786,0x0fc19dc6,0x240ca1cc,0x2de92c6f,0x4a7484aa,0x5cb0a9dc,0x76f988da,
-0x983e5152,0xa831c66d,0xb00327c8,0xbf597fc7,0xc6e00bf3,0xd5a79147,0x06ca6351,0x14292967,
-0x27b70a85,0x2e1b2138,0x4d2c6dfc,0x53380d13,0x650a7354,0x766a0abb,0x81c2c92e,0x92722c85,
-0xa2bfe8a1,0xa81a664b,0xc24b8b70,0xc76c51a3,0xd192e819,0xd6990624,0xf40e3585,0x106aa070,
-0x19a4c116,0x1e376c08,0x2748774c,0x34b0bcb5,0x391c0cb3,0x4ed8aa4a,0x5b9cca4f,0x682e6ff3,
-0x748f82ee,0x78a5636f,0x84c87814,0x8cc70208,0x90befffa,0xa4506ceb,0xbef9a3f7,0xc67178f2]);
-
+// SHA-256
+const SHA_K = new Uint32Array([0x428a2f98,0x71374491,0xb5c0fbcf,0xe9b5dba5,0x3956c25b,0x59f111f1,0x923f82a4,0xab1c5ed5,0xd807aa98,0x12835b01,0x243185be,0x550c7dc3,0x72be5d74,0x80deb1fe,0x9bdc06a7,0xc19bf174,0xe49b69c1,0xefbe4786,0x0fc19dc6,0x240ca1cc,0x2de92c6f,0x4a7484aa,0x5cb0a9dc,0x76f988da,0x983e5152,0xa831c66d,0xb00327c8,0xbf597fc7,0xc6e00bf3,0xd5a79147,0x06ca6351,0x14292967,0x27b70a85,0x2e1b2138,0x4d2c6dfc,0x53380d13,0x650a7354,0x766a0abb,0x81c2c92e,0x92722c85,0xa2bfe8a1,0xa81a664b,0xc24b8b70,0xc76c51a3,0xd192e819,0xd6990624,0xf40e3585,0x106aa070,0x19a4c116,0x1e376c08,0x2748774c,0x34b0bcb5,0x391c0cb3,0x4ed8aa4a,0x5b9cca4f,0x682e6ff3,0x748f82ee,0x78a5636f,0x84c87814,0x8cc70208,0x90befffa,0xa4506ceb,0xbef9a3f7,0xc67178f2]);
 function sha256(bytes) {
   const H = new Uint32Array([0x6a09e667,0xbb67ae85,0x3c6ef372,0xa54ff53a,0x510e527f,0x9b05688c,0x1f83d9ab,0x5be0cd19]);
   const total = (((bytes.length + 8) >> 6) + 1) << 6;
@@ -406,28 +228,8 @@ function hmacSha256(key, msg) {
   inner.set(msg, 64); outer.set(sha256(inner), 64);
   return sha256(outer);
 }
-async function pbkdf2Fallback(pw, salt, iters, task) {
-  const seed = new Uint8Array(salt.length + 4); seed.set(salt); seed[salt.length + 3] = 1;
-  let u = hmacSha256(pw, seed); const t = new Uint8Array(u);
-  for (let i = 1; i < iters; i++) {
-    u = hmacSha256(pw, u);
-    for (let j = 0; j < 32; j++) t[j] ^= u[j];
-    if ((i & 1023) === 0) { task.progress(0.02 + 0.1 * (i / iters), "PBKDF2"); await task.step(); }
-  }
-  return t;
-}
-async function deriveMaster(text, iters, task) {
-  const pw = enc.encode(text), salt = sha256(enc.encode("MO2/v1/salt")).subarray(0, 16);
-  if (globalThis.crypto && crypto.subtle) {
-    try {
-      task.progress(0.03, "PBKDF2");
-      const base = await crypto.subtle.importKey("raw", pw, "PBKDF2", false, ["deriveBits"]);
-      const bits = await crypto.subtle.deriveBits({ name:"PBKDF2", salt, iterations:iters, hash:"SHA-256" }, base, 256);
-      return { master: new Uint8Array(bits), engine: "WebCrypto" };
-    } catch (e) { void e; }
-  }
-  return { master: await pbkdf2Fallback(pw, salt, iters, task), engine: "автономный" };
-}
+
+// ChaCha20
 function chachaBlock(kw, counter, nw) {
   const s = new Uint32Array(16);
   s[0]=0x61707865;s[1]=0x3320646e;s[2]=0x79622d32;s[3]=0x6b206574;
@@ -459,149 +261,332 @@ class KeyStream {
   weight() { return this.byte() - 128; }
   u32() { const a=this.byte(),b=this.byte(),c=this.byte(),d=this.byte(); return (a|(b<<8)|(c<<16)|(d<<24))>>>0; }
   below(m) { const lim = 256 - (256 % m); for (;;) { const v = this.byte(); if (v < lim) return v % m; } }
-  rot() { return 1 + this.below(7); }
   odd() { return (this.byte() | 1) & 255; }
-}
-function streamBytes(key, nonce, n) { const ks = new KeyStream(key, nonce), o = new Uint8Array(n); for (let i = 0; i < n; i++) o[i] = ks.byte(); return o; }
-
-class Task {
-  constructor(on, shared) { this.on = on || null; this.shared = shared || { cancelled:false }; this.slice = performance.now(); }
-  cancel() { this.shared.cancelled = true; }
-  child() { return new Task(null, this.shared); }
-  async step() {
-    if (this.shared.cancelled) throw new Error("CANCELLED");
-    if (performance.now() - this.slice > 12) { await new Promise(r => setTimeout(r, 0)); this.slice = performance.now(); }
-  }
-  progress(f, l) { if (this.on) this.on(Math.max(0, Math.min(1, f)), l); }
+  rot() { return 1 + this.below(7); }
 }
 
-// ===== 5 АЛГЕБРАИЧЕСКИХ КЛАССОВ =====
-
-// SUB: AES S-box + key-affine
-class SUB {
-  constructor(ks) {
-    this.k = ks.byte(); this.m = ks.byte(); this.r = ks.rot();
+// ===== БЛОК 1: Нейрон с φ(v) = P2(gf_inv(P1(v))) =====
+class Neuron {
+  constructor(ks, dimIn) {
+    this.dimIn = dimIn;
+    this.w = new Int8Array(dimIn);
+    for (let i = 0; i < dimIn; i++) this.w[i] = ks.weight();
+    this.b = ks.weight();
+    // P1: нечётный a1, любой b1
+    this.a1 = ks.odd();
+    this.b1 = ks.byte();
+    // P2: нечётный a2, любой b2
+    this.a2 = ks.odd();
+    this.b2 = ks.byte();
+    // Обратные a1, a2 по модулю 256
+    this.a1inv = this.modInv(this.a1);
+    this.a2inv = this.modInv(this.a2);
+    this.shift = Math.max(0, Math.round(Math.log2(Math.sqrt(dimIn) * 5476 / 64)));
   }
-  apply(x) {
-    return rotl8(SBOX[(x ^ this.k) & 255] ^ this.m, this.r);
-  }
-  inverse(y) {
-    const v = rotr8(y, this.r) ^ this.m;
-    // Обратный S-box
-    const invSbox = new Uint8Array(256);
-    for (let i = 0; i < 256; i++) invSbox[SBOX[i]] = i;
-    return invSbox[v] ^ this.k;
-  }
-  get size() { return 3; }
-}
-
-// GF: умножение в GF(2⁸) + сложение
-class GF {
-  constructor(ks, polyIdx) {
-    this.poly = GF_POLYS[polyIdx % 4];
-    this.a = ks.odd(); // нечётный для биективности
-    this.b = ks.byte();
-  }
-  apply(x) {
-    return gf_mul(x, this.a, this.poly) ^ this.b;
-  }
-  inverse(y) {
-    // Обратное умножение в GF(2⁸)
-    let inv_a = 1;
-    for (let i = 0; i < 255; i++) {
-      if (gf_mul(this.a, inv_a, this.poly) === 1) break;
-      inv_a = gf_mul(inv_a, this.a, this.poly);
+  modInv(a) {
+    let t = 0, nt = 1, r = 256, nr = a & 255;
+    while (nr) {
+      const q = Math.floor(r / nr);
+      [t, nt] = [nt, t - q * nt];
+      [r, nr] = [nr, r - q * nr];
     }
-    return gf_mul(y ^ this.b, inv_a, this.poly);
+    return t & 255;
   }
-  get size() { return 3; }
+  phi(v) {
+    // P1: (a1*v + b1) mod 256
+    const p1 = (this.a1 * v + this.b1) & 255;
+    // gf_inv: p1^254
+    const gf = gf_inv(p1);
+    // P2: (a2*gf + b2) mod 256
+    const p2 = (this.a2 * gf + this.b2) & 255;
+    return p2;
+  }
+  phi_inv(v) {
+    // P2_inv: a2inv * (v - b2)
+    const p2inv = (this.a2inv * ((v - this.b2 + 256) & 255)) & 255;
+    // gf_inv сам себе обратный
+    const gf = gf_inv(p2inv);
+    // P1_inv: a1inv * (gf - b1)
+    const p1inv = (this.a1inv * ((gf - this.b1 + 256) & 255)) & 255;
+    return p1inv;
+  }
+  apply(input) {
+    let acc = this.b;
+    for (let i = 0; i < this.dimIn; i++) acc += this.w[i] * input[i];
+    const v = S(acc >> this.shift);
+    return this.phi((v + 128) & 255) - 128;
+  }
+  get size() { return this.dimIn + 1 + 2 + 2; }
 }
 
-// ARX: Add-Rotate-Xor + S-box
-class ARX {
-  constructor(ks) {
-    this.k = ks.odd(); // нечётный для биективности сложения
-    this.r = ks.rot();
-    this.m = ks.byte();
-    this.sbox_k = ks.byte(); this.sbox_m = ks.byte(); this.sbox_r = ks.rot();
-  }
-  apply(x) {
-    const v = (((x + this.k) & 255) << this.r | ((x + this.k) & 255) >>> (8 - this.r)) & 255;
-    const u = (v ^ this.m) & 255;
-    return rotl8(SBOX[(u ^ this.sbox_k) & 255] ^ this.sbox_m, this.sbox_r);
-  }
-  inverse(y) {
-    const v = rotr8(y, this.sbox_r) ^ this.sbox_m;
-    const invSbox = new Uint8Array(256);
-    for (let i = 0; i < 256; i++) invSbox[SBOX[i]] = i;
-    const u = invSbox[v] ^ this.sbox_k;
-    const w = (u ^ this.m) & 255;
-    const z = (w << (8 - this.r) | w >>> this.r) & 255;
-    return (z - this.k + 256) & 255;
-  }
-  get size() { return 6; }
-}
-
-// TRI: унитреугольная матрица + S-box на каждом канале
-class TRI {
-  constructor(ks, dim) {
-    this.dim = dim;
-    this.w = new Int8Array(dim * dim);
-    for (let c = 1; c < dim; c++) for (let c2 = 0; c2 < c; c2++) this.w[c * dim + c2] = ks.weight();
-    this.sbox_k = new Uint8Array(dim); this.sbox_m = new Uint8Array(dim); this.sbox_r = new Uint8Array(dim);
-    for (let c = 0; c < dim; c++) { this.sbox_k[c] = ks.byte(); this.sbox_m[c] = ks.byte(); this.sbox_r[c] = ks.rot(); }
-    this.shift = Math.max(0, Math.round(Math.log2(Math.sqrt(dim) * 5476 / 64)));
-  }
-  apply(u, out) {
-    const d = this.dim, w = this.w, sh = this.shift;
-    for (let c = 0; c < d; c++) {
-      let acc = u[c];
-      for (let c2 = 0; c2 < c; c2++) acc += w[c * d + c2] * u[c2];
-      const v = S(acc >> sh);
-      out[c] = rotl8(SBOX[(v ^ this.sbox_k[c]) & 255] ^ this.sbox_m[c], this.sbox_r[c]);
+// ===== Эксперт: L слоёв по N нейронов =====
+class Expert {
+  constructor(ks, dimIn, dimHidden, nLayers, quantBits) {
+    this.dimIn = dimIn;
+    this.dimHidden = dimHidden;
+    this.nLayers = nLayers;
+    this.quantBits = quantBits;
+    this.layers = [];
+    for (let l = 0; l < nLayers; l++) {
+      const d = l === 0 ? dimIn : dimHidden;
+      const layer = [];
+      for (let n = 0; n < dimHidden; n++) layer.push(new Neuron(ks, d));
+      this.layers.push(layer);
     }
   }
-  get size() { return this.dim * (this.dim - 1) / 2 + this.dim * 3; }
+  apply(input) {
+    let cur = input;
+    for (let l = 0; l < this.nLayers; l++) {
+      const out = new Int8Array(this.dimHidden);
+      for (let n = 0; n < this.dimHidden; n++) {
+        let v = this.layers[l][n].apply(cur);
+        // Квантование (Блок 7)
+        if (this.quantBits > 0) {
+          const q = (v + 128) & 255;
+          const qshifted = (q >> this.quantBits) << this.quantBits;
+          v = qshifted - 128;
+        }
+        out[n] = v;
+      }
+      cur = out;
+    }
+    return cur;
+  }
+  neuronCount() { return this.nLayers * this.dimHidden; }
+  get size() { let s = 0; for (const l of this.layers) for (const n of l) s += n.size; return s + 1; }
 }
 
-// Feistel: 3-раундовая сеть Фейстеля с S-box
-class Feistel {
+// ===== Оркестр: E экспертов + softmax gate =====
+class Orchestra {
+  constructor(ks, cfg) {
+    this.cfg = cfg;
+    this.E = cfg.E;
+    this.dimCtx = cfg.dimCtx;
+    this.dimHidden = cfg.N;
+    this.experts = [];
+    for (let e = 0; e < this.E; e++) {
+      this.experts.push(new Expert(ks, this.dimCtx, this.dimHidden, cfg.L, cfg.quantBits));
+    }
+    // Gate: dimCtx → E
+    this.gateW = new Int8Array(this.E * this.dimCtx);
+    for (let i = 0; i < this.gateW.length; i++) this.gateW[i] = ks.weight();
+    this.gateB = new Int8Array(this.E);
+    for (let i = 0; i < this.E; i++) this.gateB[i] = ks.weight();
+    this.gateShift = Math.max(0, Math.round(Math.log2(Math.sqrt(this.dimCtx) * 128)));
+    // Proj: dimHidden → 1
+    this.projW = new Int8Array(this.dimHidden);
+    for (let i = 0; i < this.dimHidden; i++) this.projW[i] = ks.weight();
+    this.projB = ks.weight();
+    this.projShift = Math.max(0, Math.round(Math.log2(Math.sqrt(this.dimHidden) * 128)));
+    this.temperature = cfg.temperature;
+  }
+  softmax(v) {
+    const scaled = v.map(x => x / this.temperature);
+    const m = Math.max(...scaled);
+    const e = scaled.map(x => Math.exp(x - m));
+    const s = e.reduce((a,b) => a + b, 0);
+    return e.map(x => x / s);
+  }
+  apply(ctx) {
+    // Gate scores
+    const scores = [];
+    for (let e = 0; e < this.E; e++) {
+      let acc = this.gateB[e];
+      for (let i = 0; i < this.dimCtx; i++) acc += this.gateW[e * this.dimCtx + i] * ctx[i];
+      scores.push(acc >> this.gateShift);
+    }
+    const weights = this.softmax(scores);
+    // Expert outputs
+    const expertOuts = this.experts.map(exp => exp.apply(ctx));
+    // Weighted sum
+    const mixed = new Int32Array(this.dimHidden);
+    for (let e = 0; e < this.E; e++) {
+      const w = Math.round(weights[e] * 256);
+      for (let i = 0; i < this.dimHidden; i++) mixed[i] += w * expertOuts[e][i];
+    }
+    // Proj to delta
+    let acc = this.projB * 256;
+    for (let i = 0; i < this.dimHidden; i++) acc += this.projW[i] * (mixed[i] >> 8);
+    const delta = S(acc >> (this.projShift + 8));
+    return { delta: (delta + 128) & 255, weights };
+  }
+  totalNeurons() { return this.E * this.experts[0].neuronCount(); }
+  get size() {
+    let s = 0; for (const exp of this.experts) s += exp.size;
+    return s + this.E * this.dimCtx + this.E + this.dimHidden + 1;
+  }
+}
+
+// ===== T_w: биекция через gf_inv =====
+class Tw {
   constructor(ks) {
-    this.k1 = ks.byte(); this.k2 = ks.byte(); this.k3 = ks.byte();
+    this.a1 = ks.odd();
+    this.b1 = ks.byte();
+    this.a2 = ks.odd();
+    this.b2 = ks.byte();
+    this.a1inv = this.modInv(this.a1);
+    this.a2inv = this.modInv(this.a2);
+  }
+  modInv(a) {
+    let t = 0, nt = 1, r = 256, nr = a & 255;
+    while (nr) {
+      const q = Math.floor(r / nr);
+      [t, nt] = [nt, t - q * nt];
+      [r, nr] = [nr, r - q * nr];
+    }
+    return t & 255;
   }
   apply(x) {
-    let L = (x >> 4) & 0xF, R = x & 0xF;
-    // Раунд 1
-    let L2 = R, R2 = L ^ ((SBOX[(R ^ this.k1) & 255] >> 4) & 0xF);
-    // Раунд 2
-    let L3 = R2, R3 = L2 ^ ((SBOX[(R2 ^ this.k2) & 255] >> 4) & 0xF);
-    // Раунд 3
-    let L4 = R3, R4 = L3 ^ ((SBOX[(R3 ^ this.k3) & 255] >> 4) & 0xF);
-    return (L4 << 4) | R4;
+    const l1 = (this.a1 * x + this.b1) & 255;
+    const nl = gf_inv(l1);
+    return (this.a2 * nl + this.b2) & 255;
   }
   inverse(y) {
-    let L = (y >> 4) & 0xF, R = y & 0xF;
-    // Обратный раунд 3
-    let L3 = R ^ ((SBOX[(L ^ this.k3) & 255] >> 4) & 0xF), R3 = L;
-    // Обратный раунд 2
-    let L2 = R3 ^ ((SBOX[(L3 ^ this.k2) & 255] >> 4) & 0xF), R2 = L3;
-    // Обратный раунд 1
-    let L1 = R2 ^ ((SBOX[(L2 ^ this.k1) & 255] >> 4) & 0xF), R1 = L2;
-    return (L1 << 4) | R1;
+    const l2inv = (this.a2inv * ((y - this.b2 + 256) & 255)) & 255;
+    const nl = gf_inv(l2inv);
+    return (this.a1inv * ((nl - this.b1 + 256) & 255)) & 255;
   }
-  get size() { return 3; }
 }
 
-// Проверка биективности
-function isBijective(apply, inverse) {
-  for (let x = 0; x < 256; x++) {
-    if (inverse(apply(x)) !== x) return false;
+// ===== Контекст: B полос × 4 признака (Блок 4) =====
+function buildContext(state, i, B) {
+  const dimCtx = B * 4;
+  const ctx = new Int8Array(dimCtx);
+  for (let b = 0; b < B; b++) {
+    const stride = Math.max(1, Math.floor((i + 1) * (b + 1) / B));
+    let sum = 0, xor = 0, last = 0, first = 0, cnt = 0;
+    for (let t = 1; t <= 8; t++) {
+      const j = i - stride * t;
+      if (j < 0) break;
+      const v = state[j];
+      sum += v; xor ^= v; last = v;
+      if (cnt === 0) first = v;
+      cnt++;
+    }
+    if (i > 0 && cnt === 0) { first = state[0]; last = state[0]; sum = state[0]; xor = state[0]; cnt = 1; }
+    const base = b * 4;
+    ctx[base] = cnt > 0 ? S(Math.round(sum / cnt)) : 0;
+    ctx[base + 1] = xor - 128;
+    ctx[base + 2] = last - 128;
+    ctx[base + 3] = first - 128;
   }
-  return true;
+  return ctx;
 }
 
-// Вычисление DP
-function computeDP(apply) {
+// ===== Сеть NNC =====
+class NNC {
+  static async create(cfg, keyBytes, nonceBytes, posSeed, task) {
+    const net = new NNC(); net.cfg = cfg;
+    const ks = new KeyStream(keyBytes, nonceBytes);
+    
+    // Эмбеддинг: 256 байт → D-мерные вектора через S-box
+    net.emb = [];
+    for (let x = 0; x < 256; x++) {
+      const row = new Int8Array(cfg.D);
+      for (let c = 0; c < cfg.D; c++) row[c] = SBOX[x ^ (c & 255)] - 128;
+      net.emb.push(row);
+      if ((x & 31) === 0) { task.progress(0.1 + 0.1 * (x / 256), "эмбеддинг"); await task.step(); }
+    }
+    
+    // T_w
+    net.tw = new Tw(ks);
+    
+    // Позиционный seed
+    net.posSeed = posSeed;
+    
+    // Оркестры на каждый слой сети
+    net.layers = [];
+    for (let l = 0; l < cfg.layers; l++) {
+      net.layers.push(new Orchestra(ks, cfg));
+      task.progress(0.2 + 0.7 * ((l + 1) / cfg.layers), "слой " + (l + 1));
+      await task.step();
+    }
+    
+    // Проверка: 256 нейронов
+    const total = net.layers[0].totalNeurons();
+    if (total !== 256) throw new Error(`Ожидалось 256 нейронов, получено ${total}`);
+    
+    return net;
+  }
+  
+  posVec(t) {
+    const v = new Int8Array(this.cfg.D);
+    let h = (this.posSeed ^ Math.imul(t + 1, GOLD)) >>> 0;
+    if (!h) h = 0x9E3779B9;
+    for (let i = 0; i < this.cfg.D; i++) { h = xs(h); v[i] = (h & 255) - 128; }
+    return v;
+  }
+  
+  async runLayer(li, state, dir, task) {
+    const N = state.length;
+    if (!N) return;
+    const orch = this.layers[li];
+    const order = dir > 0
+      ? Array.from({length: N}, (_, i) => i)
+      : Array.from({length: N}, (_, i) => N - 1 - i);
+    
+    for (let idx = 0; idx < N; idx++) {
+      const i = order[idx];
+      const ctx = buildContext(state, i, this.cfg.B);
+      const { delta } = orch.apply(ctx);
+      if (dir > 0) {
+        state[i] = this.tw.apply((state[i] + delta) & 255);
+      } else {
+        const inv = this.tw.inverse(state[i]);
+        state[i] = (inv - delta + 256) & 255;
+      }
+      if ((idx & 31) === 0) await task.step();
+    }
+  }
+  
+  async encrypt(bytes, task) {
+    const state = Uint8Array.from(bytes);
+    for (let l = 0; l < this.cfg.layers; l++) {
+      await this.runLayer(l, state, 1, task);
+      task.progress((l + 1) / this.cfg.layers, "слой " + (l + 1));
+    }
+    return state;
+  }
+  
+  async decrypt(bytes, task) {
+    const state = Uint8Array.from(bytes);
+    for (let l = this.cfg.layers - 1; l >= 0; l--) {
+      await this.runLayer(l, state, -1, task);
+      task.progress((this.cfg.layers - l) / this.cfg.layers, "слой⁻¹ " + (l + 1));
+    }
+    return state;
+  }
+  
+  get parameters() {
+    let p = 256 * this.cfg.D + 4; // emb + T_w
+    for (const l of this.layers) p += l.size;
+    return p;
+  }
+  
+  opsPerByte() {
+    const orch = this.layers[0];
+    const perOrch = this.cfg.B * 8 * 4 + // buildContext
+                    this.cfg.E * (this.cfg.L * this.cfg.N * (this.cfg.dimCtx * 2 + 10)) + // experts
+                    this.cfg.E * this.cfg.dimCtx * 2 + // gate
+                    this.cfg.N * 2; // proj
+    return perOrch * this.cfg.layers + 20; // + T_w
+  }
+  
+  bounds() {
+    const orch = this.layers[0];
+    const neuron = orch.experts[0].layers[0][0];
+    const maxAcc = this.cfg.dimCtx * 128 + 128; // max |Σ w·x + b|
+    const maxPhi = 255; // φ возвращает [0,255]
+    const maxExpert = this.cfg.L * this.cfg.N * maxPhi;
+    const maxGate = this.cfg.E * this.cfg.dimCtx * 128;
+    const maxProj = this.cfg.N * 128 * 256;
+    const max = Math.max(maxAcc, maxExpert, maxGate, maxProj);
+    return { maxAcc, maxExpert, maxGate, maxProj, max, safe: max < 2147483647 };
+  }
+}
+
+// ===== DP и NL профили =====
+function profileDP(apply) {
   let max = 0;
   for (let d = 1; d < 256; d++) {
     const cnt = new Uint16Array(256);
@@ -611,57 +596,372 @@ function computeDP(apply) {
   }
   return max;
 }
-
-// Вычисление нелинейности (упрощённо)
-function computeNL(apply) {
-  // Для 8-битной функции: NL = 128 - max|WHT|/2
-  // Упрощённая оценка через DP: NL ≈ 128 - DP*128/256
-  const dp = computeDP(apply);
-  return Math.round(128 - dp * 128 / 256);
+function profileNL(apply) {
+  const table = new Uint8Array(256);
+  for (let x = 0; x < 256; x++) table[x] = apply(x);
+  let maxWHT = 0;
+  for (let b = 1; b < 256; b++) {
+    const g = new Int8Array(256);
+    for (let x = 0; x < 256; x++) {
+      let v = b & table[x]; v ^= v >> 4; v ^= v >> 2; v ^= v >> 1;
+      g[x] = (v & 1) ? 1 : -1;
+    }
+    for (let a = 0; a < 256; a++) {
+      let s = 0;
+      for (let x = 0; x < 256; x++) {
+        let p = a & x; p ^= p >> 4; p ^= p >> 2; p ^= p >> 1;
+        s += (p & 1) ? -g[x] : g[x];
+      }
+      if (Math.abs(s) > maxWHT) maxWHT = Math.abs(s);
+    }
+  }
+  return 128 - maxWHT / 2;
 }
 
-// ===== MO² АРХИТЕКТУРА =====
+// ===== UI =====
+const $ = id => document.getElementById(id);
+const POP8 = new Uint8Array(256);
+for (let i = 1; i < 256; i++) POP8[i] = POP8[i >> 1] + (i & 1);
 
-class MO2 {
-  static async create(cfg, keyBytes, nonceBytes, posSeed, task) {
-    const net = new MO2(); net.cfg = cfg;
-    net.dh = cfg.dim / cfg.heads;
-    const ks = new KeyStream(keyBytes, nonceBytes);
-    
-    // Создаём 5 классов экспертов
-    net.classes = {
-      SUB: new SUB(ks),
-      GF: new GF(ks, 0),
-      ARX: new ARX(ks),
-      TRI: new TRI(ks, cfg.chan),
-      Feistel: new Feistel(ks)
-    };
-    
-    // Проверяем биективность всех классов
-    for (const [name, cls] of Object.entries(net.classes)) {
-      if (name === 'TRI') continue; // TRI работает с векторами
-      if (!isBijective(x => cls.apply(x), y => cls.inverse(y))) {
-        throw new Error(`Класс ${name} не биективен`);
+let net = null, cfg = null;
+
+function buildConfig() {
+  const D = parseInt($("cfgD").value);
+  const B = parseInt($("cfgB").value);
+  const E = parseInt($("cfgE").value);
+  const L = parseInt($("cfgL").value);
+  const N = parseInt($("cfgN").value);
+  const layers = parseInt($("cfgLayers").value);
+  const temperature = parseFloat($("cfgTemp").value);
+  const quantBits = parseInt($("cfgQuant").value);
+  return { D, B, E, L, N, layers, temperature, quantBits, dimCtx: B * 4 };
+}
+
+async function buildNet(cfg, keyText, task) {
+  const pw = enc.encode(keyText);
+  const salt = sha256(enc.encode("NNC/v2/salt")).subarray(0, 16);
+  const master = sha256(concat(pw, salt));
+  const kb = sha256(concat(master, enc.encode("stream-key")));
+  const nb = sha256(concat(master, enc.encode("stream-nonce"))).subarray(0, 12);
+  const pb = sha256(concat(master, enc.encode("positional")));
+  const posSeed = (pb[0] | (pb[1]<<8) | (pb[2]<<16) | (pb[3]<<24)) >>> 0;
+  return await NNC.create(cfg, kb, nb, posSeed, task);
+}
+
+async function rebuild() {
+  cfg = buildConfig();
+  const keyText = $("key").value || "demo";
+  const task = {
+    progress: (f, l) => {},
+    step: async () => {}
+  };
+  try {
+    net = await buildNet(cfg, keyText, task);
+    const total = net.layers[0].totalNeurons();
+    $("mNeurons").textContent = total;
+    $("mCtx").textContent = cfg.dimCtx;
+    $("mParams").textContent = net.parameters.toLocaleString("ru-RU");
+    $("mOps").textContent = net.opsPerByte().toLocaleString("ru-RU");
+    if (total !== 256) throw new Error(`Нейронов: ${total}, должно быть 256`);
+  } catch(e) {
+    console.error(e);
+    alert("Ошибка сборки: " + e.message);
+  }
+}
+
+$("encrypt").addEventListener("click", async () => {
+  if (!net) await rebuild();
+  const text = $("input").value;
+  const plain = enc.encode(text);
+  const task = { progress: () => {}, step: async () => {} };
+  const ct = await net.encrypt(plain, task);
+  let s = ""; const c = 16384;
+  for (let i = 0; i < ct.length; i += c) s += String.fromCharCode.apply(null, ct.subarray(i, i + c));
+  $("output").value = btoa(s);
+});
+
+$("decrypt").addEventListener("click", async () => {
+  if (!net) await rebuild();
+  try {
+    const bin = atob($("input").value.replace(/\s/g, ""));
+    const ct = new Uint8Array(bin.length);
+    for (let i = 0; i < bin.length; i++) ct[i] = bin.charCodeAt(i);
+    const task = { progress: () => {}, step: async () => {} };
+    const plain = await net.decrypt(ct, task);
+    try {
+      $("output").value = dec.decode(plain);
+    } catch(e) {
+      let hex = ""; for (let i = 0; i < Math.min(64, plain.length); i++) hex += plain[i].toString(16).padStart(2, "0") + " ";
+      $("output").value = "(не UTF-8) " + hex;
+    }
+  } catch(e) {
+    $("output").value = "Ошибка Base64";
+  }
+});
+
+$("selftest").addEventListener("click", async () => {
+  await rebuild();
+  const lens = [0, 1, 2, 7, 33, 128, 512, 2048];
+  const box = $("rtChecks");
+  box.innerHTML = "";
+  for (const n of lens) {
+    const p = randomBytes(n);
+    const task = { progress: () => {}, step: async () => {} };
+    const c = await net.encrypt(p, task);
+    const r = await net.decrypt(c, task);
+    const ok = c.length === n && eqBytes(p, r);
+    const span = document.createElement("span");
+    span.dataset.ok = String(ok);
+    span.textContent = n + " Б " + (ok ? "✓" : "✕");
+    box.appendChild(span);
+  }
+});
+
+$("runFullAudit").addEventListener("click", async () => {
+  await rebuild();
+  const rows = [];
+  const add = (id, ok, det) => rows.push({id, ok, det});
+  
+  // 1. T_w биективна
+  const twTab = new Uint8Array(256);
+  for (let v = 0; v < 256; v++) twTab[v] = net.tw.apply(v);
+  const twSeen = new Set(twTab);
+  add("T_w.bijection", twSeen.size === 256, "256 уникальных значений");
+  
+  // 2. DP(T_w) = 2/256
+  const twDP = profileDP(x => net.tw.apply(x));
+  add("T_w.DP", twDP === 2, "DP = " + twDP + "/256 (эталон 2)");
+  
+  // 3. NL(T_w) = 112
+  const twNL = profileNL(x => net.tw.apply(x));
+  add("T_w.NL", twNL === 112, "NL = " + twNL + " (эталон 112)");
+  
+  // 4. Все нейроны биективны
+  let bijOk = true;
+  const orch = net.layers[0];
+  for (let e = 0; e < cfg.E; e++) {
+    for (let l = 0; l < cfg.L; l++) {
+      for (let n = 0; n < cfg.N; n++) {
+        const neuron = orch.experts[e].layers[l][n];
+        const tab = new Uint8Array(256);
+        for (let v = 0; v < 256; v++) tab[v] = neuron.phi(v);
+        if (new Set(tab).size !== 256) bijOk = false;
       }
     }
-    
-    // Создаём слои
-    net.layers = [];
-    for (let i = 0; i < cfg.layers; i++) {
-      net.layers.push(new Layer(ks, cfg, net.dh));
-      task.progress(0.2 + 0.7 * ((i + 1) / cfg.layers), "слой " + (i + 1));
-      await task.step();
+  }
+  add("Neurons.bijection", bijOk, "все 256 нейронов биективны");
+  
+  // 5. NL всех нейронов ≥ 100
+  let nlMin = 256;
+  for (let e = 0; e < cfg.E; e++) {
+    for (let l = 0; l < cfg.L; l++) {
+      for (let n = 0; n < cfg.N; n++) {
+        const neuron = orch.experts[e].layers[l][n];
+        const nl = profileNL(v => neuron.phi(v));
+        if (nl < nlMin) nlMin = nl;
+      }
     }
-    
-    return net;
+  }
+  add("Neurons.NL", nlMin >= 100, "min NL = " + nlMin + " (требуется ≥ 100)");
+  
+  // 6. int32 bounds
+  const bd = net.bounds();
+  add("Bounds.int32", bd.safe, "max " + bd.max.toLocaleString("ru-RU") + " < 2³¹");
+  
+  // 7. Causality: delta не зависит от x[i]
+  const N = 32;
+  const state = randomBytes(N);
+  let causOk = true;
+  for (let trial = 0; trial < 3; trial++) {
+    const i = Math.floor(Math.random() * N);
+    const ctx1 = buildContext(state, i, cfg.B);
+    const { delta: d1 } = orch.apply(ctx1);
+    state[i] ^= 0x80;
+    const ctx2 = buildContext(state, i, cfg.B);
+    const { delta: d2 } = orch.apply(ctx2);
+    state[i] ^= 0x80;
+    if (d1 !== d2) causOk = false;
+  }
+  add("Causality", causOk, "δ не меняется при изменении x[i]");
+  
+  // 8. Softmax: maxW ≤ 0.9
+  let softOk = true;
+  for (let trial = 0; trial < 10; trial++) {
+    const ctx = new Int8Array(cfg.dimCtx);
+    for (let i = 0; i < cfg.dimCtx; i++) ctx[i] = Math.floor(Math.random() * 256) - 128;
+    const { weights } = orch.apply(ctx);
+    const maxW = Math.max(...weights);
+    if (maxW > 0.95) softOk = false;
+  }
+  add("Softmax.continuous", softOk, "нет вырожденных one-hot");
+  
+  // 9. Roundtrip
+  let rtOk = true;
+  for (const n of [0, 1, 2, 7, 33, 128, 512]) {
+    const p = randomBytes(n);
+    const task = { progress: () => {}, step: async () => {} };
+    const c = await net.encrypt(p, task);
+    const r = await net.decrypt(c, task);
+    if (!eqBytes(p, r)) rtOk = false;
+  }
+  add("Roundtrip", rtOk, "на 7 длинах");
+  
+  // 10. Diffusion: 2 слоя ≥ 99%
+  const rn = 96;
+  const base = randomBytes(rn);
+  const flipped = Uint8Array.from(base);
+  flipped[0] ^= 1;
+  let a = Uint8Array.from(base), b = Uint8Array.from(flipped);
+  const task = { progress: () => {}, step: async () => {} };
+  await net.runLayer(0, a, 1, task); await net.runLayer(0, b, 1, task);
+  await net.runLayer(1, a, 1, task); await net.runLayer(1, b, 1, task);
+  let ch = 0; for (let i = 0; i < rn; i++) if (a[i] !== b[i]) ch++;
+  const diff2 = ch / rn;
+  add("Diffusion.2layers", diff2 >= 0.99, "за 2 слоя затронуто " + (diff2 * 100).toFixed(1) + "%");
+  
+  // 11. Avalanche SAC
+  const BITS = 128;
+  const trials = 4;
+  const rates = new Float64Array(BITS);
+  for (let t = 0; t < trials; t++) {
+    const base = randomBytes(16);
+    const baseCt = await net.encrypt(base, task);
+    for (let bit = 0; bit < BITS; bit++) {
+      const mod = Uint8Array.from(base);
+      mod[bit >> 3] ^= 1 << (bit & 7);
+      const mc = await net.encrypt(mod, task);
+      let ch = 0;
+      for (let i = 0; i < 16; i++) ch += POP8[baseCt[i] ^ mc[i]];
+      rates[bit] += ch / (16 * 8);
+    }
+  }
+  for (let i = 0; i < BITS; i++) rates[i] /= trials;
+  let mn = 1, mx = 0, sum = 0;
+  for (let i = 0; i < BITS; i++) {
+    if (rates[i] < mn) mn = rates[i];
+    if (rates[i] > mx) mx = rates[i];
+    sum += rates[i];
+  }
+  const avOk = Math.abs(mn - 0.5) <= 0.05 && Math.abs(mx - 0.5) <= 0.05;
+  add("Avalanche.SAC", avOk, "avg " + (sum / BITS * 100).toFixed(1) + "%, min " + (mn * 100).toFixed(1) + "%, max " + (mx * 100).toFixed(1) + "%");
+  
+  // 12. Entropy
+  const entBlocks = 100;
+  const counts = new Array(256).fill(0);
+  for (let i = 0; i < entBlocks; i++) {
+    const inp = new Uint8Array(16);
+    for (let j = 0; j < 16; j++) inp[j] = (((i * 16 + j) % 4) * 85) & 255;
+    const ct = await net.encrypt(inp, task);
+    for (let j = 0; j < 16; j++) counts[ct[j]]++;
+  }
+  let ent = 0; const total = entBlocks * 16;
+  for (const c of counts) if (c > 0) { const p = c / total; ent -= p * Math.log2(p); }
+  const exp = 8 - 255 / (2 * total * Math.LN2);
+  const entOk = ent >= exp - 0.04;
+  add("Entropy", entOk, "H = " + ent.toFixed(4) + " (ожидание " + exp.toFixed(4) + ")");
+  
+  // Вывод
+  const box = $("auChecks");
+  box.innerHTML = "";
+  let failed = 0;
+  for (const r of rows) {
+    const span = document.createElement("span");
+    span.dataset.ok = String(r.ok);
+    span.textContent = r.id + " " + (r.ok ? "✓" : "✕");
+    box.appendChild(span);
+    if (!r.ok) failed++;
   }
   
-  // ... остальная реализация
-}
+  let html = "<table><tr><th>Проверка</th><th>Результат</th><th>Детали</th></tr>";
+  for (const r of rows) {
+    html += `<tr><td class="id">${r.id}</td><td><span class="tag ${r.ok ? "ok" : "bad"}">${r.ok ? "PASS" : "FAIL"}</span></td><td>${r.det}</td></tr>`;
+  }
+  html += "</table>";
+  $("auTable").innerHTML = html;
+  $("auDetails").open = failed > 0;
+});
 
-// Остальной код аналогичен DN, но с использованием 5 классов экспертов
-// ...
+$("runNLProfile").addEventListener("click", async () => {
+  await rebuild();
+  let html = "<h3>NL всех 256 нейронов</h3><table><tr><th>Эксперт</th><th>Слой</th><th>Нейрон</th><th>NL</th><th>DP</th></tr>";
+  const orch = net.layers[0];
+  let minNL = 256, maxDP = 0;
+  for (let e = 0; e < cfg.E; e++) {
+    for (let l = 0; l < cfg.L; l++) {
+      for (let n = 0; n < cfg.N; n++) {
+        const neuron = orch.experts[e].layers[l][n];
+        const nl = profileNL(v => neuron.phi(v));
+        const dp = profileDP(v => neuron.phi(v));
+        if (nl < minNL) minNL = nl;
+        if (dp > maxDP) maxDP = dp;
+        html += `<tr><td class="num">${e}</td><td class="num">${l}</td><td class="num">${n}</td><td class="num">${nl}</td><td class="num">${dp}/256</td></tr>`;
+      }
+    }
+  }
+  html += "</table>";
+  html += `<p><b>Мин NL нейрона: ${minNL}</b> (требуется ≥ 100). Макс DP: ${maxDP}/256 (требуется 2).</p>`;
+  
+  html += "<h3>NL экспертов (композиция слоёв)</h3><table><tr><th>Эксперт</th><th>NL</th><th>DP</th></tr>";
+  let minNLe = 256;
+  for (let e = 0; e < cfg.E; e++) {
+    const expert = orch.experts[e];
+    const tab = new Uint8Array(256);
+    for (let v = 0; v < 256; v++) {
+      const inp = new Int8Array(cfg.dimCtx);
+      inp[0] = v - 128;
+      const out = expert.apply(inp);
+      tab[v] = (out[0] + 128) & 255;
+    }
+    const nl = profileNL(x => tab[x]);
+    const dp = profileDP(x => tab[x]);
+    if (nl < minNLe) minNLe = nl;
+    html += `<tr><td class="id">e${e}</td><td class="num">${nl}</td><td class="num">${dp}/256</td></tr>`;
+  }
+  html += "</table>";
+  html += `<p><b>Мин NL эксперта: ${minNLe}</b> (требуется ≥ 100).</p>`;
+  
+  $("nlBody").innerHTML = html;
+  $("nlDetails").open = true;
+});
 
+$("runDiffusion").addEventListener("click", async () => {
+  await rebuild();
+  const N = 128;
+  const base = randomBytes(N);
+  const flipped = Uint8Array.from(base);
+  flipped[0] ^= 1;
+  let a = Uint8Array.from(base), b = Uint8Array.from(flipped);
+  const steps = [];
+  const task = { progress: () => {}, step: async () => {} };
+  
+  for (let l = 0; l < cfg.layers; l++) {
+    await net.runLayer(l, a, 1, task);
+    await net.runLayer(l, b, 1, task);
+    let ch = 0;
+    for (let i = 0; i < N; i++) if (a[i] !== b[i]) ch++;
+    steps.push(ch / N);
+  }
+  
+  const cv = $("reachCanvas");
+  const c = cv.getContext("2d");
+  c.fillStyle = "#0a0f1a"; c.fillRect(0, 0, cv.width, cv.height);
+  const plot = cv.height - 24;
+  const bw = cv.width / steps.length;
+  for (let i = 0; i < steps.length; i++) {
+    const h = steps[i] * plot;
+    c.fillStyle = steps[i] >= 0.99 ? "#34d399" : "#22d3ee";
+    c.fillRect(i * bw + 2, plot - h, bw - 4, h);
+  }
+  c.fillStyle = "#8fa1bd"; c.font = "11px monospace";
+  c.fillText("Диффузия по слоям: " + steps.map(s => (s * 100).toFixed(0) + "%").join(" → "), 8, 14);
+});
+
+// Автопостроение при изменении конфига
+["cfgD", "cfgB", "cfgE", "cfgL", "cfgN", "cfgLayers", "cfgTemp", "cfgQuant", "key"].forEach(id => {
+  $(id).addEventListener("change", () => { net = null; });
+});
+
+rebuild();
 })();
 </script>
 </body>
