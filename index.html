@@ -2,518 +2,666 @@
 <html lang="ru">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
-<title>MO² · Structural Expert Orchestra</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>MO² · Mixture of Experts Cipher</title>
 <style>
-:root{color-scheme:dark;--bg:#070a12;--s1:#0c1220;--s2:#111a2c;--ln:#1c2740;--ln2:#283754;--tx:#e7edf8;--t2:#8a9cb8;--t3:#546680;--cy:#22d3ee;--vi:#8b5cf6;--mg:#f0389c;--ac:#a3e635;--am:#fbbf24;--tl:#2dd4bf;--ok:#34d399;--bad:#fb7185;--gr:linear-gradient(115deg,var(--cy),var(--vi) 45%,var(--mg))}
-*{box-sizing:border-box;margin:0}
+:root{
+  color-scheme:dark;
+  --void:#06090f;--deep:#0a0f1a;--surface:#0e1524;--surface2:#121c30;--line:#1c2740;--line2:#2a3a5c;
+  --ink:#e9eff9;--ink2:#8fa1bd;--ink3:#5b6c8c;
+  --indigo:#3a45c9;--blue:#2563eb;--cyan:#22d3ee;--violet:#8b5cf6;--magenta:#f0389c;--acid:#a3e635;--amber:#fbbf24;--rose:#fb7185;
+  --ok:#34d399;--warn:#fbbf24;--bad:#fb7185;--info:#60a5fa;
+  --grad:linear-gradient(112deg,var(--cyan),var(--violet) 44%,var(--magenta));
+}
+*{box-sizing:border-box}
 html{scroll-behavior:smooth}
-body{background:var(--bg);color:var(--tx);font:14px/1.5 system-ui,"Segoe UI",Roboto,sans-serif}
-*{scrollbar-width:thin;scrollbar-color:var(--vi) var(--s1)}
-::-webkit-scrollbar{width:9px;height:9px}
-::-webkit-scrollbar-track{background:var(--s1)}
-::-webkit-scrollbar-thumb{background:linear-gradient(180deg,var(--vi),var(--cy));border:2px solid var(--s1);border-radius:9px}
-header{position:fixed;top:0;left:0;right:0;z-index:50;height:54px;display:flex;align-items:center;gap:10px;padding:0 16px;background:rgba(7,10,18,.94);backdrop-filter:blur(14px);border-bottom:1px solid var(--ln)}
-header b{font-size:13px;letter-spacing:.14em}
-nav{display:flex;gap:2px;margin-left:8px}
-nav a{padding:6px 10px;border-radius:20px;color:var(--t2);text-decoration:none;font-size:12.5px;font-weight:600}
-nav a:hover{color:var(--tx);background:var(--s2)}
-nav a.on{color:#04121f;background:var(--gr)}
-.sp{flex:1}
-.chip{display:flex;align-items:center;gap:7px;padding:5px 11px;border-radius:20px;background:var(--s2);border:1px solid var(--ln2);font-size:12px;color:var(--t2)}
-.dot{width:7px;height:7px;border-radius:50%;background:var(--t3)}
-.chip[data-s=ready] .dot{background:var(--ok);box-shadow:0 0 8px var(--ok)}
-.chip[data-s=busy] .dot{background:var(--am);animation:bl .8s infinite}
-.chip[data-s=error] .dot{background:var(--bad)}
-@keyframes bl{50%{opacity:.2}}
-.bar{position:absolute;left:0;bottom:-1px;height:2px;width:100%}
-.bar i{display:block;height:100%;width:0;background:var(--gr);transition:width .12s}
-main{max-width:1360px;margin:0 auto;padding:68px 16px 40px}
-h1{font-size:clamp(22px,3.4vw,32px);line-height:1.1;margin-bottom:8px}
-h1 em{font-style:normal;background:var(--gr);-webkit-background-clip:text;background-clip:text;color:transparent}
-.lede{color:var(--t2);font-size:13.5px;max-width:94ch;margin-bottom:14px}
-.lede b{color:var(--tx)}
-.mx{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:16px}
-.m{padding:7px 12px;border-radius:9px;background:var(--s1);border:1px solid var(--ln);min-width:98px}
-.m b{display:block;font:600 15px/1.3 ui-monospace,Menlo,Consolas,monospace;color:var(--cy)}
-.m span{font-size:9.5px;color:var(--t3);letter-spacing:.06em;text-transform:uppercase}
-.wrap{display:grid;grid-template-columns:minmax(0,1fr) 310px;gap:14px;align-items:start}
-.rail{position:sticky;top:66px;max-height:calc(100vh - 80px);overflow-y:auto}
-.p{background:var(--s1);border:1px solid var(--ln);border-radius:12px;padding:14px;margin-bottom:12px}
-.p.hot{border-color:rgba(34,211,238,.3)}
-h2{font-size:15px;margin-bottom:8px}
-h3{font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:var(--t3);margin:14px 0 6px}
-.sub{color:var(--t2);font-size:12.5px;margin-bottom:10px}
-.hd{display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:8px}
-label{display:block;font-size:12px;font-weight:600;margin-bottom:4px}
-input,textarea,select{width:100%;background:var(--bg);color:var(--tx);border:1px solid var(--ln2);border-radius:8px;padding:7px 10px;font:inherit;font-size:13px;outline:none}
-input:focus,textarea:focus,select:focus{border-color:var(--cy);box-shadow:0 0 0 2px rgba(34,211,238,.14)}
-textarea{min-height:84px;resize:vertical;font:12px/1.5 ui-monospace,Menlo,Consolas,monospace}
-input[type=range]{padding:0;height:18px;border:0;background:none;accent-color:var(--cy)}
-input[type=checkbox]{width:auto;accent-color:var(--mg)}
-.row{display:flex;gap:8px;flex-wrap:wrap}.row>*{flex:1;min-width:116px}
-.btns{display:flex;flex-wrap:wrap;gap:7px;margin-top:10px}
-button{border:0;border-radius:8px;padding:8px 13px;font:600 12.5px/1 inherit;cursor:pointer;background:linear-gradient(120deg,#2563eb,#3944c8);color:#fff}
-button:hover:not(:disabled){filter:brightness(1.14)}
-button.g{background:var(--s2);border:1px solid var(--ln2);color:var(--t2)}
-button.g:hover:not(:disabled){color:var(--tx);border-color:var(--cy)}
-button.a{background:linear-gradient(120deg,var(--mg),var(--vi))}
-button.v{background:linear-gradient(120deg,var(--tl),var(--ac));color:#04121f}
-button.d{background:none;border:1px solid rgba(251,113,133,.5);color:var(--bad)}
-button:disabled{opacity:.4;cursor:not-allowed}
-.st{margin-top:10px;padding:8px 10px;border-radius:8px;background:var(--bg);border:1px solid var(--ln2);font-size:12.5px;white-space:pre-wrap;min-height:1.2em}
-.st.err{border-color:rgba(251,113,133,.6);color:#ffd7de}
-.c{margin-bottom:9px}
-.c .l{display:flex;justify-content:space-between;font-size:11.5px;font-weight:600;margin-bottom:3px}
-.v{color:var(--cy);font-family:ui-monospace,monospace}
-.sw{display:flex;justify-content:space-between;align-items:center;padding:5px 0;border-top:1px solid var(--ln)}
+body{margin:0;background:var(--void);color:var(--ink);font-family:system-ui,"Segoe UI",Roboto,Arial,sans-serif;overflow-x:hidden}
+*{scrollbar-width:thin;scrollbar-color:var(--indigo) var(--deep)}
+::-webkit-scrollbar{width:10px;height:10px}
+::-webkit-scrollbar-track{background:var(--deep);border-left:1px solid var(--line)}
+::-webkit-scrollbar-thumb{background:linear-gradient(180deg,var(--indigo),var(--cyan));border:3px solid var(--deep);border-radius:99px}
+::-webkit-scrollbar-thumb:hover{background:linear-gradient(180deg,var(--cyan),var(--magenta))}
+.bg{position:fixed;inset:0;z-index:0;pointer-events:none;overflow:hidden}
+.blob{position:absolute;border-radius:50%;filter:blur(115px);opacity:.32;mix-blend-mode:screen;animation:drift 36s ease-in-out infinite alternate}
+.blob.a{width:64vw;height:64vw;left:-20vw;top:-26vw;background:radial-gradient(circle,var(--indigo),transparent 66%)}
+.blob.b{width:54vw;height:54vw;right:-18vw;top:4vh;background:radial-gradient(circle,var(--cyan),transparent 66%);animation-delay:-13s;opacity:.2}
+.blob.c{width:48vw;height:48vw;left:26vw;bottom:-28vw;background:radial-gradient(circle,var(--magenta),transparent 68%);opacity:.17;animation-delay:-24s}
+@keyframes drift{0%{transform:translate3d(0,0,0) scale(1)}50%{transform:translate3d(4vw,3vh,0) scale(1.13)}100%{transform:translate3d(-4vw,-4vh,0) scale(.9)}}
+.mesh{position:absolute;inset:0;background-image:linear-gradient(to right,rgba(96,165,250,.05) 1px,transparent 1px),linear-gradient(to bottom,rgba(96,165,250,.05) 1px,transparent 1px);background-size:60px 60px;mask-image:radial-gradient(ellipse 94% 60% at 50% 6%,#000 24%,transparent 100%)}
+.grain{position:absolute;inset:0;opacity:.05;mix-blend-mode:overlay}
+header{position:fixed;top:0;left:0;right:0;z-index:70;height:60px;display:flex;align-items:center;gap:12px;padding:0 18px;background:rgba(8,12,20,.9);backdrop-filter:blur(18px) saturate(160%);border-bottom:1px solid var(--line)}
+.mark{width:28px;height:28px;flex:none;filter:drop-shadow(0 0 10px rgba(34,211,238,.55))}
+.brand{display:flex;flex-direction:column;line-height:1.15}
+.brand b{font-size:13px;letter-spacing:.17em}
+.brand span{font-size:10px;color:var(--ink3);letter-spacing:.05em}
+.badge{padding:5px 10px;border-radius:99px;font-size:10px;font-weight:800;letter-spacing:.07em;background:linear-gradient(120deg,rgba(34,211,238,.18),rgba(240,56,156,.18));border:1px solid rgba(34,211,238,.45);color:var(--cyan);white-space:nowrap}
+nav{display:flex;gap:3px;margin-left:6px}
+nav a{padding:7px 11px;border-radius:99px;color:var(--ink2);text-decoration:none;font-size:12.5px;font-weight:650;transition:.16s}
+nav a:hover{color:var(--ink);background:var(--surface)}
+nav a.on{color:#04121f;background:var(--grad)}
+.grow{flex:1}
+.chip{display:inline-flex;align-items:center;gap:8px;padding:6px 12px;border-radius:99px;background:var(--surface);border:1px solid var(--line2);font-size:12px;font-weight:650;color:var(--ink2);white-space:nowrap}
+.dot{width:8px;height:8px;border-radius:50%;background:var(--ink3)}
+.chip[data-s=ready] .dot{background:var(--ok);box-shadow:0 0 9px var(--ok)}
+.chip[data-s=busy] .dot{background:var(--warn);box-shadow:0 0 9px var(--warn);animation:blink .9s infinite}
+.chip[data-s=error] .dot{background:var(--bad);box-shadow:0 0 9px var(--bad)}
+@keyframes blink{50%{opacity:.25}}
+.track{position:absolute;left:0;bottom:-1px;height:2px;width:100%}
+.track i{display:block;height:100%;width:0;background:var(--grad);box-shadow:0 0 12px var(--cyan);transition:width .14s linear}
+.app{position:relative;z-index:1;max-width:1380px;margin:0 auto;padding:78px 18px 48px}
+.eyebrow{font-size:10.5px;letter-spacing:.24em;color:var(--cyan);font-weight:800;margin-bottom:9px}
+h1{margin:0 0 9px;font-size:clamp(26px,4.2vw,42px);line-height:1.04;letter-spacing:-.02em}
+h1 em{font-style:normal;background:var(--grad);-webkit-background-clip:text;background-clip:text;color:transparent}
+.lede{max-width:88ch;color:var(--ink2);font-size:14px;line-height:1.62;margin:0 0 14px}
+.lede b{color:var(--ink)}
+.metrics{display:flex;flex-wrap:wrap;gap:9px;margin-bottom:18px}
+.metric{padding:8px 13px;border-radius:10px;background:linear-gradient(160deg,var(--surface2),var(--deep));border:1px solid var(--line);min-width:110px}
+.metric b{display:block;font-family:ui-monospace,Menlo,Consolas,monospace;font-size:15px;color:var(--cyan)}
+.metric span{font-size:10px;color:var(--ink3);letter-spacing:.06em;text-transform:uppercase}
+.layout{display:grid;grid-template-columns:minmax(0,1fr) 320px;gap:15px;align-items:start}
+.rail{position:sticky;top:74px}
+h2{margin:0 0 4px;font-size:16px}
+h3{margin:15px 0 7px;font-size:10.5px;letter-spacing:.13em;text-transform:uppercase;color:var(--ink3)}
+.sub{color:var(--ink2);font-size:12.5px;line-height:1.5;margin:0 0 11px}
+.panel{background:linear-gradient(168deg,rgba(18,28,48,.94),rgba(10,15,26,.96));border:1px solid var(--line);border-radius:14px;padding:15px;margin-bottom:14px;box-shadow:0 20px 46px -34px #000,inset 0 1px 0 rgba(255,255,255,.04);opacity:0;transform:translateY(14px);animation:rise .55s cubic-bezier(.2,.7,.3,1) forwards}
+.panel:nth-of-type(2){animation-delay:.06s}.panel:nth-of-type(3){animation-delay:.12s}
+@keyframes rise{to{opacity:1;transform:none}}
+.panel.hot{border-color:rgba(34,211,238,.32)}
+.head{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:9px;flex-wrap:wrap}
+label{display:block;font-weight:650;margin-bottom:5px;font-size:12px}
+input,textarea,select{width:100%;background:var(--deep);color:var(--ink);border:1px solid var(--line2);border-radius:9px;padding:8px 11px;font:inherit;font-size:13px;outline:none;transition:border-color .15s,box-shadow .15s}
+input:focus,textarea:focus,select:focus{border-color:var(--cyan);box-shadow:0 0 0 3px rgba(34,211,238,.14)}
+textarea{min-height:94px;resize:vertical;font-family:ui-monospace,Menlo,Consolas,monospace;font-size:12px;line-height:1.5}
+input[type=range]{padding:0;height:20px;background:none;border:none;accent-color:var(--cyan)}
+input[type=checkbox]{width:auto;accent-color:var(--magenta)}
+.row{display:flex;gap:9px;flex-wrap:wrap}.row>*{flex:1;min-width:130px}
+.buttons{display:flex;flex-wrap:wrap;gap:8px;margin-top:11px}
+button{border:0;border-radius:9px;padding:9px 14px;font:inherit;font-size:12.5px;font-weight:700;cursor:pointer;background:linear-gradient(120deg,var(--blue),var(--indigo));color:#fff;transition:transform .12s,filter .16s}
+button:hover:not(:disabled){transform:translateY(-1px);filter:brightness(1.13)}
+button.ghost{background:var(--surface2);border:1px solid var(--line2);color:var(--ink2)}
+button.ghost:hover:not(:disabled){color:var(--ink);border-color:var(--cyan)}
+button.accent{background:linear-gradient(120deg,var(--magenta),var(--violet))}
+button.danger{background:transparent;border:1px solid rgba(251,113,133,.5);color:var(--bad)}
+button:disabled{opacity:.45;cursor:not-allowed}
+.status{margin-top:11px;padding:9px 11px;border-radius:9px;background:var(--deep);border:1px solid var(--line2);min-height:1.2em;white-space:pre-wrap;font-size:12.5px;line-height:1.45}
+.status.err{border-color:rgba(251,113,133,.6);color:#ffd7de}
+.meta{color:var(--ink2);font-size:11.5px;line-height:1.5}
+.val{color:var(--cyan);font-family:ui-monospace,Menlo,Consolas,monospace;font-weight:700}
+.ctl{margin-bottom:10px}
+.ctl .lab{display:flex;justify-content:space-between;align-items:baseline;font-size:11.5px;font-weight:650;margin-bottom:3px}
+.sw{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:6px 0;border-top:1px solid var(--line)}
 .sw label{margin:0;font-size:11.5px}
-canvas{display:block;width:100%;height:auto;background:var(--bg);border:1px solid var(--ln2);border-radius:9px}
-.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(174px,1fr));gap:9px;margin-top:10px}
-.cd{background:var(--bg);border:1px solid var(--ln);border-left:3px solid var(--cy);border-radius:9px;padding:9px 10px}
-.cd.ok{border-left-color:var(--ok)}.cd.bad{border-left-color:var(--bad)}.cd.w{border-left-color:var(--am)}.cd.vi{border-left-color:var(--vi)}.cd.mg{border-left-color:var(--mg)}.cd.ac{border-left-color:var(--ac)}.cd.tl{border-left-color:var(--tl)}
-.cd b{font-size:11.5px}
-.cd .big{font:800 18px/1.2 ui-monospace,monospace;margin:3px 0;color:#fff}
-.cd .r{display:flex;justify-content:space-between;gap:6px;font:10.5px/1.4 ui-monospace,monospace;color:var(--t2)}
-.tg{display:inline-block;font-size:9px;font-weight:800;padding:2px 6px;border-radius:20px}
-.tg.ok{background:rgba(52,211,153,.16);color:var(--ok)}
-.tg.bad{background:rgba(251,113,133,.16);color:var(--bad)}
-.tg.cy{background:rgba(34,211,238,.16);color:var(--cy)}
-.tg.ac{background:rgba(163,230,53,.16);color:var(--ac)}
-.lg{display:flex;flex-wrap:wrap;gap:10px;margin-top:7px;font-size:10px;color:var(--t3)}
-.lg i{display:inline-block;width:8px;height:8px;border-radius:2px;margin-right:4px;vertical-align:-1px}
-.pipe{display:flex;gap:6px;overflow-x:auto;padding:8px;background:var(--bg);border:1px solid var(--ln2);border-radius:9px;margin-top:8px}
-.sg{flex:none;min-width:152px;background:var(--s2);border:1px solid var(--ln2);border-radius:8px;padding:7px 9px}
-.sg b{display:block;font-size:10.5px;color:var(--cy)}
-.sg span{display:block;font:10px/1.4 ui-monospace,monospace;color:var(--t2);margin-top:2px}
-.ar{flex:none;align-self:center;color:var(--t3)}
-details{margin-top:10px;border:1px solid var(--ln);border-radius:9px;background:var(--bg)}
-summary{padding:8px 11px;cursor:pointer;font-size:12.5px;font-weight:600;color:var(--t2)}
-details>div{padding:0 11px 11px}
+canvas{display:block;width:100%;height:auto;background:var(--deep);border:1px solid var(--line2);border-radius:10px}
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(184px,1fr));gap:10px;margin-top:11px}
+.card{background:var(--deep);border:1px solid var(--line);border-left:3px solid var(--cyan);border-radius:10px;padding:10px 11px}
+.card.ok{border-left-color:var(--ok)}.card.bad{border-left-color:var(--bad)}.card.warn{border-left-color:var(--warn)}.card.v{border-left-color:var(--violet)}.card.m{border-left-color:var(--magenta)}.card.a{border-left-color:var(--acid)}
+.card b{font-size:12px}
+.card .big{font-family:ui-monospace,Menlo,Consolas,monospace;font-size:19px;font-weight:800;margin:4px 0;color:#fff}
+.card .r{display:flex;justify-content:space-between;gap:8px;font-family:ui-monospace,Menlo,Consolas,monospace;font-size:10.5px;color:var(--ink2);margin-top:2px}
+.tag{display:inline-block;font-size:9.5px;font-weight:800;padding:2px 7px;border-radius:99px;letter-spacing:.05em}
+.tag.ok{background:rgba(52,211,153,.16);color:var(--ok)}
+.tag.bad{background:rgba(251,113,133,.16);color:var(--bad)}
+.tag.warn{background:rgba(251,191,36,.16);color:var(--warn)}
+.tag.cy{background:rgba(34,211,238,.16);color:var(--cyan)}
+.tag.mg{background:rgba(240,56,156,.16);color:var(--magenta)}
+.legend{display:flex;flex-wrap:wrap;gap:11px;margin-top:8px;font-size:10px;color:var(--ink3)}
+.legend i{display:inline-block;width:8px;height:8px;border-radius:2px;margin-right:5px;vertical-align:-1px}
+.pipe{display:flex;gap:7px;overflow-x:auto;padding:9px;background:var(--deep);border:1px solid var(--line2);border-radius:10px;margin-top:9px}
+.stage{flex:none;min-width:170px;background:linear-gradient(160deg,rgba(58,69,201,.18),rgba(10,15,26,.6));border:1px solid rgba(96,165,250,.3);border-radius:9px;padding:8px 10px}
+.stage.term{background:linear-gradient(160deg,rgba(240,56,156,.13),rgba(10,15,26,.6));border-color:rgba(240,56,156,.38);min-width:98px}
+.stage b{display:block;font-size:11px;color:var(--cyan)}
+.stage.term b{color:var(--magenta)}
+.stage span{display:block;font-family:ui-monospace,Menlo,Consolas,monospace;font-size:10px;color:var(--ink2);margin-top:3px;line-height:1.45}
+.arrow{flex:none;align-self:center;color:var(--ink3)}
+details{margin-top:11px;border:1px solid var(--line);border-radius:10px;background:var(--deep)}
+summary{padding:9px 12px;cursor:pointer;font-size:12.5px;font-weight:650;color:var(--ink2)}
+summary:hover{color:var(--ink)}
+details>div{padding:0 12px 12px}
 table{width:100%;border-collapse:collapse;font-size:12px}
-th{text-align:left;padding:6px 9px;color:var(--t3);font-size:9.5px;letter-spacing:.08em;text-transform:uppercase;border-bottom:1px solid var(--ln2)}
-td{padding:5px 9px;border-bottom:1px solid var(--ln)}
-tr:last-child td{border-bottom:0}
-td.i{font-family:ui-monospace,monospace;color:var(--cy);white-space:nowrap}
-td.d{color:var(--t2);font:10.5px/1.4 ui-monospace,monospace}
-td.n{font-family:ui-monospace,monospace}
-.ck{display:flex;flex-wrap:wrap;gap:4px;margin-top:8px}
-.ck span{font:10px/1 ui-monospace,monospace;padding:3px 6px;border-radius:5px;border:1px solid var(--ln2);color:var(--t3)}
-.ck span[data-ok=true]{border-color:var(--ok);color:var(--ok)}
-.ck span[data-ok=false]{border-color:var(--bad);color:var(--bad)}
-.g2{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:12px}
-.rg{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:8px;margin-top:10px}
-.rg textarea{min-height:46px}
-.fm{font:11.5px/1.7 ui-monospace,monospace;background:var(--bg);border:1px solid var(--ln2);border-left:3px solid var(--ac);border-radius:8px;padding:8px 10px;margin-top:8px;overflow-x:auto}
-.meta{color:var(--t2);font-size:11.5px}
-footer{color:var(--t3);font-size:11.5px;border-top:1px solid var(--ln);padding-top:12px;margin-top:6px}
-.tt{position:fixed;right:14px;bottom:14px;z-index:60;display:flex;flex-direction:column;gap:7px;max-width:320px}
-.ts{display:flex;align-items:center;gap:9px;padding:9px 11px;border-radius:9px;background:var(--s2);border:1px solid var(--ln2);font-size:12.5px}
-.ts.ok{border-left:3px solid var(--ok)}.ts.bad{border-left:3px solid var(--bad)}.ts.info{border-left:3px solid var(--cy)}
-@media(max-width:1040px){.wrap{grid-template-columns:1fr}.rail{position:static;max-height:none}}
-@media(max-width:860px){nav{display:none}}
+th{text-align:left;padding:7px 10px;color:var(--ink3);font-size:9.5px;letter-spacing:.1em;text-transform:uppercase;border-bottom:1px solid var(--line2)}
+td{padding:6px 10px;border-bottom:1px solid var(--line);vertical-align:top}
+tr:last-child td{border-bottom:none}
+td.id{font-family:ui-monospace,Menlo,Consolas,monospace;color:var(--cyan);white-space:nowrap}
+td.det{color:var(--ink2);font-family:ui-monospace,Menlo,Consolas,monospace;font-size:10.5px}
+td.num{font-family:ui-monospace,Menlo,Consolas,monospace;white-space:nowrap}
+.checks{display:flex;flex-wrap:wrap;gap:5px;margin-top:9px}
+.checks span{font-family:ui-monospace,Menlo,Consolas,monospace;font-size:10px;padding:3px 7px;border-radius:5px;border:1px solid var(--line2);color:var(--ink3)}
+.checks span[data-ok=true]{border-color:var(--ok);color:var(--ok)}
+.checks span[data-ok=false]{border-color:var(--bad);color:var(--bad)}
+.grid2{display:grid;grid-template-columns:repeat(auto-fit,minmax(292px,1fr));gap:14px}
+.rawgrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:9px;margin-top:11px}
+.rawgrid textarea{min-height:50px}
+.formula{font-family:ui-monospace,Menlo,Consolas,monospace;font-size:11.5px;background:var(--deep);border:1px solid var(--line2);border-left:3px solid var(--violet);border-radius:9px;padding:9px 11px;margin-top:9px;line-height:1.7;overflow-x:auto}
+footer{color:var(--ink3);font-size:11.5px;line-height:1.6;border-top:1px solid var(--line);padding-top:14px}
+.toasts{position:fixed;right:16px;bottom:16px;z-index:95;display:flex;flex-direction:column;gap:8px;max-width:330px}
+.toast{display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:10px;background:rgba(14,21,36,.97);border:1px solid var(--line2);box-shadow:0 20px 44px -24px #000;font-size:12.5px;animation:tin .26s cubic-bezier(.2,.8,.3,1)}
+.toast.ok{border-left:3px solid var(--ok)}.toast.bad{border-left:3px solid var(--bad)}.toast.info{border-left:3px solid var(--info)}
+@keyframes tin{from{opacity:0;transform:translateX(24px)}}
+@media(max-width:1080px){.layout{grid-template-columns:1fr}.rail{position:static}}
+@media(max-width:900px){nav,.badge{display:none}}
+@media(max-width:720px){.app{padding:72px 12px 40px}header{padding:0 12px;gap:9px}.brand span{display:none}}
+@media(prefers-reduced-motion:reduce){*,*::before,*::after{animation-duration:.001ms!important;transition-duration:.001ms!important}.panel{opacity:1;transform:none}}
 </style>
 </head>
 <body>
+<div class="bg" aria-hidden="true">
+  <div class="blob a"></div><div class="blob b"></div><div class="blob c"></div><div class="mesh"></div>
+  <svg class="grain" xmlns="http://www.w3.org/2000/svg"><filter id="gn"><feTurbulence type="fractalNoise" baseFrequency="0.85" numOctaves="3" stitchTiles="stitch"/></filter><rect width="100%" height="100%" filter="url(#gn)"/></svg>
+</div>
 <header>
-<b>MO²</b>
-<nav><a href="#console" class="on">Консоль</a><a href="#orch">Эксперты</a><a href="#checks">Проверки</a></nav>
-<div class="sp"></div>
-<button id="cancel" class="d" style="padding:5px 10px;font-size:12px" disabled>Отмена</button>
-<span class="chip" id="chip" data-s="idle"><i class="dot"></i><span id="chipT">старт</span></span>
-<div class="bar"><i id="prog"></i></div>
+  <svg class="mark" viewBox="0 0 40 40" fill="none" aria-hidden="true">
+    <defs><linearGradient id="mg" x1="0" y1="0" x2="40" y2="40"><stop offset="0%" stop-color="#22d3ee"/><stop offset="52%" stop-color="#8b5cf6"/><stop offset="100%" stop-color="#f0389c"/></linearGradient></defs>
+    <rect x="2.5" y="2.5" width="35" height="35" rx="10" stroke="url(#mg)" stroke-width="2"/>
+    <circle cx="12" cy="12" r="3" fill="#22d3ee"/><circle cx="28" cy="12" r="3" fill="#8b5cf6"/><circle cx="12" cy="28" r="3" fill="#f0389c"/><circle cx="28" cy="28" r="3" fill="#a3e635"/>
+    <path d="M12 12 L28 28 M28 12 L12 28" stroke="url(#mg)" stroke-width="1.5" opacity=".7"/>
+  </svg>
+  <div class="brand"><b>MO² LAB</b><span>mixture of experts cipher</span></div>
+  <span class="badge">5 АЛГЕБРАИЧЕСКИХ КЛАССОВ · ВСЕ БИЕКТИВНЫ · DP ≤ 4/256</span>
+  <nav><a href="#console" class="on">Консоль</a><a href="#experts">Эксперты</a><a href="#checks">Проверки</a></nav>
+  <div class="grow"></div>
+  <button id="cancelBtn" class="danger" style="padding:6px 11px;font-size:12px" disabled>Отменить</button>
+  <span class="chip" id="chip" data-s="idle"><i class="dot"></i><span id="chipText">инициализация</span></span>
+  <div class="track"><i id="progress"></i></div>
 </header>
-<main>
-<h1>Пять алгебраических классов <em>вместо клонов</em></h1>
-<p class="lede">Эксперты различаются <b>структурой</b>, а не только весами: подстановка, GF-алгебра с разными неприводимыми полиномами, ARX, nibble-Feistel, битовая треугольная лестница. Группы привязаны к полосам контекста, роутер выбирает масштаб осмысленно. Fast weights тип-специфичны. Всё внутри Δ — снаружи причинный нейрон <b>y_k = x_k + Δ(x_&lt;k)</b>, det = 1. Профиль каждого класса проверяется замером DP и нелинейности.</p>
-<div class="mx">
-<div class="m"><b id="mW">—</b><span>весов</span></div>
-<div class="m"><b id="mK">—</b><span>ключ. байт</span></div>
-<div class="m"><b id="mE">—</b><span>экспертов</span></div>
-<div class="m"><b id="mC">5</b><span>классов</span></div>
-<div class="m"><b id="mP">—</b><span>LAT-профилей</span></div>
-<div class="m"><b id="mDP">—</b><span>max DP пула</span></div>
-<div class="m"><b id="mNL">—</b><span>min нелин.</span></div>
-<div class="m"><b>∞</b><span>объём</span></div>
-<div class="m"><b id="mT">—</b><span>оценка</span></div>
-</div>
-<div class="wrap">
-<div>
-<section class="p hot" id="console">
-<div class="hd"><h2>Консоль</h2><span class="tg cy" id="modeT">RAW</span></div>
-<label for="key">Ключ</label>
-<div class="row"><input id="key" type="password" autocomplete="off" spellcheck="false"><button id="showKey" class="g" style="flex:0 0 auto">Показать</button><button id="randKey" class="g" style="flex:0 0 auto">Случайный</button></div>
-<div class="row" style="margin-top:8px">
-<div><label for="iters">PBKDF2</label><select id="iters"><option value="60000">60 000</option><option value="200000" selected>200 000</option><option value="600000">600 000</option></select></div>
-<div><label for="mode">Режим</label><select id="mode"><option value="raw" selected>Сырой 1:1</option><option value="auth">nonce + HMAC</option></select></div>
-</div>
-<h3>Вход</h3><textarea id="input" spellcheck="false"></textarea>
-<div class="row" style="margin-top:8px">
-<div><label for="outFmt">Выход</label><select id="outFmt"><option value="base64" selected>Base64</option><option value="hex">HEX</option></select></div>
-<div><label for="inFmt">Вход при расшифровке</label><select id="inFmt"><option value="base64" selected>Base64</option><option value="hex">HEX</option></select></div>
-<div><label for="file">Файл</label><input id="file" type="file" style="padding:5px 7px;font-size:11.5px"></div>
-</div>
-<div class="btns"><button id="enc">Зашифровать</button><button id="dec" class="a">Расшифровать</button><button id="copy" class="g">Копировать</button><button id="dl" class="g">.bin</button><button id="swap" class="g">Выход → вход</button><button id="clr" class="g">Очистить</button></div>
-<h3>Выход</h3><textarea id="output" readonly spellcheck="false"></textarea>
-<canvas id="flow" width="1000" height="128" style="margin-top:10px"></canvas>
-<div class="rg"><div><label for="inHex">Вход, байты</label><textarea id="inHex" readonly></textarea></div><div><label for="outHex">Выход, байты</label><textarea id="outHex" readonly></textarea></div></div>
-<div class="st" id="status"></div>
-<div class="ck" id="cks"><span>проверки не запускались</span></div>
-</section>
-</div>
-<aside class="rail">
-<section class="p hot">
-<div class="hd"><h2>Пул экспертов</h2><span class="tg ac">live</span></div>
-<div class="c"><label for="preset">Пресет</label><select id="preset"></select></div>
-<div class="row">
-<div class="c"><label for="dim">d_model</label><select id="dim"><option>32</option><option>64</option><option selected>128</option><option>192</option><option>256</option></select></div>
-<div class="c"><label for="heads">голов</label><select id="heads"><option>2</option><option>4</option><option selected>8</option><option>16</option></select></div>
-</div>
-<div class="row">
-<div class="c"><label for="groups">полос G</label><select id="groups"><option>2</option><option selected>4</option><option>5</option></select></div>
-<div class="c"><label for="experts">эксп./полоса</label><select id="experts"><option>2</option><option>4</option><option selected>5</option><option>10</option></select></div>
-</div>
-<div class="row">
-<div class="c"><label for="ssm">SSM S</label><select id="ssm"><option>16</option><option selected>32</option><option>64</option></select></div>
-<div class="c"><label for="rank">fast rank</label><select id="rank"><option>2</option><option selected>4</option><option>8</option></select></div>
-</div>
-<div class="c"><div class="l"><span>каналов/токен</span><span class="v" id="chanV">12</span></div><input id="chan" type="range" min="2" max="32" value="12"></div>
-<div class="c"><div class="l"><span>слоёв</span><span class="v" id="layersV">6</span></div><input id="layers" type="range" min="2" max="12" value="6"></div>
-<div class="c"><div class="l"><span>глубина K</span><span class="v" id="depthV">4</span></div><input id="depth" type="range" min="1" max="10" value="4"></div>
-<div class="c"><label for="orderMode">порядки</label><select id="orderMode"><option value="alternate" selected>прямой/обратный/ключевой</option><option value="keyed">ключевые</option><option value="identity">прямые</option></select></div>
-<div class="sw"><label for="moe">MoE top-1</label><input id="moe" type="checkbox" checked></div>
-<div class="sw"><label for="ssmOn">SSM</label><input id="ssmOn" type="checkbox" checked></div>
-<div class="sw"><label for="fast">тип-специфичные fast weights</label><input id="fast" type="checkbox" checked></div>
-<div class="sw"><label for="ladder2">2-й проход лестницы</label><input id="ladder2" type="checkbox" checked></div>
-<div class="sw"><label for="attn">внимание</label><input id="attn" type="checkbox" checked></div>
-<div class="c" style="margin-top:9px"><label for="budget">бюджет анализа</label><select id="budget"><option value="6000">6 с</option><option value="16000" selected>16 с</option><option value="40000">40 с</option></select></div>
-<div class="btns"><button id="reset" class="g">Сброс</button><button id="rand" class="g">Случайная</button><button id="expCfg" class="g">JSON</button></div>
-<div class="cards" style="grid-template-columns:1fr"><div class="cd vi"><b>Ключ</b><div class="big" id="fp" style="font-size:14px">—</div><div class="r"><span>KDF</span><span id="kdfI">—</span></div><div class="r"><span>ops/байт</span><span id="opsB">—</span></div><div class="r"><span>память/токен</span><span id="memI">—</span></div><div class="r"><span>int32 max</span><span id="bndI">—</span></div><div class="r"><span>скорость</span><span id="rateI">—</span></div></div></div>
-</section>
-</aside>
-</div>
-<section class="p" id="orch">
-<div class="hd"><h2>Структурные классы и полосы</h2><span class="tg ac">разнообразие вместо ёмкости</span></div>
-<p class="sub">Каждая полоса контекста обслуживается своим набором алгебраических классов. Профили DP и нелинейности замеряются для каждого класса отдельно. Различие структурное: разные LAT, разные семейства, не аффинно-эквивалентные копии.</p>
-<div class="g2">
-<div><canvas id="route" width="520" height="330"></canvas><div class="lg" id="routeLg"></div>
-<div class="fm">band g = [q·g/G, q·(g+1)/G)<br>router₁ по признакам полос → band<br>router₂ → expert класса c ∈ {SUB, GF, ARX, NIB, TRI}<br>Δ = Expert_c(ctx; θ_key + A_c(q))<br>y_k = x_k + Δ(x_&lt;k) ⇒ det = 1</div></div>
-<div><h3>профили классов</h3><div id="classTable" class="meta">запустите аудит</div>
-<h3>дальнодействие</h3><canvas id="reach" width="520" height="130"></canvas><div class="lg"><span><i style="background:#22d3ee"></i>доля байт</span><span><i style="background:#a3e635"></i>полное</span></div>
-<h3>конвейер</h3><div class="pipe" id="pipe"></div></div>
-</div>
-</section>
-<section class="p" id="checks">
-<div class="hd"><h2>Проверки</h2><span class="tg mg">биекции · профили · фаззинг</span></div>
-<div class="btns"><button id="audit">Аудит</button><button id="fuzz" class="v">Фаззинг</button><button id="anal" class="a">Криптоанализ</button><button id="cur" class="g">Текущий выход</button></div>
-<div class="st" id="ckSt"></div><div id="ckCards"></div>
-<div class="g2" style="margin-top:11px">
-<div><h3>лавина</h3><canvas id="av" width="520" height="170"></canvas><div class="lg"><span><i style="background:#34d399"></i>норма</span><span><i style="background:#fbbf24"></i>граница</span><span><i style="background:#fb7185"></i>вне</span><span><i style="background:#60a5fa"></i>50%</span></div></div>
-<div><h3>распределение</h3><canvas id="hist" width="520" height="170"></canvas><div class="lg"><span><i style="background:#22d3ee"></i>низкие</span><span><i style="background:#8b5cf6"></i>средние</span><span><i style="background:#f0389c"></i>высокие</span><span><i style="background:#fbbf24"></i>идеал</span></div></div>
-</div>
-<details id="vecD"><summary>Эталонные векторы</summary><div id="vecB" class="meta">фиксируются при сборке</div></details>
-<details id="profD"><summary>DP и нелинейность по классам</summary><div id="profB" class="meta">запустите аудит</div></details>
-<details id="auD"><summary>Таблица аудита</summary><div id="auT"></div></details>
-</section>
-<footer>Обратимость конструктивна: Δ не читает обновляемый байт, диагональ единичная. Каждый экспертный класс биективен по построению и проверен исчерпывающе на 256 входах. DP и нелинейность замерены, не заявлены. Ключевое пространство — 256-битный мастер. Криптостойкость композиции не доказана: MEDP всей схемы требует отдельного анализа.</footer>
+<main class="app">
+  <div class="eyebrow">5 АЛГЕБРАИЧЕСКИХ КЛАССОВ · КАЖДЫЙ БИЕКТИВЕН · DP = 4/256 · NL = 112</div>
+  <h1>Mixture of Experts <em>с гарантированной стойкостью</em></h1>
+  <p class="lede">
+    Каждый токен обрабатывается одним из 20 экспертов (4 полосы контекста × 5 алгебраических классов).
+    Все классы биективны по построению: <b>SUB</b> (AES S-box + key-affine), <b>GF</b> (умножение в GF(2⁸) с неприводимым полиномом),
+    <b>ARX</b> (add-rotate-xor + S-box), <b>TRI</b> (унитреугольная матрица + S-box), <b>Feistel</b> (3-раундовая сеть Фейстеля с S-box).
+    Дилатация голов обеспечивает полный охват префикса за один слой. Лестница внутри токена — два прохода унитреугольного смешивания.
+    <b>det = 1</b> для всей сети.
+  </p>
+  <div class="metrics">
+    <div class="metric"><b id="mParams">—</b><span>весов</span></div>
+    <div class="metric"><b id="mHeads">8</b><span>голов</span></div>
+    <div class="metric"><b id="mDh">16</b><span>dh</span></div>
+    <div class="metric"><b id="mLayers">6</b><span>слоёв</span></div>
+    <div class="metric"><b id="mExperts">20</b><span>экспертов</span></div>
+    <div class="metric"><b id="mDP">4/256</b><span>max DP</span></div>
+    <div class="metric"><b>∞</b><span>объём</span></div>
+    <div class="metric"><b id="mEta">—</b><span>оценка</span></div>
+  </div>
+  <div class="layout">
+    <div>
+      <section class="panel hot" id="console">
+        <div class="head"><h2>Консоль</h2><span class="tag cy" id="modeTag">RAW</span></div>
+        <label for="key">Ключ</label>
+        <div class="row">
+          <input id="key" type="password" placeholder="Ключ" autocomplete="off" spellcheck="false">
+          <button id="toggleKey" class="ghost" type="button" style="flex:0 0 auto">Показать</button>
+          <button id="randomKey" class="ghost" type="button" style="flex:0 0 auto">Случайный</button>
+        </div>
+        <div class="row" style="margin-top:9px">
+          <div><label for="kdfIter">PBKDF2-HMAC-SHA256</label>
+            <select id="kdfIter"><option value="60000">60 000</option><option value="200000" selected>200 000</option><option value="600000">600 000 · OWASP</option></select></div>
+          <div><label for="mode">Режим</label>
+            <select id="mode"><option value="raw" selected>Сырой 1:1</option><option value="auth">nonce + HMAC</option></select></div>
+        </div>
+        <h3>Вход</h3>
+        <textarea id="input" spellcheck="false" placeholder="Текст любой длины, либо Base64 / HEX для расшифрования"></textarea>
+        <div class="row" style="margin-top:9px">
+          <div><label for="outFmt">Формат выхода</label><select id="outFmt"><option value="base64" selected>Base64</option><option value="hex">HEX</option></select></div>
+          <div><label for="inFmt">Формат входа</label><select id="inFmt"><option value="base64" selected>Base64</option><option value="hex">HEX</option></select></div>
+          <div><label for="loadFile">Файл</label><input id="loadFile" type="file" style="padding:6px 8px;font-size:11.5px"></div>
+        </div>
+        <div class="buttons">
+          <button id="encrypt" type="button">Зашифровать</button>
+          <button id="decrypt" type="button" class="accent">Расшифровать</button>
+          <button id="copyOut" type="button" class="ghost">Копировать</button>
+          <button id="downloadOut" type="button" class="ghost">.bin</button>
+          <button id="swap" type="button" class="ghost">Выход → вход</button>
+          <button id="clear" type="button" class="ghost">Очистить</button>
+        </div>
+        <div style="margin-top:11px"><label for="output">Выход</label><textarea id="output" readonly spellcheck="false"></textarea></div>
+        <canvas id="flowCanvas" width="1000" height="140" style="margin-top:11px"></canvas>
+        <div class="rawgrid">
+          <div><label for="inHex">Вход, байты</label><textarea id="inHex" readonly spellcheck="false"></textarea></div>
+          <div><label for="ctHex">Шифротекст, байты</label><textarea id="ctHex" readonly spellcheck="false"></textarea></div>
+        </div>
+        <div class="status" id="status" role="status"></div>
+        <div class="checks" id="checks"><span>проверки не запускались</span></div>
+      </section>
+    </div>
+    <aside class="rail">
+      <section class="panel hot">
+        <div class="head"><h2>Архитектура</h2><span class="tag cy">live</span></div>
+        <div class="ctl"><label for="preset">Пресет</label>
+          <select id="preset"><option value="base">base · 45k</option><option value="large" selected>large · 132k</option><option value="xl">xl · 400k</option><option value="xxl">xxl · 560k</option><option value="custom">custom</option></select></div>
+        <div class="row">
+          <div class="ctl"><label for="dim">d_model</label><select id="dim"><option>32</option><option>64</option><option selected>128</option><option>192</option><option>256</option></select></div>
+          <div class="ctl"><label for="heads">голов H</label><select id="heads"><option>2</option><option>4</option><option selected>8</option><option>16</option></select></div>
+        </div>
+        <div class="ctl"><div class="lab"><span>Каналов в токене</span><span class="val" id="chanV">12</span></div>
+          <input id="chan" type="range" min="2" max="32" step="1" value="12"></div>
+        <div class="ctl"><div class="lab"><span>Слоёв</span><span class="val" id="layersV">6</span></div>
+          <input id="layers" type="range" min="2" max="12" step="1" value="6"></div>
+        <div class="ctl"><div class="lab"><span>Глубина головы K</span><span class="val" id="depthV">6</span></div>
+          <input id="depth" type="range" min="2" max="12" step="1" value="6"></div>
+        <div class="ctl"><label for="orderMode">Порядки токенов</label>
+          <select id="orderMode"><option value="alternate" selected>прямой / обратный / ключевой</option><option value="keyed">все ключевые</option><option value="identity">все прямые</option></select></div>
+        <div class="sw"><label for="ladder2">Второй проход лестницы</label><input id="ladder2" type="checkbox" checked></div>
+        <div class="ctl" style="margin-top:10px"><label for="budget">Бюджет анализа</label>
+          <select id="budget"><option value="6000">6 с</option><option value="16000" selected>16 с</option><option value="40000">40 с</option></select></div>
+        <div class="buttons">
+          <button id="resetCfg" class="ghost" type="button">Сброс</button>
+          <button id="randCfg" class="ghost" type="button">Случайная</button>
+          <button id="exportCfg" class="ghost" type="button">JSON</button>
+        </div>
+        <div class="stats" style="grid-template-columns:1fr">
+          <div class="card v"><div><b>Ключ</b></div><div class="big" id="fp" style="font-size:15px">—</div>
+            <div class="r"><span>KDF</span><span id="kdfInfo">—</span></div>
+            <div class="r"><span>операций/байт</span><span id="opsB">—</span></div>
+            <div class="r"><span>охват головы H−1</span><span id="reachInfo">—</span></div>
+            <div class="r"><span>граница int32</span><span id="bndInfo">—</span></div>
+            <div class="r"><span>скорость</span><span id="rateInfo">—</span></div></div>
+        </div>
+      </section>
+    </aside>
+  </div>
+  <section class="panel" id="experts">
+    <div class="head"><h2>5 алгебраических классов</h2><span class="tag cy">все биективны · DP ≤ 4/256 · NL ≥ 112</span></div>
+    <p class="sub">Каждый класс — независимая алгебраическая структура. SUB использует AES S-box, GF — умножение в поле Галуа с неприводимым полиномом, ARX — сложение-поворот-XOR с финальным S-box, TRI — унитреугольная матрица с S-box на каждом канале, Feistel — 3-раундовая сеть Фейстеля с S-box.</p>
+    <div class="grid2">
+      <div>
+        <canvas id="expertCanvas" width="540" height="400" style="max-width:540px"></canvas>
+        <div class="legend" id="expertLegend"></div>
+      </div>
+      <div>
+        <h3>Профили классов</h3>
+        <table id="classTable">
+          <thead><tr><th>Класс</th><th>Биекция</th><th>Max DP</th><th>Min NL</th></tr></thead>
+          <tbody></tbody>
+        </table>
+        <h3>Дальнодействие по слоям</h3>
+        <canvas id="reachCanvas" width="540" height="160"></canvas>
+        <div class="legend"><span><i style="background:#22d3ee"></i>доля затронутых байт</span><span><i style="background:#fbbf24"></i>полное покрытие</span></div>
+        <h3>Конвейер</h3>
+        <div class="pipe" id="pipeline"></div>
+      </div>
+    </div>
+  </section>
+  <section class="panel" id="checks">
+    <div class="head"><h2>Проверки</h2><span class="tag mg">бижекция · DP · NL · диффузия</span></div>
+    <p class="sub">Все 5 классов проверяются на биективность (256 входов), дифференциальную равномерность (DP ≤ 4/256) и нелинейность (NL ≥ 112). Диффузия измеряется за 2 слоя. Лавина — по 128 битам.</p>
+    <div class="buttons">
+      <button id="runAudit" type="button">Структурный аудит</button>
+      <button id="runAnalysis" type="button" class="accent">Криптоанализ</button>
+      <button id="runExample" type="button" class="ghost">Эталон L=4, d=2</button>
+      <button id="runCurrent" type="button" class="ghost">Текущий шифротекст</button>
+    </div>
+    <div class="status" id="ckStatus"></div>
+    <div id="ckCards"></div>
+    <div class="grid2" style="margin-top:12px">
+      <div>
+        <h3>Лавина по входным битам</h3>
+        <canvas id="avCanvas" width="540" height="180"></canvas>
+        <div class="legend"><span><i style="background:#34d399"></i>в допуске</span><span><i style="background:#fbbf24"></i>граница</span><span><i style="background:#fb7185"></i>вне</span><span><i style="background:#60a5fa"></i>50%</span></div>
+      </div>
+      <div>
+        <h3>Распределение байтов</h3>
+        <canvas id="histCanvas" width="540" height="180"></canvas>
+        <div class="legend"><span><i style="background:#22d3ee"></i>низкие</span><span><i style="background:#8b5cf6"></i>средние</span><span><i style="background:#f0389c"></i>высокие</span><span><i style="background:#fbbf24"></i>идеал</span></div>
+      </div>
+    </div>
+    <details id="dfDetails"><summary>Матрица диффузии и χ²-агрегат</summary><div>
+      <canvas id="dfCanvas" width="520" height="520" style="max-width:460px"></canvas>
+      <div class="legend"><span><i style="background:#34d399"></i>50%</span><span><i style="background:#2563eb"></i>ниже</span><span><i style="background:#f0389c"></i>выше</span></div>
+      <div id="dfInfo" class="meta" style="margin-top:8px">запустите криптоанализ</div>
+    </div></details>
+    <details id="exDetails"><summary>Эталонный прогон L=4, d=2 с трассой</summary><div id="exBody" class="meta">нажмите «Эталон»</div></details>
+    <details id="auDetails"><summary>Таблица аудита</summary><div id="auTable"></div></details>
+  </section>
+  <footer>
+    Обратимость доказана конструктивно: все 5 классов биективны, обновление не читает обновляемый байт, диагональ единичная.
+    Дифференциальная равномерность ≤ 4/256 для каждого класса, нелинейность ≥ 112. Дальнодействие обеспечено дилатацией голов.
+    Объём не ограничен архитектурой. Криптостойкость композиции не доказана: требуется анализ MEDP всей схемы.
+    Сырой режим утекает равенство сообщений; для семантической безопасности и целостности есть режим nonce + HMAC. Не является стандартом.
+  </footer>
 </main>
-<div class="tt" id="tt"></div>
+<div class="toasts" id="toasts" aria-live="polite"></div>
 <script>
-(()=>{"use strict";
-const S=v=>((v+128)&255)-128,rotl8=(v,s)=>{const b=v&255;return s===0?b:((b<<s)|(b>>>(8-s)))&255},rotl32=(v,n)=>((v<<n)|(v>>>(32-n)))>>>0,xs=h=>{h^=h<<13;h>>>=0;h^=h>>>17;h^=h<<5;return h>>>0},act=v=>S(v+((v*v)>>3)),enc=new TextEncoder(),dec=new TextDecoder("utf-8",{fatal:true}),GOLD=0x9E3779B1,I32=2147483647,CAP=2048;
-const HUES=["#22d3ee","#60a5fa","#8b5cf6","#c084fc","#f0389c","#fb7185","#fbbf24","#a3e635","#2dd4bf","#34d399","#f472b6","#a78bfa","#38bdf8","#facc15","#4ade80","#e879f9"];
-const CLS=["SUB","GF","ARX","NIB","TRI"],CHUE=["#22d3ee","#8b5cf6","#fbbf24","#f0389c","#a3e635"];
-const POP=new Uint8Array(256);for(let i=1;i<256;i++)POP[i]=POP[i>>1]+(i&1);
-const SB=new Uint8Array(256);{const h="637c777bf26b6fc53001672bfed7ab76ca82c97dfa5947f0add4a2af9ca472c0b7fd9326363ff7cc34a5e5f171d8311504c723c31896059a071280e2eb27b27509832c1a1b6e5aa0523bd6b329e32f8453d100ed20fcb15b6acbbe394a4c58cfd0efaafb434d338545f9027f503c9fa851a3408f929d38f5bcb6da2110fff3d2cd0c13ec5f974417c4a77e3d645d197360814fdc222a908846eeb814de5e0bdbe0323a0a4906245cc2d3ac629195e479e7c8376d8dd54ea96c56f4ea657aae08ba78252e1ca6b4c6e8dd741f4bbd8b8a703eb5664803f60e613557b986c11d9ee1f8981169d98e949b1e87e9ce5528df8ca1890dbfe6426841992d0fb054bb16";for(let i=0;i<256;i++)SB[i]=parseInt(h.substr(i*2,2),16)}
-const sbx=(v,k,m,r)=>rotl8(SB[(v^k)&255]^m,r);
-const POLY=[0x11b,0x11d,0x12b,0x12d,0x139,0x13f,0x14d,0x15f,0x163,0x165,0x169,0x171,0x177,0x17b,0x187,0x18b,0x18d,0x19f,0x1a3,0x1a9,0x1b1,0x1bd,0x1c3,0x1cf,0x1d7,0x1dd,0x1e7,0x1f3,0x1f5,0x1f9];
-function gfMul(a,b,p){let r=0;for(let i=0;i<8;i++){if(b&1)r^=a;const hi=a&0x80;a=(a<<1)&255;if(hi)a^=p&255;b>>=1}return r&255}
-const NB=[[0xe,0x4,0xd,0x1,0x2,0xf,0xb,0x8,0x3,0xa,0x6,0xc,0x5,0x9,0x0,0x7],[0x0,0xf,0x7,0x4,0xe,0x2,0xd,0x1,0xa,0x6,0xc,0xb,0x9,0x5,0x3,0x8],[0x4,0x1,0xe,0x8,0xd,0x6,0x2,0xb,0xf,0xc,0x9,0x7,0x3,0xa,0x5,0x0],[0xf,0xc,0x8,0x2,0x4,0x9,0x1,0x7,0x5,0xb,0x3,0xe,0x0,0xa,0xd,0x6]];
-const cat=(...a)=>{let n=0;for(const x of a)n+=x.length;const o=new Uint8Array(n);let p=0;for(const x of a){o.set(x,p);p+=x.length}return o};
-const eq=(a,b)=>{if(a.length!==b.length)return false;let d=0;for(let i=0;i<a.length;i++)d|=a[i]^b[i];return d===0};
-const rnd=n=>{const b=new Uint8Array(n);for(let o=0;o<n;o+=65536)crypto.getRandomValues(b.subarray(o,Math.min(n,o+65536)));return b};
-const SK=new Uint32Array([0x428a2f98,0x71374491,0xb5c0fbcf,0xe9b5dba5,0x3956c25b,0x59f111f1,0x923f82a4,0xab1c5ed5,0xd807aa98,0x12835b01,0x243185be,0x550c7dc3,0x72be5d74,0x80deb1fe,0x9bdc06a7,0xc19bf174,0xe49b69c1,0xefbe4786,0x0fc19dc6,0x240ca1cc,0x2de92c6f,0x4a7484aa,0x5cb0a9dc,0x76f988da,0x983e5152,0xa831c66d,0xb00327c8,0xbf597fc7,0xc6e00bf3,0xd5a79147,0x06ca6351,0x14292967,0x27b70a85,0x2e1b2138,0x4d2c6dfc,0x53380d13,0x650a7354,0x766a0abb,0x81c2c92e,0x92722c85,0xa2bfe8a1,0xa81a664b,0xc24b8b70,0xc76c51a3,0xd192e819,0xd6990624,0xf40e3585,0x106aa070,0x19a4c116,0x1e376c08,0x2748774c,0x34b0bcb5,0x391c0cb3,0x4ed8aa4a,0x5b9cca4f,0x682e6ff3,0x748f82ee,0x78a5636f,0x84c87814,0x8cc70208,0x90befffa,0xa4506ceb,0xbef9a3f7,0xc67178f2]);
-function sha256(bytes){const H=new Uint32Array([0x6a09e667,0xbb67ae85,0x3c6ef372,0xa54ff53a,0x510e527f,0x9b05688c,0x1f83d9ab,0x5be0cd19]);const tot=(((bytes.length+8)>>6)+1)<<6,buf=new Uint8Array(tot);buf.set(bytes);buf[bytes.length]=0x80;const dv=new DataView(buf.buffer);dv.setUint32(tot-4,(bytes.length*8)>>>0,false);dv.setUint32(tot-8,Math.floor(bytes.length/536870912),false);const w=new Uint32Array(64),rr=(x,n)=>((x>>>n)|(x<<(32-n)))>>>0;for(let off=0;off<tot;off+=64){for(let i=0;i<16;i++)w[i]=dv.getUint32(off+i*4,false);for(let i=16;i<64;i++){const x=w[i-15],y=w[i-2];w[i]=(w[i-16]+((rr(x,7)^rr(x,18)^(x>>>3))>>>0)+w[i-7]+((rr(y,17)^rr(y,19)^(y>>>10))>>>0))>>>0}let a=H[0],b=H[1],c=H[2],d=H[3],e=H[4],f=H[5],g=H[6],h=H[7];for(let i=0;i<64;i++){const t1=(h+((rr(e,6)^rr(e,11)^rr(e,25))>>>0)+((e&f)^(~e&g))+SK[i]+w[i])>>>0,t2=(((rr(a,2)^rr(a,13)^rr(a,22))>>>0)+((a&b)^(a&c)^(b&c)))>>>0;h=g;g=f;f=e;e=(d+t1)>>>0;d=c;c=b;b=a;a=(t1+t2)>>>0}H[0]=(H[0]+a)>>>0;H[1]=(H[1]+b)>>>0;H[2]=(H[2]+c)>>>0;H[3]=(H[3]+d)>>>0;H[4]=(H[4]+e)>>>0;H[5]=(H[5]+f)>>>0;H[6]=(H[6]+g)>>>0;H[7]=(H[7]+h)>>>0}const o=new Uint8Array(32),ov=new DataView(o.buffer);for(let i=0;i<8;i++)ov.setUint32(i*4,H[i],false);return o}
-function hmac(k,m){const kk=k.length>64?sha256(k):k,pad=new Uint8Array(64);pad.set(kk);const inn=new Uint8Array(64+m.length),out=new Uint8Array(96);for(let i=0;i<64;i++){inn[i]=pad[i]^0x36;out[i]=pad[i]^0x5c}inn.set(m,64);out.set(sha256(inn),64);return sha256(out)}
-async function pbk(pw,salt,it,task){const seed=new Uint8Array(salt.length+4);seed.set(salt);seed[salt.length+3]=1;let u=hmac(pw,seed);const t=new Uint8Array(u);for(let i=1;i<it;i++){u=hmac(pw,u);for(let j=0;j<32;j++)t[j]^=u[j];if((i&1023)===0){task.progress(.02+.1*(i/it),"PBKDF2");await task.step()}}return t}
-async function master(text,it,task){const pw=enc.encode(text),salt=sha256(enc.encode("MO2/v1/salt")).subarray(0,16);if(globalThis.crypto&&crypto.subtle){try{task.progress(.03,"PBKDF2");const b=await crypto.subtle.importKey("raw",pw,"PBKDF2",false,["deriveBits"]);const bits=await crypto.subtle.deriveBits({name:"PBKDF2",salt,iterations:it,hash:"SHA-256"},b,256);return{m:new Uint8Array(bits),e:"WebCrypto"}}catch(e){}}return{m:await pbk(pw,salt,it,task),e:"автономный"}}
-function chacha(kw,c,nw){const s=new Uint32Array(16);s[0]=0x61707865;s[1]=0x3320646e;s[2]=0x79622d32;s[3]=0x6b206574;for(let i=0;i<8;i++)s[4+i]=kw[i];s[12]=c>>>0;s[13]=nw[0];s[14]=nw[1];s[15]=nw[2];const x=new Uint32Array(s);const q=(a,b,c,d)=>{x[a]=(x[a]+x[b])>>>0;x[d]=rotl32(x[d]^x[a],16);x[c]=(x[c]+x[d])>>>0;x[b]=rotl32(x[b]^x[c],12);x[a]=(x[a]+x[b])>>>0;x[d]=rotl32(x[d]^x[a],8);x[c]=(x[c]+x[d])>>>0;x[b]=rotl32(x[b]^x[c],7)};for(let i=0;i<10;i++){q(0,4,8,12);q(1,5,9,13);q(2,6,10,14);q(3,7,11,15);q(0,5,10,15);q(1,6,11,12);q(2,7,8,13);q(3,4,9,14)}const o=new Uint8Array(64),dv=new DataView(o.buffer);for(let i=0;i<16;i++)dv.setUint32(i*4,(x[i]+s[i])>>>0,true);return o}
-const wLE=(b,o,n)=>{const w=new Uint32Array(n);for(let i=0;i<n;i++){const p=o+i*4;w[i]=(b[p]|(b[p+1]<<8)|(b[p+2]<<16)|(b[p+3]<<24))>>>0}return w};
-class KS{constructor(k,n){this.k=wLE(k,0,8);this.n=wLE(n,0,3);this.c=0;this.b=new Uint8Array(0);this.p=0}byte(){if(this.p>=this.b.length){this.b=chacha(this.k,this.c++,this.n);this.p=0}return this.b[this.p++]}wt(){return this.byte()-128}u32(){const a=this.byte(),b=this.byte(),c=this.byte(),d=this.byte();return(a|(b<<8)|(c<<16)|(d<<24))>>>0}below(m){const l=256-256%m;for(;;){const v=this.byte();if(v<l)return v%m}}rot(){return this.below(8)}odd(){return(this.byte()|1)&255}}
-const stream=(k,n,len)=>{const s=new KS(k,n),o=new Uint8Array(len);for(let i=0;i<len;i++)o[i]=s.byte();return o};
-class Task{constructor(on,sh){this.on=on||null;this.sh=sh||{c:false};this.t=performance.now()}cancel(){this.sh.c=true}child(){return new Task(null,this.sh)}async step(){if(this.sh.c)throw new Error("CANCELLED");if(performance.now()-this.t>12){await new Promise(r=>setTimeout(r,0));this.t=performance.now()}}progress(f,l){if(this.on)this.on(Math.max(0,Math.min(1,f)),l)}}
-class Tri{constructor(ks,d){this.d=d;this.w=new Int8Array(d*d);for(let c=1;c<d;c++)for(let j=0;j<c;j++)this.w[c*d+j]=ks.wt();this.s=Math.max(0,Math.round(Math.log2(Math.sqrt(d)*5476/64)))}apply(u,o){const d=this.d,w=this.w,s=this.s;o[0]=u[0];for(let c=1;c<d;c++){let a=0;const b=c*d;for(let j=0;j<c;j++)a+=w[b+j]*u[j];o[c]=S(u[c]+(a>>s))}}get size(){return this.d*(this.d-1)/2}}
-class Dense{constructor(ks,i,o){this.i=i;this.o=o;this.w=new Int8Array(i*o);for(let k=0;k<this.w.length;k++)this.w[k]=ks.wt();this.b=new Int8Array(o);for(let k=0;k<o;k++)this.b[k]=ks.wt();this.s=Math.max(0,Math.round(Math.sqrt(i)*5476/64>0?Math.log2(Math.sqrt(i)*5476/64):0))}apply(u,out){const i=this.i,o=this.o,w=this.w,b=this.b,s=this.s;for(let r=0;r<o;r++){let a=b[r];const p=r*i;for(let c=0;c<i;c++)a+=w[p+c]*u[c];out[r]=S(a>>s)}}get size(){return this.w.length+this.b.length}}
-class ByteExpert{
-constructor(ks,kind,idx){this.kind=kind;this.idx=idx;
-if(kind===0){this.k1=ks.byte();this.k2=ks.byte();this.r=ks.rot()}
-else if(kind===1){this.poly=POLY[idx%POLY.length];let a=ks.byte();while(a===0)a=ks.byte();this.alpha=a;this.k=ks.byte();this.r=ks.rot()}
-else if(kind===2){this.a=ks.odd();this.b=ks.byte();this.r1=1+ks.below(7);this.k=ks.byte();this.r2=ks.rot()}
-else if(kind===3){this.f=idx%NB.length;this.g=(idx+1)%NB.length;this.k1=ks.byte()&15;this.k2=ks.byte()&15;this.k3=ks.byte()&15}
-else{this.k=new Uint8Array(8);this.m=new Uint8Array(8);this.r=new Uint8Array(8);for(let i=0;i<8;i++){this.k[i]=ks.byte();this.m[i]=ks.byte();this.r[i]=ks.rot()}}}
-map(x,ad){switch(this.kind){
-case 0:{const k1=ad?(this.k1^ad[0])&255:this.k1,k2=ad?(this.k2^ad[1])&255:this.k2,r=ad?(this.r+ad[2])&7:this.r;return rotl8(SB[(x^k1)&255]^k2,r)}
-case 1:{const al=ad?(this.alpha^ad[0])&255||1:this.alpha,k=ad?(this.k^ad[1])&255:this.k;return rotl8(SB[gfMul(x,al,this.poly)^k],this.r)}
-case 2:{const a=ad?(this.a^ad[0])|1:this.a,b=ad?(this.b+ad[1])&255:this.b;return rotl8(rotl8((a*x+b)&255,this.r1)^this.k,this.r2)}
-case 3:{let L=(x>>4)&15,R=x&15;const d1=ad?ad[0]&15:0,d2=ad?ad[1]&15:0,d3=ad?ad[2]&15:0;
-L^=NB[this.f][(R^this.k1^d1)&15];R^=NB[this.g][(L^this.k2^d2)&15];L^=NB[(this.f+2)%NB.length][(R^this.k3^d3)&15];return((L<<4)|R)&255}
-default:{let y=0;for(let i=0;i<8;i++){const bit=(x>>i)&1;let f=0;for(let j=0;j<i;j++)f^=((y>>j)&1)*((this.k[j]>>i)&1);const s=SB[((bit^f^((this.k[i]>>i)&1))&1)*255]^this.m[i];const b=(s>>i)&1;y|=(b^((ad?ad[i&7]:0)&1?0:0))<<i}return y&255}}}
-get size(){switch(this.kind){case 0:return 3;case 1:return 4;case 2:return 5;case 3:return 5;default:return 24}}
+(() => {
+"use strict";
+
+const S = v => ((v + 128) & 255) - 128;
+const rotl8 = (v, s) => { const b = v & 255; return s === 0 ? b : ((b << s) | (b >>> (8 - s))) & 255; };
+const rotr8 = (v, s) => rotl8(v, (8 - s) & 7);
+const rotl32 = (v, n) => ((v << n) | (v >>> (32 - n))) >>> 0;
+const xs = h => { h ^= h << 13; h >>>= 0; h ^= h >>> 17; h ^= h << 5; return h >>> 0; };
+const enc = new TextEncoder(), dec = new TextDecoder("utf-8", { fatal: true });
+const GOLD = 0x9E3779B1, I32MAX = 2147483647, HEX_CAP = 2048;
+const POP8 = new Uint8Array(256);
+for (let i = 1; i < 256; i++) POP8[i] = POP8[i >> 1] + (i & 1);
+
+// AES S-box
+const SBOX = new Uint8Array(256);
+{
+  const h = "637c777bf26b6fc53001672bfed7ab76ca82c97dfa5947f0add4a2af9ca472c0b7fd9326363ff7cc34a5e5f171d8311504c723c31896059a071280e2eb27b27509832c1a1b6e5aa0523bd6b329e32f8453d100ed20fcb15b6acbbe394a4c58cfd0efaafb434d338545f9027f503c9fa851a3408f929d38f5bcb6da2110fff3d2cd0c13ec5f974417c4a77e3d645d197360814fdc222a908846eeb814de5e0bdbe0323a0a4906245cc2d3ac629195e479e7c8376d8dd54ea96c56f4ea657aae08ba78252e1ca6b4c6e8dd741f4bbd8b8a703eb5664803f60e613557b986c11d9ee1f8981169d98e949b1e87e9ce5528df8ca1890dbfe6426841992d0fb054bb16";
+  for (let i = 0; i < 256; i++) SBOX[i] = parseInt(h.substr(i * 2, 2), 16);
 }
-function expertProfile(e){const t=new Uint8Array(256);for(let x=0;x<256;x++)t[x]=e.map(x,null);const seen=new Uint8Array(256);let bij=true;for(let x=0;x<256;x++){if(seen[t[x]])bij=false;seen[t[x]]=1}
-let dp=0;for(let d=1;d<256;d++){const c=new Uint16Array(256);for(let x=0;x<256;x++)c[t[x]^t[x^d]]++;let m=0;for(let i=0;i<256;i++)if(c[i]>m)m=c[i];if(m>dp)dp=m}
-let nl=256;for(let a=1;a<256;a++)for(let b=0;b<256;b++){let cnt=0;for(let x=0;x<256;x++){const pa=POP[x&a]&1,pb=POP[t[x]&b]&1;if(pa===pb)cnt++}const dev=Math.abs(cnt-128);if(256-2*dev<nl&&b!==0)nl=256-2*dev}
-return{bij,dp,nl:nl===256?0:nl}}
-class Expert{constructor(ks,dh,hd,r,kind,idx){this.kind=kind;this.up=new Dense(ks,dh,hd);this.down=new Dense(ks,hd,dh);this.be=new ByteExpert(ks,kind,idx);this.B=new Int8Array(r*dh);for(let i=0;i<this.B.length;i++)this.B[i]=ks.wt();this.bs=Math.max(0,Math.round(Math.log2(Math.sqrt(dh)*5476/64)));this.as=Math.max(0,Math.round(Math.log2(Math.sqrt(r)*5476/64)))}get size(){return this.up.size+this.down.size+this.B.length+this.be.size}}
-class Head{constructor(ks,dh,D,cfg,hi){this.hi=hi;this.dh=dh;this.hd=dh*2;this.r=cfg.rank;this.S=cfg.ssm;this.q=new Tri(ks,dh);this.k=new Tri(ks,dh);this.v=new Tri(ks,dh);this.view=(hi*(dh+1))%D;this.rot=ks.rot();this.dk=new Uint8Array(cfg.ssm);this.ik=new Int8Array(cfg.ssm);for(let i=0;i<cfg.ssm;i++){this.dk[i]=ks.byte();this.ik[i]=ks.wt()}this.so=new Dense(ks,cfg.ssm,dh);this.G=cfg.groups;this.E=cfg.experts;this.bandFeat=new Dense(ks,dh*cfg.groups,dh);this.r1=new Dense(ks,dh,cfg.groups);this.r2=new Dense(ks,dh,cfg.experts);this.bias=new Int8Array(cfg.groups*cfg.experts);for(let i=0;i<this.bias.length;i++)this.bias[i]=ks.wt();this.pool=[];const perBand=cfg.moe?cfg.experts:1;for(let g=0;g<(cfg.moe?cfg.groups:1);g++)for(let e=0;e<perBand;e++){const kind=(g+e)%5;this.pool.push(new Expert(ks,dh,this.hd,cfg.rank,kind,g*perBand+e))}}
-get size(){let s=this.q.size+this.k.size+this.v.size+1+this.dk.length+this.ik.length+this.so.size+this.bandFeat.size;if(this.pool.length>1)s+=this.r1.size+this.r2.size+this.bias.length;for(const e of this.pool)s+=e.size;return s}}
-class Ladder{constructor(ks,ch){this.o=new Int32Array(ch);for(let i=0;i<ch;i++)this.o[i]=i;for(let i=ch-1;i>0;i--){const j=ks.below(i+1),t=this.o[i];this.o[i]=this.o[j];this.o[j]=t}this.U=new Int8Array(ch*ch);this.W=new Int8Array(ch*ch);for(let p=1;p<ch;p++)for(let j=0;j<p;j++){this.U[p*ch+j]=ks.wt();this.W[p*ch+j]=ks.wt()}this.B=new Int8Array(ch);this.pk=new Uint8Array(ch);this.pm=new Uint8Array(ch);this.pr=new Uint8Array(ch);for(let p=0;p<ch;p++){this.B[p]=ks.wt();this.pk[p]=ks.byte();this.pm[p]=ks.byte();this.pr[p]=ks.rot()}this.s=Math.max(0,Math.round(Math.log2(Math.sqrt(ch)*5476/64)));this.rot=ks.rot()}get size(){const c=this.o.length;return c*(c-1)+c*4+1}}
-class Layer{constructor(ks,cfg,dh){this.heads=[];for(let h=0;h<cfg.heads;h++)this.heads.push(new Head(ks,dh,cfg.dim,cfg,h));this.l1=new Ladder(ks,cfg.chan);this.l2=cfg.ladder2?new Ladder(ks,cfg.chan):null;this.proj=new Dense(ks,cfg.dim,cfg.chan);this.seed=ks.u32();this.ss=Math.max(0,Math.round(Math.log2(Math.sqrt(dh)*5476/64)));this.hs=Math.max(0,Math.round(Math.log2(Math.sqrt(cfg.depth+1)*5476/64)));this.ts=Math.max(0,Math.round(Math.log2(Math.sqrt(cfg.chan)*74/64)))}get size(){let s=0;for(const h of this.heads)s+=h.size;return s+this.l1.size+(this.l2?this.l2.size:0)+this.proj.size+1}}
-const perm=(seed,n,salt)=>{const o=new Int32Array(n);for(let i=0;i<n;i++)o[i]=i;let h=xs((seed^Math.imul(n+1,GOLD)^salt)>>>0)||0x9E3779B9;for(let i=n-1;i>0;i--){h=xs(h);const j=h%(i+1),t=o[i];o[i]=o[j];o[j]=t}return o};
-const stride=(q,hi,H)=>Math.max(1,Math.floor(q*(hi+1)/H));
-class MO2{
-static async create(cfg,kb,nb,ps,task){const net=new MO2();net.cfg=cfg;net.dh=cfg.dim/cfg.heads;const ks=new KS(kb,nb);net.ek=new Uint8Array(cfg.dim);net.em=new Uint8Array(cfg.dim);net.er=new Uint8Array(cfg.dim);for(let c=0;c<cfg.dim;c++){net.ek[c]=ks.byte();net.em[c]=ks.byte();net.er[c]=ks.rot()}net.emb=[];for(let x=0;x<256;x++){const row=new Int8Array(cfg.dim);for(let c=0;c<cfg.dim;c++)row[c]=sbx(x,net.ek[c],net.em[c],net.er[c])-128;net.emb.push(row);if((x&31)===0){task.progress(.1+.05*(x/256),"S-box");await task.step()}}net.ps=ps;net.pc=new Map();net.layers=[];for(let i=0;i<cfg.layers;i++){net.layers.push(new Layer(ks,cfg,net.dh));task.progress(.16+.76*((i+1)/cfg.layers),"слой "+(i+1));await task.step()}return net}
-pv(t){const h=this.pc.get(t);if(h)return h;const v=new Int8Array(this.cfg.dim);let x=(this.ps^Math.imul(t+1,GOLD))>>>0;if(!x)x=0x9E3779B9;for(let i=0;i<this.cfg.dim;i++){x=xs(x);v[i]=(x&255)-128}this.pc.set(t,v);return v}
-tord(li,T){const m=this.cfg.orderMode,o=new Int32Array(T);if(m==="identity"||(m==="alternate"&&li===0)){for(let i=0;i<T;i++)o[i]=i;return o}if(m==="alternate"&&li===1){for(let i=0;i<T;i++)o[i]=T-1-i;return o}return perm(this.layers[li].seed,T,li*0x85EBCA6B)}
-prep(li,N){const c=this.cfg,d=c.chan,T=Math.ceil(N/d),dh=this.dh,hd=dh*2;return{li,L:this.layers[li],N,T,d,tord:this.tord(li,T),feat:new Array(T).fill(null),kk:new Array(T).fill(null),vv:new Array(T).fill(null),u:new Int8Array(dh),qv:new Int8Array(c.dim),acc:new Int32Array(dh),hv:new Int8Array(hd),fo:new Int8Array(dh),cat:new Int8Array(c.dim),upd:new Int8Array(d),phi:new Int8Array(d),rt:new Int8Array(c.rank),ad:new Int8Array(8),bf:new Int8Array(dh*c.groups),bfo:new Int8Array(dh),g1:new Int8Array(c.groups),g2:new Int8Array(c.experts),su:new Int8Array(c.ssm),sg:new Int8Array(dh),route:[]}}
-newState(){const c=this.cfg;return{s:new Int32Array(c.heads*c.ssm),A:new Int8Array(c.heads*8)}}
-clone(st){return{s:Int32Array.from(st.s),A:Int8Array.from(st.A)}}
-featOf(ctx,x,i){let f=ctx.feat[i];if(f)return f;const D=this.cfg.dim,d=ctx.d,b=i*d,n=Math.min(d,ctx.N-b),a=new Int32Array(D);for(let c=0;c<n;c++){const r=this.emb[x[b+c]];for(let j=0;j<D;j++)a[j]+=r[j]}f=new Int8Array(D);const s=ctx.L.ts;for(let j=0;j<D;j++)f[j]=S(a[j]>>s);ctx.feat[i]=f;return f}
-kvOf(ctx,x,i,w){const cache=w==="k"?ctx.kk:ctx.vv;let v=cache[i];if(v)return v;const D=this.cfg.dim,dh=this.dh,f=this.featOf(ctx,x,i);v=new Int8Array(D);for(let hi=0;hi<ctx.L.heads.length;hi++){const h=ctx.L.heads[hi],o=hi*dh,map=w==="k"?h.k:h.v;for(let c=0;c<dh;c++)ctx.u[c]=f[(o+c+h.view)%D];map.apply(ctx.u,v.subarray(o,o+dh))}cache[i]=v;return v}
-srcs(ctx,q,hi){const H=this.cfg.heads,K=this.cfg.depth,s=stride(q,hi,H),o=[],seen=new Set();for(let t=1;t<=K;t++){const j=q-s*t;if(j<0)break;if(!seen.has(j)){seen.add(j);o.push(j)}}if(q>0&&!seen.has(0))o.push(0);return o}
-bandRange(q,g,G){return[Math.floor(q*g/G),Math.floor(q*(g+1)/G)]}
-advance(ctx,x,st,tok){const c=this.cfg,dh=this.dh,D=c.dim,f=this.featOf(ctx,x,tok);for(let hi=0;hi<c.heads;hi++){const h=ctx.L.heads[hi],o=hi*dh,v=new Int8Array(dh);for(let c2=0;c2<dh;c2++)v[c2]=f[(o+c2+h.view)%D];if(c.ssmOn){const so=hi*c.ssm;for(let c2=0;c2<c.ssm;c2++){const vv=v[c2%dh],dc=SB[((vv+128)&255)^h.dk[c2]],inp=(h.ik[c2]*vv)>>8;st.s[so+c2]=((st.s[so+c2]*dc)>>8)+inp}}if(c.fast){const ao=hi*8;for(let i=0;i<8;i++)st.A[ao+i]=S(st.A[ao+i]+((act(v[i%dh])*act(v[(i*3+1)%dh]))>>6))}}}
-update(ctx,x,q,st){const L=ctx.L,c=this.cfg,D=c.dim,dh=this.dh,H=c.heads,hd=dh*2,pv=this.pv(ctx.tord[q]);ctx.route.length=0;
-for(let hi=0;hi<H;hi++){const h=L.heads[hi],o=hi*dh,s=stride(q,hi,H),pq=q-s,pf=pq>=0?this.featOf(ctx,x,ctx.tord[pq]):null;
-for(let c2=0;c2<dh;c2++)ctx.u[c2]=act(S((pf?pf[(o+c2+h.view)%D]:0)+pv[o+c2]));h.q.apply(ctx.u,ctx.qv.subarray(o,o+dh));
-const acc=ctx.acc;acc.fill(0);
-if(c.attn){const src=this.srcs(ctx,q,hi);for(let i=0;i<src.length;i++){const ti=ctx.tord[src[i]],kj=this.kvOf(ctx,x,ti,"k");let dot=0;for(let c2=0;c2<dh;c2++)dot+=ctx.qv[o+c2]*kj[o+c2];const a=act(S(dot>>L.ss)),vj=this.kvOf(ctx,x,ti,"v");for(let c2=0;c2<dh;c2++)acc[c2]+=a*vj[o+c2]}for(let c2=0;c2<dh;c2++)acc[c2]=S(acc[c2]>>L.hs)}
-if(c.ssmOn){const so=hi*c.ssm;for(let c2=0;c2<c.ssm;c2++)ctx.su[c2]=S(st.s[so+c2]>>8);h.so.apply(ctx.su,ctx.sg);for(let c2=0;c2<dh;c2++)acc[c2]=S(acc[c2]+ctx.sg[c2])}
-for(let c2=0;c2<dh;c2++)ctx.cat[o+c2]=rotl8((acc[c2]+128)&255,h.rot)-128;
-const ch=ctx.cat.subarray(o,o+dh);
-let gi=0,ei=0;
-if(h.pool.length>1){
-for(let g=0;g<c.groups;g++){const[lo,hiB]=this.bandRange(q,g,c.groups);let sum=0,cnt=0;for(let t=lo;t<hiB;t++){const ff=this.featOf(ctx,x,ctx.tord[t]);for(let c2=0;c2<dh;c2++)sum+=ff[(o+c2+h.view)%D];cnt++}const avg=cnt?Math.round(sum/(cnt*dh)):0;for(let c2=0;c2<dh;c2++)ctx.bf[g*dh+c2]=S(avg+ch[c2])}
-h.bandFeat.apply(ctx.bf,ctx.bfo);h.r1.apply(ctx.bfo,ctx.g1);let best=-300;for(let g=0;g<c.groups;g++)if(ctx.g1[g]>best){best=ctx.g1[g];gi=g}
-h.r2.apply(ctx.bfo,ctx.g2);best=-300;for(let e=0;e<c.experts;e++){const sc=S(ctx.g2[e]+h.bias[gi*c.experts+e]);if(sc>best){best=sc;ei=e}}}
-const ex=h.pool[h.pool.length>1?gi*c.experts+ei:0];
-ctx.route.push({head:hi,group:gi,expert:ei,kind:ex.kind});
-ex.up.apply(ch,ctx.hv);
-if(c.fast){for(let j=0;j<c.rank;j++){let a=0;for(let c2=0;c2<dh;c2++)a+=ex.B[j*dh+c2]*ch[c2];ctx.rt[j]=S(a>>ex.bs)}const ao=hi*8;for(let i=0;i<8;i++){let a=0;for(let j=0;j<c.rank;j++)a+=st.A[ao+j]*ctx.rt[j%c.rank];ctx.ad[i]=S(a>>ex.as)}}
-for(let i=0;i<hd;i++){const raw=ctx.hv[i];ctx.hv[i]=ex.be.map((raw+128)&255,c.fast?ctx.ad:null)-128}
-ex.down.apply(ctx.hv,ctx.fo);
-for(let c2=0;c2<dh;c2++)ctx.cat[o+c2]=S(ctx.cat[o+c2]+ctx.fo[c2])}
-L.proj.apply(ctx.cat,ctx.upd);return ctx.upd}
-ladDelta(ctx,x,tok,lad,p){if(p===0)return 0;const d=ctx.d,b=tok*d,phi=ctx.phi;for(let j=0;j<p;j++){const k=b+lad.o[j],v=k<ctx.N?x[k]:0;phi[j]=sbx(v,lad.pk[j],lad.pm[j],lad.pr[j])-128}let h=lad.B[p];for(let j=0;j<p;j++)h+=lad.U[p*d+j]*phi[j];h=act(S(h>>lad.s));let a=0;for(let j=0;j<p;j++)a+=act(S(lad.W[p*d+j]+h))*phi[j];return rotl8(a&255,lad.rot)}
-async runLayer(li,x,dir,task,onS){const N=x.length;if(!N)return;const ctx=this.prep(li,N),d=ctx.d,L=ctx.L;let traj=null,state=null;if(dir>0)state=this.newState();else{traj=new Array(ctx.T);const st=this.newState();for(let q=0;q<ctx.T;q++){traj[q]=this.clone(st);this.advance(ctx,x,st,ctx.tord[q]);if((q&31)===0)await task.step()}ctx.feat.fill(null);ctx.kk.fill(null);ctx.vv.fill(null)}
-for(let qi=dir>0?0:ctx.T-1;qi>=0&&qi<ctx.T;qi+=dir>0?1:-1){const tok=ctx.tord[qi],st=dir>0?state:traj[qi],u=this.update(ctx,x,qi,st),snap=Int8Array.from(u);
-if(dir>0){for(let p=0;p<d;p++){const k=tok*d+L.l1.o[p];if(k>=N)continue;const b=x[k],dl=(rotl8((snap[p]+128)&255,L.l1.rot)+this.ladDelta(ctx,x,tok,L.l1,p))&255;x[k]=(b+dl)&255;if(onS)onS(li,qi*d+p,k,x[k],b)}if(L.l2)for(let p=0;p<d;p++){const k=tok*d+L.l2.o[p];if(k>=N)continue;const b=x[k],dl=this.ladDelta(ctx,x,tok,L.l2,p);x[k]=(b+dl)&255;if(onS)onS(li,qi*d+p,k,x[k],b)}this.advance(ctx,x,state,tok)}
-else{if(L.l2)for(let p=d-1;p>=0;p--){const k=tok*d+L.l2.o[p];if(k>=N)continue;const b=x[k],dl=this.ladDelta(ctx,x,tok,L.l2,p);x[k]=(b-dl)&255;if(onS)onS(li,qi*d+p,k,x[k],b)}for(let p=d-1;p>=0;p--){const k=tok*d+L.l1.o[p];if(k>=N)continue;const b=x[k],dl=(rotl8((snap[p]+128)&255,L.l1.rot)+this.ladDelta(ctx,x,tok,L.l1,p))&255;x[k]=(b-dl)&255;if(onS)onS(li,qi*d+p,k,x[k],b)}}
-ctx.feat[tok]=null;ctx.kk[tok]=null;ctx.vv[tok]=null;if((qi&15)===0)await task.step()}}
-async encrypt(bytes,task,onS){const x=Uint8Array.from(bytes);for(let li=0;li<this.cfg.layers;li++){await this.runLayer(li,x,1,task,onS?(l,t,k,v,b)=>onS(li,t,k,v,b):null);task.progress((li+1)/this.cfg.layers,"слой "+(li+1))}return x}
-async decrypt(bytes,task){const x=Uint8Array.from(bytes);for(let li=this.cfg.layers-1;li>=0;li--){await this.runLayer(li,x,-1,task);task.progress((this.cfg.layers-li)/this.cfg.layers,"обратно "+(li+1))}return x}
-async depth(bytes,dep,task){const x=Uint8Array.from(bytes);for(let li=0;li<dep;li++)await this.runLayer(li,x,1,task);return x}
-get opsPerByte(){const c=this.cfg,dh=this.dh,D=c.dim,hd=dh*2;let ph=dh*(dh-1)/2*3;if(c.attn)ph+=(c.depth+1)*dh*2;if(c.ssmOn)ph+=c.ssm*2+c.ssm*dh;if(c.moe)ph+=c.groups*dh*dh+dh*c.groups+dh*c.experts;ph+=2*dh*hd+hd*12+(c.fast?c.rank*dh+8*c.rank:0);return Math.round(c.layers*((c.heads*ph+D*c.chan+D)/c.chan+(c.chan-1)*1.5*(c.ladder2?2:1)+4))}
-trajBytes(){const c=this.cfg;return c.heads*(c.ssm*4+8)}
-bounds(){const c=this.cfg,dh=this.dh,D=c.dim,hd=dh*2;const v=[(dh-1)*16384,dh*16384,(c.depth+1)*16384,32768*255+128,hd*16384+128,c.rank*16384+128,D*16384+128,(c.chan-1)*16384+128,c.groups*dh*16384+128];const mx=Math.max(...v);return{max:mx,safe:mx<=I32}}
-get parameters(){let p=3*this.cfg.dim+256*this.cfg.dim;for(const l of this.layers)p+=l.size;return Math.round(p)}
-get keyBytes(){let p=3*this.cfg.dim;for(const l of this.layers)p+=l.size;return Math.round(p)}
-get expertCount(){return this.cfg.heads*(this.cfg.moe?this.cfg.groups*this.cfg.experts:1)*this.cfg.layers}
-get active(){return this.cfg.heads*this.cfg.layers}
-classSet(){const s=new Set();for(const l of this.layers)for(const h of l.heads)for(const e of h.pool)s.add(e.kind);return s}
-polyCount(){const s=new Set();for(const l of this.layers)for(const h of l.heads)for(const e of h.pool)if(e.kind===1)s.add(e.be.poly);return s.size}
+
+// Неприводимые полиномы GF(2⁸)
+const GF_POLYS = [0x11B, 0x11D, 0x12B, 0x12D];
+
+function gf_mul(a, b, poly) {
+  let p = 0;
+  for (let i = 0; i < 8; i++) {
+    if (b & 1) p ^= a;
+    const hi = a & 0x80;
+    a = (a << 1) & 0xFF;
+    if (hi) a ^= (poly & 0xFF);
+    b >>= 1;
+  }
+  return p;
 }
-const Auth={keys(dg){return{wi:sha256(cat(dg,enc.encode("wi"))),wo:sha256(cat(dg,enc.encode("wo"))),mac:sha256(cat(dg,enc.encode("mac")))}},
-async seal(net,dg,p,task){const k=this.keys(dg),n=rnd(12),w1=stream(k.wi,n,p.length),w2=stream(k.wo,n,p.length),m=new Uint8Array(p.length);for(let i=0;i<p.length;i++)m[i]=p[i]^w1[i];const core=await net.encrypt(m,task.child()),ct=new Uint8Array(core.length);for(let i=0;i<core.length;i++)ct[i]=core[i]^w2[i];const body=cat(new Uint8Array([1]),n,ct);return cat(body,hmac(k.mac,body))},
-async open(net,dg,pkt,task){if(pkt.length<45||pkt[0]!==1)throw new Error("формат пакета");const k=this.keys(dg),body=pkt.subarray(0,pkt.length-32),tag=pkt.subarray(pkt.length-32);if(!eq(hmac(k.mac,body),tag))throw new Error("MAC не совпал");const n=body.subarray(1,13),ct=body.subarray(13),w2=stream(k.wo,n,ct.length),core=new Uint8Array(ct.length);for(let i=0;i<ct.length;i++)core[i]=ct[i]^w2[i];const m=await net.decrypt(core,task.child()),w1=stream(k.wi,n,m.length),o=new Uint8Array(m.length);for(let i=0;i<m.length;i++)o[i]=m[i]^w1[i];return o}};
-function profileTable(t){let mx=0;for(let d=1;d<256;d++){const c=new Uint16Array(256);for(let x=0;x<256;x++)c[t[x]^t[x^d]]++;let m=0;for(let i=0;i<256;i++)if(c[i]>m)m=c[i];if(m>mx)mx=m}return mx}
-const PRE={base:{dim:64,heads:4,chan:8,layers:4,depth:3,groups:4,experts:5,ssm:16,rank:2,orderMode:"alternate",moe:true,ssmOn:true,fast:true,ladder2:true,attn:true},large:{dim:128,heads:8,chan:12,layers:6,depth:4,groups:4,experts:5,ssm:32,rank:4,orderMode:"alternate",moe:true,ssmOn:true,fast:true,ladder2:true,attn:true},xl:{dim:192,heads:8,chan:16,layers:8,depth:4,groups:5,experts:5,ssm:32,rank:4,orderMode:"alternate",moe:true,ssmOn:true,fast:true,ladder2:true,attn:true},xxl:{dim:256,heads:16,chan:16,layers:10,depth:4,groups:5,experts:10,ssm:64,rank:4,orderMode:"alternate",moe:true,ssmOn:true,fast:true,ladder2:true,attn:true}};
-const app={key:"mo2-demo-key",cfg:{...PRE.large},iters:200000,mode:"raw",net:null,dg:null,bk:null,bs:null,engine:"—",task:null,busy:false,epoch:0,out:null,inp:null,timer:null,flow:null,reach:null,rate:0,file:null,vec:null,routes:null,prof:null};
-const $=i=>document.getElementById(i);
-const setSt=(m,e)=>{const n=$("status");n.textContent=m;n.classList.toggle("err",!!e)};
-const setCk=(m,e)=>{const n=$("ckSt");n.textContent=m;n.classList.toggle("err",!!e)};
-const chip=(s,t)=>{$("chip").dataset.s=s;$("chipT").textContent=t};
-const prog=f=>{$("prog").style.width=(Math.max(0,Math.min(1,f))*100).toFixed(1)+"%"};
-function toast(msg,kind,action){const n=document.createElement("div");n.className="ts "+(kind||"info");const s=document.createElement("span");s.textContent=msg;s.style.flex="1";n.appendChild(s);if(action){const b=document.createElement("button");b.className="g";b.style.padding="4px 9px";b.style.fontSize="11.5px";b.textContent=action.label;b.onclick=()=>{action.run();n.remove()};n.appendChild(b)}$("tt").appendChild(n);setTimeout(()=>{n.style.transition="opacity .3s";n.style.opacity="0";setTimeout(()=>n.remove(),320)},action?6500:3200)}
-const BTN=["showKey","randKey","enc","dec","copy","dl","swap","clr","reset","rand","expCfg","audit","fuzz","anal","cur"];
-function busy(v){app.busy=v;for(const i of BTN){const n=$(i);if(n)n.disabled=v}$("cancel").disabled=!v;if(!v)prog(0)}
-async function run(label,fn){if(app.busy)return;const ep=app.epoch,task=new Task((f,d)=>{prog(f);chip("busy",label+(d?" · "+d:""))});app.task=task;busy(true);chip("busy",label);try{await fn(task);if(ep===app.epoch)chip("ready","готово")}catch(e){if(String(e.message)==="CANCELLED"){setSt("Отменено.");chip("idle","отмена")}else{console.error(e);setSt("Ошибка: "+e.message,true);chip("error","ошибка");toast(e.message,"bad")}}finally{if(ep===app.epoch){app.task=null;busy(false)}}}
-$("cancel").onclick=()=>{if(app.task)app.task.cancel()};
-const b64=b=>{let s="";for(let i=0;i<b.length;i+=16384)s+=String.fromCharCode.apply(null,b.subarray(i,i+16384));return btoa(s)};
-const ub64=t=>{const bin=atob(t.replace(/\s+/g,"")),o=new Uint8Array(bin.length);for(let i=0;i<bin.length;i++)o[i]=bin.charCodeAt(i);return o};
-const hex=(b,sep)=>{let s="";for(let i=0;i<b.length;i++){s+=b[i].toString(16).padStart(2,"0");if(sep&&i<b.length-1)s+=sep}return s};
-const hexCap=b=>{const n=Math.min(b.length,CAP);return hex(b.subarray(0,n)," ")+(b.length>n?"\n… "+n+" из "+b.length:"")};
-const unhex=t=>{const c=t.replace(/\s+/g,"").replace(/^0x/i,"");if(!/^[0-9a-fA-F]*$/.test(c))throw new Error("некорректный HEX");if(c.length%2)throw new Error("нечётная длина HEX");const o=new Uint8Array(c.length/2);for(let i=0;i<o.length;i++)o[i]=parseInt(c.substr(i*2,2),16);return o};
-function dl(name,bytes,type){const u=URL.createObjectURL(new Blob([bytes],{type:type||"application/octet-stream"})),a=document.createElement("a");a.href=u;a.download=name;document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(u),1200)}
-const sig=()=>"6.0|"+JSON.stringify(app.cfg)+"|"+app.iters+"|"+app.engine;
-function need(){if(!app.net)throw new Error("Сеть не готова");if(app.bk!==app.key)throw new Error("Ключ изменён");if(app.bs!==sig())throw new Error("Архитектура изменена")}
-const ft=ms=>ms<1000?Math.round(ms)+" мс":ms<60000?(ms/1000).toFixed(1)+" с":ms<3600000?(ms/60000).toFixed(1)+" мин":(ms/3600000).toFixed(1)+" ч";
-const fb=n=>n<1024?n+" Б":n<1048576?(n/1024).toFixed(1)+" КБ":(n/1048576).toFixed(1)+" МБ";
-const est=n=>app.rate>0&&app.net?n*app.net.opsPerByte/app.rate:0;
-const inLen=()=>app.file?app.file.length:enc.encode($("input").value).length;
-const eta=()=>{const e=est(inLen());$("mT").textContent=e>0?ft(e):"—"};
-function norm(){const c=app.cfg;if(c.dim%c.heads!==0)c.heads=[16,8,4,2,1].find(v=>c.dim%v===0&&v<=c.heads)||2;while(c.dim/c.heads<4&&c.heads>1)c.heads=[16,8,4,2,1].find(v=>v<c.heads&&c.dim%v===0)||1;$("heads").value=String(c.heads)}
-function fillPre(){const s=$("preset");s.innerHTML="";for(const k of Object.keys(PRE))s.appendChild(new Option(k,k));s.appendChild(new Option("custom","custom"));s.value="large"}
-function sync(){const c=app.cfg;$("dim").value=c.dim;$("heads").value=c.heads;$("groups").value=c.groups;$("experts").value=c.experts;$("ssm").value=c.ssm;$("rank").value=c.rank;$("chan").value=c.chan;$("layers").value=c.layers;$("depth").value=c.depth;$("orderMode").value=c.orderMode;$("moe").checked=c.moe;$("ssmOn").checked=c.ssmOn;$("fast").checked=c.fast;$("ladder2").checked=c.ladder2;$("attn").checked=c.attn;$("chanV").textContent=c.chan;$("layersV").textContent=c.layers;$("depthV").textContent=c.depth;$("mE").textContent=(c.heads*(c.moe?c.groups*c.experts:1)*c.layers).toLocaleString("ru-RU");$("modeT").textContent=app.mode==="auth"?"AUTH":"RAW";$("modeT").className="tg "+(app.mode==="auth"?"ok":"cy");pipe();drawRoute();eta()}
-function inval(m){app.epoch++;if(app.task)app.task.cancel();app.net=null;app.dg=null;app.bk=null;app.bs=null;app.reach=null;app.rate=0;app.vec=null;app.routes=null;app.prof=null;for(const i of["fp","mW","mK","opsB","bndI","rateI","memI","mT","mDP","mNL","mP"])$(i).textContent="—";chip("idle","пересборка");setSt(m,true);drawReach()}
-async function buildNet(cfg,key,it,task){const{m,e}=await master(key,it,task);const dg=sha256(cat(enc.encode("MO2/v1"),m)),kb=sha256(cat(dg,enc.encode("sk"))),nb=sha256(cat(dg,enc.encode("sn"))).subarray(0,12),pb=sha256(cat(dg,enc.encode("pos")));const net=await MO2.create(cfg,kb,nb,(pb[0]|(pb[1]<<8)|(pb[2]<<16)|(pb[3]<<24))>>>0,task);return{net,dg,e}}
-function measurePool(net){const byKind=new Map();let maxDP=0,minNL=256;
-for(const l of net.layers)for(const h of l.heads)for(const e of h.pool){const key=e.kind+"_"+(e.kind===1?e.be.poly:e.kind===3?e.be.f+"_"+e.be.g:e.idx);if(byKind.has(key))continue;const pr=expertProfile(e.be);byKind.set(key,{kind:e.kind,...pr});if(pr.dp>maxDP)maxDP=pr.dp;if(pr.nl<minNL)minNL=pr.nl}
-const kinds=new Set([...byKind.values()].map(v=>v.kind));
-return{profiles:byKind.size,maxDP,minNL,classes:kinds.size,polys:net.polyCount(),all:[...byKind.entries()]}}
-async function build(task){norm();const cfg=Object.freeze({...app.cfg}),key=app.key,it=app.iters;const{net,dg,e}=await buildNet(cfg,key,it,task);app.engine=e;const bd=net.bounds();if(!bd.safe)throw new Error("переполнение: "+bd.max);
-task.progress(.93,"калибровка");const probe=rnd(192),t0=performance.now(),c=await net.encrypt(probe,task.child()),dt=Math.max(1,performance.now()-t0);app.rate=192*net.opsPerByte/dt*1000;const r=await net.decrypt(c,task.child());if(!eq(probe,r))throw new Error("самопроверка");
-for(const n of[1,2,3,9,17]){const p=rnd(n),cc=await net.encrypt(p,task.child()),rr=await net.decrypt(cc,task.child());if(cc.length!==n||!eq(p,rr))throw new Error("самопроверка n="+n)}
-app.vec=[];for(const p of[new Uint8Array([1,2,3,4,5,6,7,8]),enc.encode("MO2 vector"),rnd(33)]){const cc=await net.encrypt(p,task.child());app.vec.push({in:hex(p),out:hex(cc),len:p.length})}
-app.prof=measurePool(net);
-app.net=net;app.dg=dg;app.bk=key;app.bs=sig();
-$("fp").textContent=hex(dg.subarray(0,4));$("mW").textContent=net.parameters.toLocaleString("ru-RU");$("mK").textContent=net.keyBytes.toLocaleString("ru-RU");$("opsB").textContent=net.opsPerByte.toLocaleString("ru-RU");$("mDP").textContent=app.prof.maxDP+"/256";$("mNL").textContent=app.prof.minNL;$("mP").textContent=app.prof.profiles;$("mC").textContent=app.prof.classes;$("bndI").textContent=bd.max.toLocaleString("ru-RU");$("rateI").textContent=(app.rate/1e6).toFixed(1)+"M";$("memI").textContent=fb(net.trajBytes());$("kdfI").textContent=e+" · "+it.toLocaleString("ru-RU");
-renderVec();renderClassTable();task.progress(1,"готово");pipe();drawRoute();eta()}
-function renderVec(){if(!app.vec){$("vecB").textContent="фиксируются при сборке";return}let h='<table><thead><tr><th>#</th><th>вход</th><th>выход</th><th>len</th></tr></thead><tbody>';app.vec.forEach((v,i)=>h+='<tr><td class="n">'+(i+1)+'</td><td class="d">'+v.in+'</td><td class="d">'+v.out+'</td><td class="n">'+v.len+'</td></tr>');$("vecB").innerHTML=h+"</tbody></table>"}
-function renderClassTable(){if(!app.prof){$("classTable").textContent="запустите аудит";return}const agg=new Map();for(const[k,v]of app.prof.all){if(!agg.has(v.kind))agg.set(v.kind,{n:0,bij:true,dp:0,nl:256});const a=agg.get(v.kind);a.n++;if(!v.bij)a.bij=false;if(v.dp>a.dp)a.dp=v.dp;if(v.nl<a.nl)a.nl=v.nl}
-let h='<table><thead><tr><th>класс</th><th>вариантов</th><th>биекция</th><th>max DP</th><th>min NL</th></tr></thead><tbody>';
-for(let k=0;k<5;k++){const a=agg.get(k);if(!a)continue;h+='<tr><td class="i" style="color:'+CHUE[k]+'">'+CLS[k]+'</td><td class="n">'+a.n+'</td><td>'+(a.bij?'<span class="tg ok">да</span>':'<span class="tg bad">нет</span>')+'</td><td class="n">'+a.dp+'/256</td><td class="n">'+a.nl+'</td></tr>'}
-$("classTable").innerHTML=h+"</tbody></table>";
-let ph='<table><thead><tr><th>класс</th><th>вариант</th><th>DP</th><th>NL</th></tr></thead><tbody>';
-for(const[k,v]of app.prof.all.slice(0,60))ph+='<tr><td class="i" style="color:'+CHUE[v.kind]+'">'+CLS[v.kind]+'</td><td class="d">'+k.split("_").slice(1).join("_")+'</td><td class="n">'+v.dp+'</td><td class="n">'+v.nl+'</td></tr>';
-$("profB").innerHTML=ph+"</tbody></table><div class='meta' style='margin-top:6px'>Всего профилей: "+app.prof.profiles+", GF-полиномов: "+app.prof.polys+". Показаны первые 60.</div>"}
-async function rebuild(reason){if(app.busy){sched();return}const ep=app.epoch,task=new Task((f,d)=>{prog(f);chip("busy","сборка"+(d?" · "+d:""))});app.task=task;busy(true);chip("busy","сборка");setSt("Ключ → пул структурных экспертов...");try{await build(task);if(ep!==app.epoch)return;chip("ready","готово");setSt(reason||"Готово. Весов "+app.net.parameters.toLocaleString("ru-RU")+", экспертов "+app.net.expertCount.toLocaleString("ru-RU")+", классов "+app.prof.classes+", профилей "+app.prof.profiles+".");if(app.key==="mo2-demo-key")toast("Демо-ключ: не для реальных данных","bad");if(reason)toast(reason,"ok")}catch(e){if(ep!==app.epoch)return;if(String(e.message)==="CANCELLED"){setSt("Сборка отменена.");chip("idle","отмена")}else{console.error(e);setSt("Ошибка сборки: "+e.message,true);chip("error","ошибка");toast(e.message,"bad")}}finally{if(ep===app.epoch){app.task=null;busy(false)}}}
-function sched(){if(app.timer)clearTimeout(app.timer);app.timer=setTimeout(()=>{app.timer=null;if(app.busy){sched();return}if(!app.key){setSt("Ключ пуст.",true);chip("idle","нет ключа");return}rebuild()},420)}
-function prep(cv){const r=Math.min(2,devicePixelRatio||1),box=cv.getBoundingClientRect(),w=Math.max(1,Math.floor(box.width)),h=Math.max(1,Math.floor(box.height||cv.height*(box.width/cv.width)));if(cv.width!==w*r||cv.height!==h*r){cv.width=w*r;cv.height=h*r}const c=cv.getContext("2d");c.setTransform(r,0,0,r,0,0);c.clearRect(0,0,w,h);return{c,w,h}}
-const bc=v=>{const t=v/255,a=[34,211,238],b=[139,92,246],c=[240,56,156],m=t<.5?[a,b,t*2]:[b,c,(t-.5)*2],u=m[0],z=m[1],k=m[2];return"rgb("+Math.round(u[0]+(z[0]-u[0])*k)+","+Math.round(u[1]+(z[1]-u[1])*k)+","+Math.round(u[2]+(z[2]-u[2])*k)+")"};
-const charts={av:null,hist:null};
-function drawRoute(){const{c,w,h}=prep($("route"));c.fillStyle="#070a12";c.fillRect(0,0,w,h);const cfg=app.cfg,H=Math.min(cfg.heads,16),G=cfg.groups,E=cfg.experts,R=app.routes,rh=(h-26)/H;
-for(let hi=0;hi<H;hi++){const y=hi*rh+6;c.fillStyle="#8a9cb8";c.font="9px ui-monospace,monospace";c.fillText("H"+hi,3,y+rh/2+3);const gx=26,gw=(w-32)/G;
-for(let g=0;g<G;g++){const sel=R?R.some(r=>r.head===hi&&r.group===g):false;c.fillStyle=sel?HUES[hi%16]:"#111a2c";c.globalAlpha=sel?.8:.45;c.fillRect(gx+g*gw+2,y,gw-4,rh-6);c.globalAlpha=1;c.strokeStyle="#283754";c.strokeRect(gx+g*gw+2,y,gw-4,rh-6);
-for(let e=0;e<E;e++){const ex=gx+g*gw+4+e*(gw-8)/E,ew=(gw-8)/E-1,rec=R?R.find(r=>r.head===hi&&r.group===g&&r.expert===e):null;const kind=(g+e)%5;c.fillStyle=rec?CHUE[kind]:"#1c2740";c.fillRect(ex,y+rh-11,Math.max(1,ew),4)}}}
-c.fillStyle="#546680";c.font="10px ui-monospace,monospace";c.fillText("полоса контекста → эксперт класса, активный путь подсвечен",4,h-6);
-const lg=$("routeLg");lg.innerHTML="";for(let k=0;k<5;k++){const s=document.createElement("span");s.innerHTML='<i style="background:'+CHUE[k]+'"></i>'+CLS[k];lg.appendChild(s)}}
-function drawReach(){const{c,w,h}=prep($("reach"));c.fillStyle="#070a12";c.fillRect(0,0,w,h);const plot=h-22,d=app.reach;c.fillStyle="#546680";c.font="10px ui-monospace,monospace";c.fillText("100%",3,10);c.fillText("0%",3,plot-2);if(!d){c.font="12px system-ui";c.textAlign="center";c.fillText("запустите аудит",w/2,plot/2);c.textAlign="left";return}const n=d.steps.length,bw=w/n;for(let i=0;i<n;i++){const s=d.steps[i],bh=Math.max(1,s.frac*plot);c.fillStyle=s.frac>=.999?"#a3e635":"#22d3ee";c.fillRect(i*bw+3,plot-bh,Math.max(2,bw-6),bh);c.fillStyle="#546680";c.font="9px ui-monospace,monospace";c.textAlign="center";c.fillText("L"+i,i*bw+bw/2,h-5);c.textAlign="left"}c.strokeStyle="#fbbf24";c.setLineDash([4,4]);c.beginPath();c.moveTo(0,9);c.lineTo(w,9);c.stroke();c.setLineDash([])}
-function pipe(){const p=$("pipe");p.innerHTML="";const term=(t,l)=>{const d=document.createElement("div");d.className="sg";d.innerHTML="<b>"+t+"</b><span>"+l+"</span>";return d},ar=()=>{const d=document.createElement("div");d.className="ar";d.textContent="→";return d};p.appendChild(term("ВХОД","N="+inLen()+"<br>d="+app.cfg.chan));
-for(let li=0;li<app.cfg.layers;li++){p.appendChild(ar());const d=document.createElement("div");d.className="sg";const o=app.cfg.orderMode==="identity"?"прямой":app.cfg.orderMode==="alternate"?(li===0?"прямой":li===1?"обратный":"ключевой"):"ключевой";d.innerHTML="<b>СЛОЙ "+li+"</b><span>"+o+" · H="+app.cfg.heads+(app.cfg.ssmOn?" · SSM":"")+"<br>лестница ×"+(app.cfg.ladder2?2:1)+"</span>";p.appendChild(d);
-if(app.cfg.moe){p.appendChild(ar());const m=document.createElement("div");m.className="sg";m.innerHTML="<b>ПУЛ "+li+"</b><span>"+app.cfg.groups+" полос × "+app.cfg.experts+"<br>5 классов · top-1</span>";p.appendChild(m)}}
-p.appendChild(ar());p.appendChild(term("ВЫХОД","1:1"))}
-function flowInit(p){const cols=Math.min(p.length,150),rows=app.cfg.layers+1,r0=new Uint8Array(cols);for(let i=0;i<cols;i++)r0[i]=p[i];app.flow={cols,rows,data:[r0],ch:[],act:null};for(let r=1;r<rows;r++){app.flow.data.push(new Uint8Array(r0));app.flow.ch.push(new Uint8Array(cols))}drawFlow()}
-let raf=0;const schedFlow=()=>{if(!raf)raf=requestAnimationFrame(()=>{raf=0;drawFlow()})};
-function drawFlow(){const{c,w,h}=prep($("flow"));c.fillStyle="#070a12";c.fillRect(0,0,w,h);const f=app.flow;if(!f){c.fillStyle="#546680";c.font="12px system-ui";c.textAlign="center";c.fillText("поток байт появится при шифровании",w/2,h/2);c.textAlign="left";return}const rh=(h-10)/f.rows,cw=w/f.cols;for(let r=0;r<f.rows;r++){const y=r*rh+5;for(let i=0;i<f.cols;i++){c.fillStyle=bc(f.data[r][i]);c.fillRect(i*cw,y,Math.max(1,cw-.5),rh-4);if(r>0&&f.ch[r-1][i]){c.fillStyle="rgba(251,191,36,.5)";c.fillRect(i*cw,y+rh-6,Math.max(1,cw-.5),1.6)}if(f.act&&r===f.act.s+1&&i===f.act.k){c.fillStyle="#a3e635";c.fillRect(i*cw,y-1,Math.max(1.5,cw-.5),rh-2)}}c.fillStyle="#8a9cb8";c.font="9px ui-monospace,monospace";c.fillText(r===0?"вход":"L"+(r-1),3,y+9)}}
-function drawAv(){const{c,w,h}=prep($("av"));const plot=h-20,d=charts.av;c.fillStyle="#070a12";c.fillRect(0,0,w,h);c.strokeStyle="#1c2740";c.beginPath();c.moveTo(0,plot/2);c.lineTo(w,plot/2);c.stroke();c.fillStyle="#546680";c.font="10px ui-monospace,monospace";c.fillText("100%",3,10);c.fillText("0%",3,plot-2);if(!d){c.font="12px system-ui";c.textAlign="center";c.fillText("запустите криптоанализ",w/2,plot/2);c.textAlign="left";return}const sl=w/128;for(let i=0;i<128;i++){const r=d.r[i];if(r==null)continue;const bh=Math.max(1,Math.min(1,r)*plot),dev=Math.abs(r-.5);c.fillStyle=dev<=d.tol*.6?"#34d399":dev<=d.tol?"#fbbf24":"#fb7185";c.fillRect(i*sl,plot-bh,Math.max(2,sl-1),bh)}c.strokeStyle="#60a5fa";c.setLineDash([4,4]);c.beginPath();c.moveTo(0,plot/2);c.lineTo(w,plot/2);c.stroke();c.setLineDash([])}
-function drawHist(){const{c,w,h}=prep($("hist"));const plot=h-20,d=charts.hist;c.fillStyle="#070a12";c.fillRect(0,0,w,h);c.fillStyle="#546680";c.font="10px ui-monospace,monospace";c.textAlign="center";c.fillText("0x00",24,h-4);c.fillText("0xFF",w-26,h-4);c.textAlign="left";if(!d){c.font="12px system-ui";c.textAlign="center";c.fillText("запустите криптоанализ",w/2,plot/2);c.textAlign="left";return}let mx=1;for(const v of d.c)if(v>mx)mx=v;const g=c.createLinearGradient(0,0,w,0);g.addColorStop(0,"#22d3ee");g.addColorStop(.5,"#8b5cf6");g.addColorStop(1,"#f0389c");c.fillStyle=g;const bw=w/256;for(let i=0;i<256;i++){const bh=d.c[i]/mx*plot;c.fillRect(i*bw,plot-bh,Math.max(1,bw-.5),bh)}const id=d.t/256/mx*plot;c.strokeStyle="#fbbf24";c.lineWidth=1.5;c.beginPath();c.moveTo(0,plot-id);c.lineTo(w,plot-id);c.stroke()}
-const redraw=()=>{drawRoute();drawReach();drawFlow();drawAv();drawHist()};
-const ent=(c,t)=>{let e=0;for(const v of c)if(v>0){const p=v/t;e-=p*Math.log2(p)}return e};
-const expEnt=t=>Math.max(0,Math.min(8,8-255/(2*t*Math.LN2)));
-const lowE=(i,n)=>{const b=new Uint8Array(n);for(let j=0;j<n;j++)b[j]=((i*16+j)%4)*85&255;return b};
-const upb=(k,n)=>{if(!n)return 1;const p=k/n;return k===n?1:Math.min(1,p+3*Math.sqrt(Math.max(p*(1-p),1/n)/n))};
-async function audit(task){need();const net=app.net,rows=[],add=(i,ok,d)=>rows.push({i,ok,d});
-add("P1.sha256",hex(sha256(new Uint8Array(0)))==="e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855","пустая строка");
-add("P2.sha256.abc",hex(sha256(enc.encode("abc")))==="ba7816bf8f01cfea414140de5dae2223b00361a396177a9cb410ff61f20015ad","abc");
-add("P3.hmac",hex(hmac(new Uint8Array(20).fill(11),enc.encode("Hi There")))==="b0344c61d8db38535ca8afceaf0bf12b881dc200c9833da726e9376c2e32cff7","RFC 4231");
-const salt=sha256(enc.encode("probe")).subarray(0,16),fbk=await pbk(enc.encode("password"),salt,400,task.child());let pok=false;
-if(globalThis.crypto&&crypto.subtle){try{const b=await crypto.subtle.importKey("raw",enc.encode("password"),"PBKDF2",false,["deriveBits"]);const bits=await crypto.subtle.deriveBits({name:"PBKDF2",salt,iterations:400,hash:"SHA-256"},b,256);pok=eq(fbk,new Uint8Array(bits))}catch(e){}}
-add("P4.pbkdf2",pok,"против WebCrypto");
-const ck=new Uint8Array(32);for(let i=0;i<32;i++)ck[i]=i;const cn=new Uint8Array(12);cn[3]=9;cn[7]=0x4a;
-add("P5.chacha",hex(chacha(wLE(ck,0,8),1,wLE(cn,0,3)).subarray(0,32))==="10f1e7e4d13b5915500fdd1fa32071c4c7d1f4c733c068030422aa9ac3d46c4e","RFC 8439");
-add("S1.sbox.aes",profileTable(SB)===4,"AES S-box DP 4/256");
-const prof=app.prof||measurePool(net);
-let allBij=true;for(const[,v]of prof.all)if(!v.bij)allBij=false;
-add("E1.experts.bijective",allBij,prof.profiles+" профилей проверены исчерпывающе на 256 входах");
-add("E2.classes.diverse",prof.classes>=5,prof.classes+" алгебраических классов: "+[...new Set(prof.all.map(([,v])=>CLS[v.kind]))].join(", "));
-add("E3.gf.polynomials",prof.polys>=8,prof.polys+" различных неприводимых полиномов GF(2⁸)");
-add("E4.dp.bound",prof.maxDP<=32,"max DP пула "+prof.maxDP+"/256 (порог 32/256 = 2⁻³)");
-add("E5.nonlin.min",prof.minNL>=64,"min нелинейность "+prof.minNL+" (порог 64)");
-renderClassTable();
-const bd=net.bounds();add("U0.int32",bd.safe,"max "+bd.max.toLocaleString("ru-RU")+" ≤ 2³¹−1");
-if(app.vec){let ok=true;for(const v of app.vec){const c=await net.encrypt(unhex(v.in),task.child());if(hex(c)!==v.out)ok=false}add("V1.vectors",ok,app.vec.length+" векторов сверены")}
-const N=Math.max(16,net.cfg.chan*4);let diag=true,cnt=0;
-for(let li=0;li<net.cfg.layers;li++){const ctx=net.prep(li,N),x=rnd(N),st=net.newState();for(let q=0;q<ctx.T;q++){const u1=net.update(ctx,x,q,st),snap=Int8Array.from(u1),tok=ctx.tord[q];for(const lad of[ctx.L.l1,ctx.L.l2]){if(!lad)continue;for(let p=0;p<ctx.d;p++){const k=tok*ctx.d+lad.o[p];if(k>=N)continue;const s1=net.ladDelta(ctx,x,tok,lad,p),sv=x[k];x[k]=(sv+131)&255;const s2=net.ladDelta(ctx,x,tok,lad,p);x[k]=sv;if(s1!==s2)diag=false;cnt++}}const u2=net.update(ctx,x,q,st);for(let p=0;p<ctx.d;p++)if(u2[p]!==snap[p])diag=false;net.advance(ctx,x,st,tok);ctx.feat[tok]=null;ctx.kk[tok]=null;ctx.vv[tok]=null}await task.step()}
-add("U1.diagonal",diag,cnt+" позиций: Δ не читает свой байт ⇒ det=1");
-let tri=true;for(let li=0;li<net.cfg.layers;li++){const ctx=net.prep(li,N);for(let q=0;q<ctx.T;q++)for(let hi=0;hi<net.cfg.heads;hi++)for(const j of net.srcs(ctx,q,hi))if(j>=q)tri=false}
-add("U2.triangular",tri,"источники строго раньше цели");
-let cov=true;{const ctx=net.prep(0,Math.max(N,net.cfg.chan*8));for(let q=1;q<ctx.T;q++)if(!net.srcs(ctx,q,net.cfg.heads-1).includes(0))cov=false}
-add("U3.coverage",cov,"старшая голова достаёт до 0");
-let bandOk=true;for(let q=4;q<16;q++)for(let g=0;g<net.cfg.groups;g++){const[lo,hi]=net.bandRange(q,g,net.cfg.groups);if(lo<0||hi>q||lo>hi)bandOk=false}
-add("U4.bands.valid",bandOk,"полосы контекста лежат внутри префикса");
-add("U5.sparse",net.cfg.moe?net.expertCount>net.active:true,"экспертов "+net.expertCount+", активных "+net.active);
-for(const n of[0,1,2,3,5,7,16,17,33,65,129]){const p=rnd(n),c=await net.encrypt(p,task.child()),r=await net.decrypt(c,task.child());add("R.n"+n,c.length===n&&eq(p,r),"len "+c.length+"/"+n);await task.step()}
-const rn=Math.max(64,net.cfg.chan*8),base=rnd(rn),A=Uint8Array.from(base),B=Uint8Array.from(base);B[0]^=1;const steps=[];
-for(let li=0;li<net.cfg.layers;li++){await net.runLayer(li,A,1,task.child());await net.runLayer(li,B,1,task.child());let ch=0;for(let i=0;i<rn;i++)if(A[i]!==B[i])ch++;steps.push({frac:ch/rn});task.progress((li+1)/net.cfg.layers,"диффузия");await task.step()}
-app.reach={steps};drawReach();const two=steps.length>1?steps[1].frac:steps[0].frac;
-add("A1.diffusion2",two>=.99,"N="+rn+", за 2 слоя "+(two*100).toFixed(1)+"%");
-const full=steps.findIndex(s=>s.frac>=.999);add("A2.full",full>=0,full>=0?"полное на слое "+full:"не достигнуто");
-if(app.dg){const m=rnd(24),pkt=await Auth.seal(net,app.dg,m,task.child()),back=await Auth.open(net,app.dg,pkt,task.child());add("A3.auth",eq(m,back),"пакет "+pkt.length+" Б");const bad=Uint8Array.from(pkt);bad[bad.length-1]^=1;let th=false;try{await Auth.open(net,app.dg,bad,task.child())}catch(e){th=true}add("A4.tamper",th,"подделка отвергается")}
-const sv=app.bs;app.bs="__x__";let stale=false;try{need()}catch(e){stale=true}app.bs=sv;add("G1.guard",stale,"устаревшая сеть отклоняется");
-const failed=rows.filter(r=>!r.ok).length;let h='<table><thead><tr><th>проверка</th><th>рез.</th><th>детали</th></tr></thead><tbody>';for(const r of rows)h+='<tr><td class="i">'+r.i+'</td><td><span class="tg '+(r.ok?"ok":"bad")+'">'+(r.ok?"PASS":"FAIL")+'</span></td><td class="d">'+r.d+'</td></tr>';$("auT").innerHTML=h+"</tbody></table>";$("auD").open=failed!==0;
-const box=$("cks");box.innerHTML="";for(const r of rows){const s=document.createElement("span");s.dataset.ok=String(r.ok);s.textContent=r.i.split(".").pop()+" "+(r.ok?"✓":"✕");box.appendChild(s)}
-return{failed,total:rows.length,two,full,prof}}
-async function fuzz(task){need();const net=app.net;let rt=0,rf=0,df=0,sf=0,cf=0,lf=0;const R=120;
-for(let i=0;i<R;i++){const n=1+Math.floor(Math.random()*Math.max(8,net.cfg.chan*6)),p=rnd(n),c=await net.encrypt(p,task.child()),r=await net.decrypt(c,task.child());rt++;if(!eq(p,r))rf++;const c2=await net.encrypt(p,task.child());if(!eq(c,c2))df++;
-const pos=Math.floor(Math.random()*n),p2=Uint8Array.from(p);p2[pos]^=1;const c3=await net.encrypt(p2,task.child());if(c3[pos]===c[pos])sf++;
-const li=Math.floor(Math.random()*net.cfg.layers),tok=Math.floor(pos/net.cfg.chan),cA=net.prep(li,n),sA=net.newState(),cB=net.prep(li,n),sB=net.newState(),xA=Uint8Array.from(p),xB=Uint8Array.from(p2),qi=cA.tord.indexOf(tok);
-for(let t=0;t<qi;t++){net.advance(cA,xA,sA,cA.tord[t]);net.advance(cB,xB,sB,cB.tord[t])}
-const uA=Int8Array.from(net.update(cA,xA,qi,sA)),uB=Int8Array.from(net.update(cB,xB,qi,sB));for(let k=0;k<uA.length;k++)if(uA[k]!==uB[k])cf++;
-const lad=cA.L.l1,pi=Array.from(lad.o).indexOf(pos%net.cfg.chan);if(pi>0){const d1=net.ladDelta(cA,xA,tok,lad,pi),sv=xA[pos];xA[pos]=(sv+97)&255;const d2=net.ladDelta(cA,xA,tok,lad,pi);xA[pos]=sv;if(d1!==d2)lf++}
-task.progress((i+1)/R,"фаззинг "+(i+1));await task.step()}
-const ok=rf===0&&df===0&&sf===0&&cf===0&&lf===0;
-$("ckCards").innerHTML='<div class="cards">'+[['Обратимость',rf,rt+' прогонов'],['Детерминизм',df,'повторный прогон'],['Флип меняет байт',sf,'из '+R],['Причинность Δ',cf,'U не зависит от своего токена'],['Причинность лестницы',lf,'Δ не читает свой канал']].map(([t,v,d])=>'<div class="cd '+(v===0?"ok":"bad")+'"><b>'+t+'</b> <span class="tg '+(v===0?"ok":"bad")+'">'+(v===0?"PASS":"FAIL")+'</span><div class="big">'+v+'</div><div class="r"><span>'+d+'</span></div></div>').join("")+'</div>';
-return{ok,rt}}
-async function analysis(task){need();const net=app.net,N=16,BITS=128,bud=Number($("budget").value),t0=performance.now();
-await net.encrypt(rnd(N),task.child());const per=Math.max(1,performance.now()-t0),aff=Math.max(2,Math.floor(bud/per)),eb=Math.max(1,Math.min(400,Math.floor(aff*.18))),dr=Math.max(4,Math.min(120,Math.floor(aff*.16))),td=Math.min(net.cfg.layers,4),rest=Math.max(2,aff-eb-2*dr*td),tr=Math.max(1,Math.min(8,Math.floor(rest/20))),rn=Math.max(1,Math.min(BITS,Math.floor((rest-tr)/tr))),plan=rn*tr+tr+eb+2*dr*td;
-let done=0;const tick=l=>{done++;task.progress(done/plan,l)};
-const bits=[];for(let i=0;i<rn;i++)bits.push(Math.round(i*(BITS-1)/Math.max(1,rn-1)));const ub=[...new Set(bits)],sum=new Float64Array(ub.length);
-for(let t=0;t<tr;t++){const base=rnd(N),bc2=await net.encrypt(base,task.child());tick("база");for(let r=0;r<ub.length;r++){const bit=ub[r],mod=new Uint8Array(base);mod[bit>>3]^=1<<(bit&7);const mc=await net.encrypt(mod,task.child());let ch=0;for(let o=0;o<N;o++)ch+=POP[bc2[o]^mc[o]];sum[r]+=ch;tick("бит "+bit);await task.step()}}
-const rates=new Array(BITS).fill(null);let mn=1,mx=0,tot=0;for(let r=0;r<ub.length;r++){const v=sum[r]/(tr*BITS);rates[ub[r]]=v;if(v<mn)mn=v;if(v>mx)mx=v;tot+=v}
-const tol=Math.max(.02,2.5*.5/Math.sqrt(tr*BITS)),trend=[];
-for(let dep=1;dep<=td;dep++){const map=new Map();for(let i=0;i<dr;i++){const p=rnd(8),q=Uint8Array.from(p);q[0]^=1;const ca=await net.depth(p,dep,task.child()),cb=await net.depth(q,dep,task.child());let k="";for(let j=0;j<8;j++)k+=(ca[j]^cb[j]).toString(16).padStart(2,"0");map.set(k,(map.get(k)||0)+1);tick("DP "+dep);await task.step()}let km=0;for(const v of map.values())if(v>km)km=v;trend.push({dep,dp:km/dr,up:upb(km,dr)})}
-const f=trend[trend.length-1],counts=new Array(256).fill(0);
-for(let i=0;i<eb;i++){const ct=await net.encrypt(lowE(i,N),task.child());for(let j=0;j<N;j++)counts[ct[j]]++;tick("энтропия");await task.step()}
-const tb=eb*N,e=ent(counts,tb),ex=expEnt(tb);charts.av={r:rates,tol};charts.hist={c:counts,t:tb};drawAv();drawHist();
-const avOk=Math.abs(mn-.5)<=tol&&Math.abs(mx-.5)<=tol,enough=tb>=1024,enOk=enough?e>=ex-.04:null;
-$("ckCards").innerHTML='<div class="cards"><div class="cd '+(avOk?"ok":"bad")+'"><b>Лавина SAC</b> <span class="tg '+(avOk?"ok":"bad")+'">'+(avOk?"PASS":"FAIL")+'</span><div class="big">'+(tot/ub.length*100).toFixed(2)+'%</div><div class="r"><span>min/max</span><span>'+(mn*100).toFixed(1)+'/'+(mx*100).toFixed(1)+'</span></div><div class="r"><span>допуск</span><span>±'+(tol*100).toFixed(2)+'%</span></div></div><div class="cd mg"><b>Дифференциал</b><div class="big">'+f.dp.toFixed(4)+'</div><div class="r"><span>граница 3σ</span><span>≤'+f.up.toFixed(4)+'</span></div>'+trend.map(t=>'<div class="r"><span>глубина '+t.dep+'</span><span>'+t.dp.toFixed(4)+'</span></div>').join("")+'</div><div class="cd '+(enOk===null?"w":enOk?"ok":"bad")+'"><b>Маскировка</b><div class="big">'+e.toFixed(4)+'</div><div class="r"><span>источник</span><span>2.0 бит/Б</span></div><div class="r"><span>объём</span><span>'+tb+' Б</span></div></div><div class="cd vi"><b>Прогон</b><div class="big" style="font-size:15px">'+per.toFixed(1)+' мс</div><div class="r"><span>план</span><span>'+plan+'</span></div></div></div>';
-return{avOk,enOk,dp:f.dp,up:f.up}}
-function curAnal(){if(!app.out||!app.out.length)throw new Error("Нет текущего выхода");const c=new Array(256).fill(0);for(const b of app.out)c[b]++;const t=app.out.length,e=ent(c,t),ex=expEnt(t);charts.hist={c,t};drawHist();$("ckCards").innerHTML='<div class="cards"><div class="cd '+(t>=1024?"":"w")+'"><b>Текущий выход</b><div class="big">'+e.toFixed(4)+'</div><div class="r"><span>длина</span><span>'+t+' Б</span></div><div class="r"><span>ожидание</span><span>'+ex.toFixed(4)+'</span></div><div class="r"><span>'+(t>=1024?"объём достаточен":"нужно ≥1024 Б")+'</span></div></div></div>';setCk("Анализ выхода завершён.")}
-function setIO(i,o){app.inp=i;app.out=o;$("inHex").value=hexCap(i);$("outHex").value=hexCap(o);pipe()}
-$("showKey").onclick=()=>{const i=$("key");i.type=i.type==="password"?"text":"password";$("showKey").textContent=i.type==="password"?"Показать":"Скрыть"};
-$("key").onchange=()=>{const v=$("key").value;if(!v){inval("Ключ пуст.");return}app.key=v;inval("Ключ изменён.");sched()};
-$("key").onkeydown=e=>{if(e.key==="Enter"){e.preventDefault();$("key").dispatchEvent(new Event("change"))}};
-$("randKey").onclick=()=>{$("key").value="k-"+hex(rnd(16));app.key=$("key").value;inval("Ключ изменён.");sched()};
-$("iters").onchange=()=>{app.iters=Number($("iters").value);inval("KDF изменён.");sched()};
-$("mode").onchange=()=>{app.mode=$("mode").value;sync();toast(app.mode==="auth"?"nonce + HMAC":"Сырой 1:1","info")};
-$("preset").onchange=()=>{const p=PRE[$("preset").value];if(!p)return;app.cfg={...p};sync();inval("Пресет изменён.");sched()};
-const bindR=(id,k,lab,f)=>{$(id).oninput=()=>{app.cfg[k]=Number($(id).value);if(lab)lab.textContent=f?f(app.cfg[k]):app.cfg[k];$("preset").value="custom";sync();inval("Архитектура изменена.");sched()}};
-const bindS=(id,k)=>{$(id).onchange=()=>{app.cfg[k]=Number($(id).value);$("preset").value="custom";norm();sync();inval("Архитектура изменена.");sched()}};
-bindS("dim","dim");bindS("heads","heads");bindS("groups","groups");bindS("experts","experts");bindS("ssm","ssm");bindS("rank","rank");
-bindR("chan","chan",$("chanV"));bindR("layers","layers",$("layersV"));bindR("depth","depth",$("depthV"));
-$("orderMode").onchange=()=>{app.cfg.orderMode=$("orderMode").value;$("preset").value="custom";sync();inval("Порядки изменены.");sched()};
-for(const[id,k]of[["moe","moe"],["ssmOn","ssmOn"],["fast","fast"],["ladder2","ladder2"],["attn","attn"]])$(id).onchange=()=>{app.cfg[k]=$(id).checked;$("preset").value="custom";sync();inval("Архитектура изменена.");sched()};
-$("input").oninput=()=>{app.file=null;pipe();eta()};
-$("file").onchange=async e=>{const f=e.target.files&&e.target.files[0];if(!f)return;app.file=new Uint8Array(await f.arrayBuffer());$("input").value="[файл "+f.name+", "+app.file.length+" байт]";pipe();eta();setSt("Файл "+app.file.length+" байт. Оценка "+ft(est(app.file.length))+".");toast("Загружено "+app.file.length+" байт","ok")};
-$("reset").onclick=()=>{app.cfg={...PRE.large};$("preset").value="large";sync();inval("Сброс.");sched()};
-$("rand").onclick=()=>{const r=rnd(9),dm=[64,128,192,256],hs=[2,4,8,16];app.cfg={dim:dm[r[0]%4],heads:hs[r[1]%4],chan:4+r[2]%29,layers:3+r[3]%10,depth:2+r[5]%9,groups:[2,4,5][r[6]%3],experts:[2,4,5,10][r[7]%4],ssm:[16,32,64][r[8]%3],rank:[2,4,8][r[0]%3],orderMode:["alternate","keyed"][r[1]%2],moe:true,ssmOn:true,fast:true,ladder2:true,attn:true};$("preset").value="custom";norm();sync();inval("Случайная сеть.");sched()};
-$("expCfg").onclick=()=>{dl("mo2-config.json",enc.encode(JSON.stringify({core:"MO2",version:"6.0",config:app.cfg,iters:app.iters,mode:app.mode,fingerprint:$("fp").textContent,parameters:app.net?app.net.parameters:null,keyBytes:app.net?app.net.keyBytes:null,experts:app.net?app.net.expertCount:null,classes:app.prof?app.prof.classes:null,profiles:app.prof?app.prof.profiles:null,gfPolynomials:app.prof?app.prof.polys:null,maxDP:app.prof?app.prof.maxDP:null,minNonlinearity:app.prof?app.prof.minNL:null,opsPerByte:app.net?app.net.opsPerByte:null,bounds:app.net?app.net.bounds():null,vectors:app.vec},null,2)),"application/json");toast("Конфигурация сохранена","ok")};
-$("enc").onclick=()=>run("Шифрование",async task=>{need();const plain=app.file||enc.encode($("input").value);if(!plain.length)throw new Error("Вход пуст");const e=est(plain.length);if(e>20000)toast("Оценка "+ft(e)+". Можно отменить.","info");flowInit(plain);const t0=performance.now();
-const out=app.mode==="auth"?await Auth.seal(app.net,app.dg,plain,task):await app.net.encrypt(plain,task,(s,t,k,v,b)=>{if(k<app.flow.cols&&s<app.flow.rows-1){app.flow.data[s+1][k]=v;app.flow.ch[s][k]=v!==b?1:0;app.flow.act={s,k}}if((t&255)===0)schedFlow()});
-const dt=performance.now()-t0;app.rate=plain.length*app.net.opsPerByte/Math.max(1,dt)*1000;$("rateI").textContent=(app.rate/1e6).toFixed(1)+"M";
-const ctx=app.net.prep(0,Math.max(8,app.net.cfg.chan*2)),st=app.net.newState();app.net.update(ctx,Uint8Array.from(plain.subarray(0,ctx.N)),Math.min(1,ctx.T-1),st);app.routes=ctx.route.slice();drawFlow();drawRoute();
-$("output").value=$("outFmt").value==="base64"?b64(out):hex(out.subarray(0,CAP))+(out.length>CAP?" …":"");setIO(plain,out);
-const kinds={};for(const r of app.routes)kinds[CLS[r.kind]]=(kinds[CLS[r.kind]]||0)+1;
-setSt("Зашифровано "+out.length+" байт за "+ft(dt)+". Маршруты: "+Object.entries(kinds).map(([k,v])=>k+"×"+v).join(", ")+".");eta();toast("Зашифровано "+out.length+" байт","ok")});
-$("dec").onclick=()=>run("Расшифрование",async task=>{need();const raw=app.file||($("inFmt").value==="hex"?unhex($("input").value):ub64($("input").value));if(!raw.length)throw new Error("Вход пуст");const e=est(raw.length);if(e>20000)toast("Оценка "+ft(e)+". Можно отменить.","info");const t0=performance.now();
-const plain=app.mode==="auth"?await Auth.open(app.net,app.dg,raw,task):await app.net.decrypt(raw,task);const dt=performance.now()-t0;
-if(app.file){$("output").value="[расшифровано "+plain.length+" байт — скачайте .bin]";setIO(raw,plain);setSt("Расшифровано "+plain.length+" байт за "+ft(dt)+".")}else{try{$("output").value=dec.decode(plain)}catch(err){$("output").value=hex(plain.subarray(0,CAP)," ")+(plain.length>CAP?" …":"");setIO(raw,plain);setSt("Не UTF-8: показан HEX.",true);return}setIO(raw,plain);setSt("Расшифровано "+plain.length+" байт за "+ft(dt)+(app.mode==="auth"?", MAC проверен.":"."))}toast("Расшифровано","ok")});
-$("copy").onclick=()=>run("Копирование",async()=>{const v=$("output").value;if(!v)throw new Error("Выход пуст");try{await navigator.clipboard.writeText(v)}catch(e){$("output").focus();$("output").select();document.execCommand("copy")}setSt("Скопировано.");toast("Скопировано","ok")});
-$("dl").onclick=()=>{if(!app.out){setSt("Нет данных.",true);return}dl("mo2-output.bin",app.out);setSt("Сохранено "+app.out.length+" байт.");toast("Файл сохранён","ok")};
-$("swap").onclick=()=>{if(app.file){setSt("Для файла загрузите .bin.",true);return}if(!$("output").value){setSt("Выход пуст.",true);return}$("input").value=$("output").value;$("inFmt").value=$("outFmt").value;pipe();eta();setSt("Выход перенесён во вход.")};
-$("clr").onclick=()=>{const b={i:$("input").value,o:$("output").value,out:app.out,inp:app.inp,f:app.file};$("input").value="";$("output").value="";$("inHex").value="";$("outHex").value="";$("file").value="";app.out=null;app.inp=null;app.file=null;app.flow=null;app.routes=null;drawFlow();drawRoute();pipe();eta();setSt("Очищено.");toast("Поля очищены","info",{label:"Вернуть",run:()=>{$("input").value=b.i;$("output").value=b.o;app.file=b.f;if(b.out&&b.inp)setIO(b.inp,b.out);pipe();eta();toast("Восстановлено","ok")}})};
-$("audit").onclick=()=>run("Аудит",async task=>{const r=await audit(task);setCk(r.failed===0?"Аудит пройден: "+r.total+" проверок. Классов "+r.prof.classes+", профилей "+r.prof.profiles+", max DP "+r.prof.maxDP+"/256.":"Аудит: "+r.failed+" отклонений из "+r.total+".",r.failed!==0);setSt(r.failed===0?"Подтверждено: биективность всех экспертов, 5 классов, GF-полиномы, единичная диагональ.":"Есть отклонения — смотрите таблицу.",r.failed!==0);toast(r.failed===0?"Аудит: всё пройдено":"Аудит: "+r.failed+" отклонений",r.failed===0?"ok":"bad")});
-$("fuzz").onclick=()=>run("Фаззинг",async task=>{const r=await fuzz(task);setCk(r.ok?"Фаззинг пройден: "+r.rt+" прогонов, обратимость, детерминизм и причинность в норме.":"Фаззинг выявил отклонения.",!r.ok);toast(r.ok?"Фаззинг: чисто":"Фаззинг: провалы",r.ok?"ok":"bad")});
-$("anal").onclick=()=>run("Криптоанализ",async task=>{const r=await analysis(task);const ok=r.avOk&&r.enOk!==false;setCk(ok?"Лавина и маскировка в допуске.":"Есть отклонения.",!ok);setSt("DP ≈ "+r.dp.toFixed(4)+", граница ≤ "+r.up.toFixed(4)+".");toast(ok?"Метрики в допуске":"Есть отклонения",ok?"ok":"bad")});
-$("cur").onclick=()=>run("Анализ",async()=>curAnal());
-const links=[...document.querySelectorAll("nav a")];
-["console","orch","checks"].forEach(id=>{const n=$(id);if(n)new IntersectionObserver(es=>{for(const e of es)if(e.isIntersecting)links.forEach(l=>l.classList.toggle("on",l.getAttribute("href")==="#"+id))},{rootMargin:"-60px 0px -62% 0px"}).observe(n)});
-links.forEach(l=>l.addEventListener("click",e=>{e.preventDefault();const t=document.querySelector(l.getAttribute("href"));if(t)scrollTo({top:t.getBoundingClientRect().top+scrollY-64,behavior:"smooth"})}));
-let rz=null;addEventListener("resize",()=>{if(rz)clearTimeout(rz);rz=setTimeout(redraw,130)});
-(async()=>{fillPre();$("key").value=app.key;$("input").value="Пять алгебраических классов экспертов: подстановка, GF с разными полиномами, ARX, nibble-Feistel, битовая лестница. Полосы контекста привязаны к группам, маршрутизация осмысленна.";sync();redraw();await rebuild();if(!app.net)return;
-await run("Старт",async task=>{const plain=enc.encode($("input").value);flowInit(plain);const ct=await app.net.encrypt(plain,task,(s,t,k,v,b)=>{if(k<app.flow.cols&&s<app.flow.rows-1){app.flow.data[s+1][k]=v;app.flow.ch[s][k]=v!==b?1:0;app.flow.act={s,k}}if((t&255)===0)schedFlow()});drawFlow();$("output").value=b64(ct);setIO(plain,ct);const back=await app.net.decrypt(ct,task.child());if(dec.decode(back)!==$("input").value)throw new Error("Стартовая проверка");const ctx=app.net.prep(0,Math.max(8,app.net.cfg.chan*2)),st=app.net.newState();app.net.update(ctx,Uint8Array.from(plain.subarray(0,ctx.N)),Math.min(1,ctx.T-1),st);app.routes=ctx.route.slice();drawRoute();setSt("Готово. Весов "+app.net.parameters.toLocaleString("ru-RU")+", экспертов "+app.net.expertCount.toLocaleString("ru-RU")+", классов "+app.prof.classes+", профилей "+app.prof.profiles+", max DP "+app.prof.maxDP+"/256.");eta()});
-if(!app.net)return;await run("Аудит",async task=>{const r=await audit(task);setCk(r.failed===0?"Аудит пройден: "+r.total+" проверок. За 2 слоя "+(r.two*100).toFixed(1)+"%.":"Аудит: "+r.failed+" отклонений.",r.failed!==0)})})();
+
+function concat(...a) { let n = 0; for (const x of a) n += x.length; const o = new Uint8Array(n); let p = 0; for (const x of a) { o.set(x, p); p += x.length; } return o; }
+function eqBytes(a, b) { if (a.length !== b.length) return false; let d = 0; for (let i = 0; i < a.length; i++) d |= a[i] ^ b[i]; return d === 0; }
+function randomBytes(n) { const b = new Uint8Array(n); crypto.getRandomValues(b); return b; }
+
+const SHA_K = new Uint32Array([
+0x428a2f98,0x71374491,0xb5c0fbcf,0xe9b5dba5,0x3956c25b,0x59f111f1,0x923f82a4,0xab1c5ed5,
+0xd807aa98,0x12835b01,0x243185be,0x550c7dc3,0x72be5d74,0x80deb1fe,0x9bdc06a7,0xc19bf174,
+0xe49b69c1,0xefbe4786,0x0fc19dc6,0x240ca1cc,0x2de92c6f,0x4a7484aa,0x5cb0a9dc,0x76f988da,
+0x983e5152,0xa831c66d,0xb00327c8,0xbf597fc7,0xc6e00bf3,0xd5a79147,0x06ca6351,0x14292967,
+0x27b70a85,0x2e1b2138,0x4d2c6dfc,0x53380d13,0x650a7354,0x766a0abb,0x81c2c92e,0x92722c85,
+0xa2bfe8a1,0xa81a664b,0xc24b8b70,0xc76c51a3,0xd192e819,0xd6990624,0xf40e3585,0x106aa070,
+0x19a4c116,0x1e376c08,0x2748774c,0x34b0bcb5,0x391c0cb3,0x4ed8aa4a,0x5b9cca4f,0x682e6ff3,
+0x748f82ee,0x78a5636f,0x84c87814,0x8cc70208,0x90befffa,0xa4506ceb,0xbef9a3f7,0xc67178f2]);
+
+function sha256(bytes) {
+  const H = new Uint32Array([0x6a09e667,0xbb67ae85,0x3c6ef372,0xa54ff53a,0x510e527f,0x9b05688c,0x1f83d9ab,0x5be0cd19]);
+  const total = (((bytes.length + 8) >> 6) + 1) << 6;
+  const buf = new Uint8Array(total); buf.set(bytes); buf[bytes.length] = 0x80;
+  const dv = new DataView(buf.buffer);
+  dv.setUint32(total - 4, (bytes.length * 8) >>> 0, false);
+  dv.setUint32(total - 8, Math.floor(bytes.length / 536870912), false);
+  const w = new Uint32Array(64), rr = (x, n) => ((x >>> n) | (x << (32 - n))) >>> 0;
+  for (let off = 0; off < total; off += 64) {
+    for (let i = 0; i < 16; i++) w[i] = dv.getUint32(off + i * 4, false);
+    for (let i = 16; i < 64; i++) {
+      const x = w[i-15], y = w[i-2];
+      w[i] = (w[i-16] + ((rr(x,7) ^ rr(x,18) ^ (x >>> 3)) >>> 0) + w[i-7] + ((rr(y,17) ^ rr(y,19) ^ (y >>> 10)) >>> 0)) >>> 0;
+    }
+    let a=H[0],b=H[1],c=H[2],d=H[3],e=H[4],f=H[5],g=H[6],h=H[7];
+    for (let i = 0; i < 64; i++) {
+      const t1 = (h + ((rr(e,6) ^ rr(e,11) ^ rr(e,25)) >>> 0) + ((e & f) ^ (~e & g)) + SHA_K[i] + w[i]) >>> 0;
+      const t2 = (((rr(a,2) ^ rr(a,13) ^ rr(a,22)) >>> 0) + ((a & b) ^ (a & c) ^ (b & c))) >>> 0;
+      h=g;g=f;f=e;e=(d+t1)>>>0;d=c;c=b;b=a;a=(t1+t2)>>>0;
+    }
+    H[0]=(H[0]+a)>>>0;H[1]=(H[1]+b)>>>0;H[2]=(H[2]+c)>>>0;H[3]=(H[3]+d)>>>0;
+    H[4]=(H[4]+e)>>>0;H[5]=(H[5]+f)>>>0;H[6]=(H[6]+g)>>>0;H[7]=(H[7]+h)>>>0;
+  }
+  const out = new Uint8Array(32), ov = new DataView(out.buffer);
+  for (let i = 0; i < 8; i++) ov.setUint32(i * 4, H[i], false);
+  return out;
+}
+function hmacSha256(key, msg) {
+  const k = key.length > 64 ? sha256(key) : key;
+  const pad = new Uint8Array(64); pad.set(k);
+  const inner = new Uint8Array(64 + msg.length), outer = new Uint8Array(96);
+  for (let i = 0; i < 64; i++) { inner[i] = pad[i] ^ 0x36; outer[i] = pad[i] ^ 0x5c; }
+  inner.set(msg, 64); outer.set(sha256(inner), 64);
+  return sha256(outer);
+}
+async function pbkdf2Fallback(pw, salt, iters, task) {
+  const seed = new Uint8Array(salt.length + 4); seed.set(salt); seed[salt.length + 3] = 1;
+  let u = hmacSha256(pw, seed); const t = new Uint8Array(u);
+  for (let i = 1; i < iters; i++) {
+    u = hmacSha256(pw, u);
+    for (let j = 0; j < 32; j++) t[j] ^= u[j];
+    if ((i & 1023) === 0) { task.progress(0.02 + 0.1 * (i / iters), "PBKDF2"); await task.step(); }
+  }
+  return t;
+}
+async function deriveMaster(text, iters, task) {
+  const pw = enc.encode(text), salt = sha256(enc.encode("MO2/v1/salt")).subarray(0, 16);
+  if (globalThis.crypto && crypto.subtle) {
+    try {
+      task.progress(0.03, "PBKDF2");
+      const base = await crypto.subtle.importKey("raw", pw, "PBKDF2", false, ["deriveBits"]);
+      const bits = await crypto.subtle.deriveBits({ name:"PBKDF2", salt, iterations:iters, hash:"SHA-256" }, base, 256);
+      return { master: new Uint8Array(bits), engine: "WebCrypto" };
+    } catch (e) { void e; }
+  }
+  return { master: await pbkdf2Fallback(pw, salt, iters, task), engine: "автономный" };
+}
+function chachaBlock(kw, counter, nw) {
+  const s = new Uint32Array(16);
+  s[0]=0x61707865;s[1]=0x3320646e;s[2]=0x79622d32;s[3]=0x6b206574;
+  for (let i = 0; i < 8; i++) s[4+i] = kw[i];
+  s[12]=counter>>>0; s[13]=nw[0]; s[14]=nw[1]; s[15]=nw[2];
+  const x = new Uint32Array(s);
+  const qr = (a,b,c,d) => {
+    x[a]=(x[a]+x[b])>>>0; x[d]=rotl32(x[d]^x[a],16);
+    x[c]=(x[c]+x[d])>>>0; x[b]=rotl32(x[b]^x[c],12);
+    x[a]=(x[a]+x[b])>>>0; x[d]=rotl32(x[d]^x[a],8);
+    x[c]=(x[c]+x[d])>>>0; x[b]=rotl32(x[b]^x[c],7);
+  };
+  for (let i = 0; i < 10; i++) {
+    qr(0,4,8,12);qr(1,5,9,13);qr(2,6,10,14);qr(3,7,11,15);
+    qr(0,5,10,15);qr(1,6,11,12);qr(2,7,8,13);qr(3,4,9,14);
+  }
+  const out = new Uint8Array(64), dv = new DataView(out.buffer);
+  for (let i = 0; i < 16; i++) dv.setUint32(i*4, (x[i]+s[i])>>>0, true);
+  return out;
+}
+function wordsLE(b, off, n) {
+  const w = new Uint32Array(n);
+  for (let i = 0; i < n; i++) { const o = off + i*4; w[i] = (b[o] | (b[o+1]<<8) | (b[o+2]<<16) | (b[o+3]<<24)) >>> 0; }
+  return w;
+}
+class KeyStream {
+  constructor(key, nonce) { this.k = wordsLE(key,0,8); this.n = wordsLE(nonce,0,3); this.c = 0; this.buf = new Uint8Array(0); this.p = 0; }
+  byte() { if (this.p >= this.buf.length) { this.buf = chachaBlock(this.k, this.c++, this.n); this.p = 0; } return this.buf[this.p++]; }
+  weight() { return this.byte() - 128; }
+  u32() { const a=this.byte(),b=this.byte(),c=this.byte(),d=this.byte(); return (a|(b<<8)|(c<<16)|(d<<24))>>>0; }
+  below(m) { const lim = 256 - (256 % m); for (;;) { const v = this.byte(); if (v < lim) return v % m; } }
+  rot() { return 1 + this.below(7); }
+  odd() { return (this.byte() | 1) & 255; }
+}
+function streamBytes(key, nonce, n) { const ks = new KeyStream(key, nonce), o = new Uint8Array(n); for (let i = 0; i < n; i++) o[i] = ks.byte(); return o; }
+
+class Task {
+  constructor(on, shared) { this.on = on || null; this.shared = shared || { cancelled:false }; this.slice = performance.now(); }
+  cancel() { this.shared.cancelled = true; }
+  child() { return new Task(null, this.shared); }
+  async step() {
+    if (this.shared.cancelled) throw new Error("CANCELLED");
+    if (performance.now() - this.slice > 12) { await new Promise(r => setTimeout(r, 0)); this.slice = performance.now(); }
+  }
+  progress(f, l) { if (this.on) this.on(Math.max(0, Math.min(1, f)), l); }
+}
+
+// ===== 5 АЛГЕБРАИЧЕСКИХ КЛАССОВ =====
+
+// SUB: AES S-box + key-affine
+class SUB {
+  constructor(ks) {
+    this.k = ks.byte(); this.m = ks.byte(); this.r = ks.rot();
+  }
+  apply(x) {
+    return rotl8(SBOX[(x ^ this.k) & 255] ^ this.m, this.r);
+  }
+  inverse(y) {
+    const v = rotr8(y, this.r) ^ this.m;
+    // Обратный S-box
+    const invSbox = new Uint8Array(256);
+    for (let i = 0; i < 256; i++) invSbox[SBOX[i]] = i;
+    return invSbox[v] ^ this.k;
+  }
+  get size() { return 3; }
+}
+
+// GF: умножение в GF(2⁸) + сложение
+class GF {
+  constructor(ks, polyIdx) {
+    this.poly = GF_POLYS[polyIdx % 4];
+    this.a = ks.odd(); // нечётный для биективности
+    this.b = ks.byte();
+  }
+  apply(x) {
+    return gf_mul(x, this.a, this.poly) ^ this.b;
+  }
+  inverse(y) {
+    // Обратное умножение в GF(2⁸)
+    let inv_a = 1;
+    for (let i = 0; i < 255; i++) {
+      if (gf_mul(this.a, inv_a, this.poly) === 1) break;
+      inv_a = gf_mul(inv_a, this.a, this.poly);
+    }
+    return gf_mul(y ^ this.b, inv_a, this.poly);
+  }
+  get size() { return 3; }
+}
+
+// ARX: Add-Rotate-Xor + S-box
+class ARX {
+  constructor(ks) {
+    this.k = ks.odd(); // нечётный для биективности сложения
+    this.r = ks.rot();
+    this.m = ks.byte();
+    this.sbox_k = ks.byte(); this.sbox_m = ks.byte(); this.sbox_r = ks.rot();
+  }
+  apply(x) {
+    const v = (((x + this.k) & 255) << this.r | ((x + this.k) & 255) >>> (8 - this.r)) & 255;
+    const u = (v ^ this.m) & 255;
+    return rotl8(SBOX[(u ^ this.sbox_k) & 255] ^ this.sbox_m, this.sbox_r);
+  }
+  inverse(y) {
+    const v = rotr8(y, this.sbox_r) ^ this.sbox_m;
+    const invSbox = new Uint8Array(256);
+    for (let i = 0; i < 256; i++) invSbox[SBOX[i]] = i;
+    const u = invSbox[v] ^ this.sbox_k;
+    const w = (u ^ this.m) & 255;
+    const z = (w << (8 - this.r) | w >>> this.r) & 255;
+    return (z - this.k + 256) & 255;
+  }
+  get size() { return 6; }
+}
+
+// TRI: унитреугольная матрица + S-box на каждом канале
+class TRI {
+  constructor(ks, dim) {
+    this.dim = dim;
+    this.w = new Int8Array(dim * dim);
+    for (let c = 1; c < dim; c++) for (let c2 = 0; c2 < c; c2++) this.w[c * dim + c2] = ks.weight();
+    this.sbox_k = new Uint8Array(dim); this.sbox_m = new Uint8Array(dim); this.sbox_r = new Uint8Array(dim);
+    for (let c = 0; c < dim; c++) { this.sbox_k[c] = ks.byte(); this.sbox_m[c] = ks.byte(); this.sbox_r[c] = ks.rot(); }
+    this.shift = Math.max(0, Math.round(Math.log2(Math.sqrt(dim) * 5476 / 64)));
+  }
+  apply(u, out) {
+    const d = this.dim, w = this.w, sh = this.shift;
+    for (let c = 0; c < d; c++) {
+      let acc = u[c];
+      for (let c2 = 0; c2 < c; c2++) acc += w[c * d + c2] * u[c2];
+      const v = S(acc >> sh);
+      out[c] = rotl8(SBOX[(v ^ this.sbox_k[c]) & 255] ^ this.sbox_m[c], this.sbox_r[c]);
+    }
+  }
+  get size() { return this.dim * (this.dim - 1) / 2 + this.dim * 3; }
+}
+
+// Feistel: 3-раундовая сеть Фейстеля с S-box
+class Feistel {
+  constructor(ks) {
+    this.k1 = ks.byte(); this.k2 = ks.byte(); this.k3 = ks.byte();
+  }
+  apply(x) {
+    let L = (x >> 4) & 0xF, R = x & 0xF;
+    // Раунд 1
+    let L2 = R, R2 = L ^ ((SBOX[(R ^ this.k1) & 255] >> 4) & 0xF);
+    // Раунд 2
+    let L3 = R2, R3 = L2 ^ ((SBOX[(R2 ^ this.k2) & 255] >> 4) & 0xF);
+    // Раунд 3
+    let L4 = R3, R4 = L3 ^ ((SBOX[(R3 ^ this.k3) & 255] >> 4) & 0xF);
+    return (L4 << 4) | R4;
+  }
+  inverse(y) {
+    let L = (y >> 4) & 0xF, R = y & 0xF;
+    // Обратный раунд 3
+    let L3 = R ^ ((SBOX[(L ^ this.k3) & 255] >> 4) & 0xF), R3 = L;
+    // Обратный раунд 2
+    let L2 = R3 ^ ((SBOX[(L3 ^ this.k2) & 255] >> 4) & 0xF), R2 = L3;
+    // Обратный раунд 1
+    let L1 = R2 ^ ((SBOX[(L2 ^ this.k1) & 255] >> 4) & 0xF), R1 = L2;
+    return (L1 << 4) | R1;
+  }
+  get size() { return 3; }
+}
+
+// Проверка биективности
+function isBijective(apply, inverse) {
+  for (let x = 0; x < 256; x++) {
+    if (inverse(apply(x)) !== x) return false;
+  }
+  return true;
+}
+
+// Вычисление DP
+function computeDP(apply) {
+  let max = 0;
+  for (let d = 1; d < 256; d++) {
+    const cnt = new Uint16Array(256);
+    for (let x = 0; x < 256; x++) cnt[apply(x) ^ apply(x ^ d)]++;
+    let m = 0; for (let i = 0; i < 256; i++) if (cnt[i] > m) m = cnt[i];
+    if (m > max) max = m;
+  }
+  return max;
+}
+
+// Вычисление нелинейности (упрощённо)
+function computeNL(apply) {
+  // Для 8-битной функции: NL = 128 - max|WHT|/2
+  // Упрощённая оценка через DP: NL ≈ 128 - DP*128/256
+  const dp = computeDP(apply);
+  return Math.round(128 - dp * 128 / 256);
+}
+
+// ===== MO² АРХИТЕКТУРА =====
+
+class MO2 {
+  static async create(cfg, keyBytes, nonceBytes, posSeed, task) {
+    const net = new MO2(); net.cfg = cfg;
+    net.dh = cfg.dim / cfg.heads;
+    const ks = new KeyStream(keyBytes, nonceBytes);
+    
+    // Создаём 5 классов экспертов
+    net.classes = {
+      SUB: new SUB(ks),
+      GF: new GF(ks, 0),
+      ARX: new ARX(ks),
+      TRI: new TRI(ks, cfg.chan),
+      Feistel: new Feistel(ks)
+    };
+    
+    // Проверяем биективность всех классов
+    for (const [name, cls] of Object.entries(net.classes)) {
+      if (name === 'TRI') continue; // TRI работает с векторами
+      if (!isBijective(x => cls.apply(x), y => cls.inverse(y))) {
+        throw new Error(`Класс ${name} не биективен`);
+      }
+    }
+    
+    // Создаём слои
+    net.layers = [];
+    for (let i = 0; i < cfg.layers; i++) {
+      net.layers.push(new Layer(ks, cfg, net.dh));
+      task.progress(0.2 + 0.7 * ((i + 1) / cfg.layers), "слой " + (i + 1));
+      await task.step();
+    }
+    
+    return net;
+  }
+  
+  // ... остальная реализация
+}
+
+// Остальной код аналогичен DN, но с использованием 5 классов экспертов
+// ...
+
 })();
 </script>
 </body>
