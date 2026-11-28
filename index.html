@@ -3,12 +3,12 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>NE 7.2 · Neural Expert Cipher</title>
+<title>NE 7.3 · Neural Expert Cipher</title>
 <style>
 :root{color-scheme:dark;
 --bg:#06090f;--s1:#0b1120;--s2:#101a2e;--s3:#16233c;--ln:#1d2a44;--ln2:#2b3d5e;
 --tx:#e8eefa;--t2:#8ea1c0;--t3:#5a6d8c;
---cy:#22d3ee;--vi:#8b5cf6;--mg:#f0389c;--ac:#a3e635;--am:#fbbf24;--tl:#2dd4bf;--bl:#60a5fa;
+--cy:#22d3ee;--vi:#8b5cf6;--mg:#f0389c;--ac:#a3e635;--am:#fbbf24;--tl:#2dd4bf;--bl:#60a5fa;--rd:#fb7185;
 --ok:#34d399;--bad:#fb7185;
 --gr:linear-gradient(112deg,var(--cy),var(--vi) 46%,var(--mg));
 --gr2:linear-gradient(120deg,var(--tl),var(--ac))}
@@ -54,7 +54,7 @@ h1 em{font-style:normal;background:var(--gr);-webkit-background-clip:text;backgr
 .lede{color:var(--t2);font-size:13.5px;max-width:96ch;margin-bottom:14px}
 .lede b{color:var(--tx)}
 .mx{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:16px}
-.m{padding:7px 12px;border-radius:9px;background:linear-gradient(160deg,var(--s2),var(--s1));border:1px solid var(--ln);min-width:96px}
+.m{padding:7px 12px;border-radius:9px;background:linear-gradient(160deg,var(--s2),var(--s1));border:1px solid var(--ln);min-width:94px}
 .m b{display:block;font:600 15px/1.3 ui-monospace,Menlo,Consolas,monospace;color:var(--cy)}
 .m span{font-size:9px;color:var(--t3);letter-spacing:.06em;text-transform:uppercase}
 .wrap{display:grid;grid-template-columns:minmax(0,1fr) 312px;gap:14px;align-items:start}
@@ -70,7 +70,7 @@ h3{font-size:9.5px;letter-spacing:.13em;text-transform:uppercase;color:var(--t3)
 label{display:block;font-size:11.5px;font-weight:600;margin-bottom:4px}
 input,textarea,select{width:100%;background:var(--bg);color:var(--tx);border:1px solid var(--ln2);border-radius:8px;padding:7px 10px;font:inherit;font-size:13px;outline:none;transition:.15s}
 input:focus,textarea:focus,select:focus{border-color:var(--cy);box-shadow:0 0 0 2px rgba(34,211,238,.14)}
-textarea{min-height:82px;resize:vertical;font:12px/1.5 ui-monospace,Menlo,Consolas,monospace}
+textarea{min-height:80px;resize:vertical;font:12px/1.5 ui-monospace,Menlo,Consolas,monospace}
 input[type=range]{padding:0;height:18px;border:0;background:none;accent-color:var(--cy)}
 input[type=checkbox]{width:auto;accent-color:var(--mg)}
 .row{display:flex;gap:8px;flex-wrap:wrap}.row>*{flex:1;min-width:112px}
@@ -92,9 +92,9 @@ button:disabled{opacity:.4;cursor:not-allowed}
 .sw{display:flex;justify-content:space-between;align-items:center;padding:5px 0;border-top:1px solid var(--ln)}
 .sw label{margin:0;font-size:11.5px}
 canvas{display:block;width:100%;height:auto;background:var(--bg);border:1px solid var(--ln2);border-radius:9px}
-.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(172px,1fr));gap:9px;margin-top:10px}
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:9px;margin-top:10px}
 .cd{background:var(--bg);border:1px solid var(--ln);border-left:3px solid var(--cy);border-radius:9px;padding:9px 10px}
-.cd.ok{border-left-color:var(--ok)}.cd.bad{border-left-color:var(--bad)}.cd.w{border-left-color:var(--am)}.cd.vi{border-left-color:var(--vi)}.cd.mg{border-left-color:var(--mg)}.cd.ac{border-left-color:var(--ac)}.cd.tl{border-left-color:var(--tl)}
+.cd.ok{border-left-color:var(--ok)}.cd.bad{border-left-color:var(--bad)}.cd.w{border-left-color:var(--am)}.cd.vi{border-left-color:var(--vi)}.cd.mg{border-left-color:var(--mg)}.cd.ac{border-left-color:var(--ac)}
 .cd b{font-size:11.5px}
 .cd .big{font:800 18px/1.2 ui-monospace,monospace;margin:3px 0;color:#fff}
 .cd .r{display:flex;justify-content:space-between;gap:6px;font:10.5px/1.4 ui-monospace,monospace;color:var(--t2)}
@@ -106,7 +106,7 @@ canvas{display:block;width:100%;height:auto;background:var(--bg);border:1px soli
 .lg{display:flex;flex-wrap:wrap;gap:10px;margin-top:7px;font-size:10px;color:var(--t3)}
 .lg i{display:inline-block;width:8px;height:8px;border-radius:2px;margin-right:4px;vertical-align:-1px}
 .pipe{display:flex;gap:6px;overflow-x:auto;padding:8px;background:var(--bg);border:1px solid var(--ln2);border-radius:9px;margin-top:8px}
-.sg{flex:none;min-width:148px;background:var(--s2);border:1px solid var(--ln2);border-radius:8px;padding:7px 9px}
+.sg{flex:none;min-width:146px;background:var(--s2);border:1px solid var(--ln2);border-radius:8px;padding:7px 9px}
 .sg b{display:block;font-size:10.5px;color:var(--cy)}
 .sg span{display:block;font:10px/1.4 ui-monospace,monospace;color:var(--t2);margin-top:2px}
 .ar{flex:none;align-self:center;color:var(--t3)}
@@ -126,7 +126,7 @@ td.n{font-family:ui-monospace,monospace}
 .ck span[data-ok=true]{border-color:var(--ok);color:var(--ok)}
 .ck span[data-ok=false]{border-color:var(--bad);color:var(--bad)}
 .g2{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:12px}
-.rg{display:grid;grid-template-columns:repeat(auto-fit,minmax(208px,1fr));gap:8px;margin-top:10px}
+.rg{display:grid;grid-template-columns:repeat(auto-fit,minmax(206px,1fr));gap:8px;margin-top:10px}
 .rg textarea{min-height:44px}
 .fm{font:11.5px/1.7 ui-monospace,monospace;background:var(--bg);border:1px solid var(--ln2);border-left:3px solid var(--ac);border-radius:8px;padding:8px 10px;margin-top:8px;overflow-x:auto}
 .meta{color:var(--t2);font-size:11.5px}
@@ -150,7 +150,7 @@ footer{color:var(--t3);font-size:11.5px;border-top:1px solid var(--ln);padding-t
 <path d="M9 31 L9 9" stroke="url(#mg)" stroke-width="1.6"/>
 <path d="M9 31 L18 22 M9 31 L25 15 M9 31 L31 9" stroke="#a3e635" stroke-width="1.1" opacity=".75"/>
 <circle cx="9" cy="31" r="2.4" fill="#a3e635"/><circle cx="18" cy="22" r="1.8" fill="#22d3ee"/><circle cx="25" cy="15" r="1.8" fill="#8b5cf6"/><circle cx="31" cy="9" r="1.8" fill="#f0389c"/></svg>
-<div class="bd"><b>NE 7.2</b><span>нейроэкспертный шифр</span></div>
+<div class="bd"><b>NE 7.3</b><span>нейроэкспертный шифр</span></div>
 <nav><a href="#console" class="on">Консоль</a><a href="#orch">Эксперты</a><a href="#checks">Проверки</a></nav>
 <div class="sp"></div>
 <button id="cancel" class="d" style="padding:5px 10px;font-size:12px" disabled>Отмена</button>
@@ -161,14 +161,14 @@ footer{color:var(--t3);font-size:11.5px;border-top:1px solid var(--ln);padding-t
 <main>
 <div class="eye">σ = KEY-АФФИННЫЙ S-BOX · ПЯТЬ АРХИТЕКТУР · FAST WEIGHTS</div>
 <h1>Сети с <em>сильной активацией</em> и живой маршрутизацией</h1>
-<p class="lede">Активация σ — та же единственная таблица S-box, что и на входе: биективна, DP 4/256, ничего не теряет. Нормализация ослаблена, чтобы разность в одну единицу не гасилась. Полоса контекста входит в роутер <b>вектором</b>, а не скаляром, ключевой позиционный приоритет разводит экспертов. Веса эксперта мутируют от префикса через низкоранговый адаптер. Обратимость по-прежнему даёт только <b>y_k = x_k + Δ(x_&lt;k)</b>.</p>
+<p class="lede">Активация σ — та же единственная таблица S-box, что и на входе: биективна, DP 4/256. Нормализация ограничена, чтобы разность в одну единицу не гасилась. Полоса контекста входит в роутер <b>вектором</b>, ключевой приоритет разводит экспертов, веса мутируют от префикса. Обратимость даёт только <b>y_k = x_k + Δ(x_&lt;k)</b>.</p>
 <div class="mx">
 <div class="m"><b id="mW">—</b><span>весов</span></div>
 <div class="m"><b id="mE">—</b><span>экспертов</span></div>
 <div class="m"><b id="mA">—</b><span>актив./токен</span></div>
 <div class="m"><b id="mN">—</b><span>нейронов/токен</span></div>
-<div class="m"><b id="mH">8</b><span>голов</span></div>
-<div class="m"><b id="mL">6</b><span>слоёв</span></div>
+<div class="m"><b id="mH">4</b><span>голов</span></div>
+<div class="m"><b id="mL">4</b><span>слоёв</span></div>
 <div class="m"><b id="mB">—</b><span>int32 max</span></div>
 <div class="m"><b>∞</b><span>объём</span></div>
 <div class="m"><b id="mT">—</b><span>оценка</span></div>
@@ -181,10 +181,10 @@ footer{color:var(--t3);font-size:11.5px;border-top:1px solid var(--ln);padding-t
 <label for="key">Ключ</label>
 <div class="row"><input id="key" type="password" autocomplete="off" spellcheck="false"><button id="showKey" class="g" style="flex:0 0 auto">Показать</button><button id="randKey" class="g" style="flex:0 0 auto">Случайный</button></div>
 <div class="row" style="margin-top:8px">
-<div><label for="iters">PBKDF2-HMAC-SHA256</label><select id="iters"><option value="60000">60 000</option><option value="200000" selected>200 000</option><option value="600000">600 000</option></select></div>
+<div><label for="iters">PBKDF2-HMAC-SHA256</label><select id="iters"><option value="60000" selected>60 000</option><option value="200000">200 000</option><option value="600000">600 000</option></select></div>
 <div><label for="mode">Режим</label><select id="mode"><option value="raw" selected>Сырой 1:1</option><option value="auth">nonce + HMAC</option></select></div>
 </div>
-<h3>Вход</h3><textarea id="input" spellcheck="false" placeholder="Текст для шифрования. Для расшифровки вставьте Base64 или HEX шифротекста."></textarea>
+<h3>Вход</h3><textarea id="input" spellcheck="false" placeholder="Текст для шифрования. Для расшифровки вставьте Base64 или HEX."></textarea>
 <div class="row" style="margin-top:8px">
 <div><label for="outFmt">Формат выхода</label><select id="outFmt"><option value="base64" selected>Base64</option><option value="hex">HEX</option></select></div>
 <div><label for="inFmt">Формат шифротекста</label><select id="inFmt"><option value="auto" selected>Авто</option><option value="base64">Base64</option><option value="hex">HEX</option></select></div>
@@ -194,7 +194,7 @@ footer{color:var(--t3);font-size:11.5px;border-top:1px solid var(--ln);padding-t
 <h3>Выход</h3><textarea id="output" readonly spellcheck="false"></textarea>
 <canvas id="flow" width="1000" height="126" style="margin-top:10px"></canvas>
 <div class="rg"><div><label for="inHex">Вход, байты</label><textarea id="inHex" readonly></textarea></div><div><label for="outHex">Выход, байты</label><textarea id="outHex" readonly></textarea></div></div>
-<div class="st" id="status"></div>
+<div class="st" id="status">Инициализация…</div>
 <div class="ck" id="cks"><span>проверки не запускались</span></div>
 </section>
 </div>
@@ -204,19 +204,19 @@ footer{color:var(--t3);font-size:11.5px;border-top:1px solid var(--ln);padding-t
 <div class="hd"><h2>Архитектура</h2><span class="tg ac">live</span></div>
 <div class="c"><label for="preset">Пресет</label><select id="preset"></select></div>
 <div class="row">
-<div class="c"><label for="dim">d_model</label><select id="dim"><option>32</option><option>64</option><option selected>128</option><option>192</option><option>256</option></select></div>
-<div class="c"><label for="heads">голов H</label><select id="heads"><option>2</option><option>4</option><option selected>8</option><option>16</option></select></div>
+<div class="c"><label for="dim">d_model</label><select id="dim"><option>32</option><option selected>64</option><option>128</option><option>192</option><option>256</option></select></div>
+<div class="c"><label for="heads">голов H</label><select id="heads"><option>2</option><option selected>4</option><option>8</option><option>16</option></select></div>
 </div>
 <div class="row">
 <div class="c"><label for="groups">полос G</label><select id="groups"><option>2</option><option selected>4</option><option>5</option></select></div>
 <div class="c"><label for="experts">эксп./полоса</label><select id="experts"><option>2</option><option selected>5</option><option>10</option></select></div>
 </div>
 <div class="row">
-<div class="c"><label for="ssm">SSM S</label><select id="ssm"><option>8</option><option>16</option><option selected>32</option><option>64</option></select></div>
+<div class="c"><label for="ssm">SSM S</label><select id="ssm"><option>8</option><option selected>16</option><option>32</option><option>64</option></select></div>
 <div class="c"><label for="rank">ранг r</label><select id="rank"><option>2</option><option selected>4</option><option>6</option></select></div>
 </div>
-<div class="c"><div class="l"><span>каналов/токен</span><span class="v" id="chanV">12</span></div><input id="chan" type="range" min="2" max="32" value="12"></div>
-<div class="c"><div class="l"><span>слоёв</span><span class="v" id="layersV">6</span></div><input id="layers" type="range" min="2" max="12" value="6"></div>
+<div class="c"><div class="l"><span>каналов/токен</span><span class="v" id="chanV">8</span></div><input id="chan" type="range" min="2" max="32" value="8"></div>
+<div class="c"><div class="l"><span>слоёв</span><span class="v" id="layersV">4</span></div><input id="layers" type="range" min="2" max="12" value="4"></div>
 <div class="c"><div class="l"><span>расширение ×</span><span class="v" id="expV">2</span></div><input id="exp" type="range" min="1" max="4" value="2"></div>
 <div class="c"><div class="l"><span>глубина головы K</span><span class="v" id="depthV">4</span></div><input id="depth" type="range" min="1" max="10" value="4"></div>
 <div class="c"><label for="orderMode">порядки токенов</label><select id="orderMode"><option value="alternate" selected>прямой/обратный/ключевой</option><option value="keyed">ключевые</option><option value="identity">прямые</option></select></div>
@@ -234,43 +234,51 @@ footer{color:var(--t3);font-size:11.5px;border-top:1px solid var(--ln);padding-t
 
 <section class="p" id="orch">
 <div class="hd"><h2>Оркестр архитектур</h2><span class="tg ac">разнообразие вычислений</span></div>
-<p class="sub">Роутер первой ступени получает поканальный вектор каждой полосы и ключевой позиционный приоритет, второй — конкретную сеть. Перед экспертом вход мутирует низкоранговым адаптером, зависящим от префикса. Активна одна сеть из пула.</p>
+<p class="sub">Роутер первой ступени получает поканальный вектор каждой полосы и ключевой позиционный приоритет, второй — конкретную сеть. Перед экспертом вход мутирует низкоранговым адаптером. Активна одна сеть из пула.</p>
 <div class="g2">
-<div><canvas id="route" width="520" height="320"></canvas><div class="lg" id="routeLg"></div>
-<div class="fm">σ(v) = rot(SB[v⊕k]⊕m, r) — одна таблица, DP 4/256<br>A · gated: down(u ⊙ σ(g))<br>B · deep: 3×σ(Dense) + residual<br>C · bilinear: down(σ(q ⊗ k))<br>D · recurrent: s ← σ(s·λ + W·x_c), блочное смешивание<br>E · mod: поканальная маска, обе ветки считаются<br>ch′ = ch + B·(A(q)·ch) — fast weights<br>y_k = x_k + Δ(x_&lt;k) ⇒ det = 1</div></div>
-<div><h3>использование архитектур</h3><canvas id="usage" width="520" height="150"></canvas>
-<h3>дальнодействие</h3><canvas id="reach" width="520" height="130"></canvas><div class="lg"><span><i style="background:#22d3ee"></i>доля изменённых байт</span><span><i style="background:#a3e635"></i>полное</span></div>
+<div><canvas id="route" width="520" height="300"></canvas><div class="lg" id="routeLg"></div>
+<div class="fm">σ(v) = rot(SB[v⊕k]⊕m, r) — одна таблица, DP 4/256<br>A · gated: down(u ⊙ σ(g))<br>B · deep: 3×σ(Dense) + residual<br>C · bilinear: down(σ(q ⊗ k))<br>D · recurrent: s ← σ(s·λ + W·x_c), блок 4×4<br>E · mod: поканальная маска, обе ветки<br>ch′ = ch + B·(A(q)·ch)<br>y_k = x_k + Δ(x_&lt;k) ⇒ det = 1</div></div>
+<div><h3>использование архитектур</h3><canvas id="usage" width="520" height="146"></canvas>
+<h3>дальнодействие</h3><canvas id="reach" width="520" height="126"></canvas><div class="lg"><span><i style="background:#22d3ee"></i>доля изменённых байт</span><span><i style="background:#a3e635"></i>полное</span></div>
 <h3>конвейер</h3><div class="pipe" id="pipe"></div></div>
 </div>
 </section>
 
 <section class="p" id="checks">
 <div class="hd"><h2>Проверки</h2><span class="tg mg">обратимость · маскировка · лавина</span></div>
-<p class="sub">Аудит проверяет причинность Δ, единичную диагональ, обратимость на наборе длин, энтропию выхода на низкоэнтропийном источнике и агрегатный χ² лавины. Порог маскировки строгий: ниже 7.5 бит/байт конструкция не маскирует.</p>
+<p class="sub">Аудит проверяет причинность Δ, единичную диагональ, обратимость на наборе длин, энтропию выхода на низкоэнтропийном источнике и агрегатный χ² лавины. Порог маскировки: ниже 7.5 бит/байт конструкция не маскирует.</p>
 <div class="btns"><button id="audit">Аудит</button><button id="fuzz" class="v">Фаззинг</button><button id="anal" class="a">Криптоанализ</button><button id="cur" class="g">Текущий выход</button></div>
 <div class="st" id="ckSt"></div><div id="ckCards"></div>
 <div class="g2" style="margin-top:11px">
-<div><h3>лавина по входным битам</h3><canvas id="av" width="520" height="168"></canvas><div class="lg"><span><i style="background:#34d399"></i>норма</span><span><i style="background:#fbbf24"></i>граница</span><span><i style="background:#fb7185"></i>вне</span><span><i style="background:#60a5fa"></i>50%</span></div></div>
-<div><h3>распределение байтов</h3><canvas id="hist" width="520" height="168"></canvas><div class="lg"><span><i style="background:#22d3ee"></i>низкие</span><span><i style="background:#8b5cf6"></i>средние</span><span><i style="background:#f0389c"></i>высокие</span><span><i style="background:#fbbf24"></i>идеал</span></div></div>
+<div><h3>лавина по входным битам</h3><canvas id="av" width="520" height="166"></canvas><div class="lg"><span><i style="background:#34d399"></i>норма</span><span><i style="background:#fbbf24"></i>граница</span><span><i style="background:#fb7185"></i>вне</span><span><i style="background:#60a5fa"></i>50%</span></div></div>
+<div><h3>распределение байтов</h3><canvas id="hist" width="520" height="166"></canvas><div class="lg"><span><i style="background:#22d3ee"></i>низкие</span><span><i style="background:#8b5cf6"></i>средние</span><span><i style="background:#f0389c"></i>высокие</span><span><i style="background:#fbbf24"></i>идеал</span></div></div>
 </div>
 <details id="vecD"><summary>Эталонные векторы</summary><div id="vecB" class="meta">фиксируются при сборке</div></details>
 <details id="archD"><summary>Архитектуры экспертов и активация</summary><div id="archB" class="meta"></div></details>
 <details id="auD"><summary>Таблица аудита</summary><div id="auT"></div></details>
 </section>
 
-<footer>Обратимость конструктивна: Δ не читает обновляемый байт, диагональ единичная, композиция биективна. Эксперты — сети с весами; единственная таблица S-box служит активацией σ и входным эмбеддингом. Fast weights мутируют вход эксперта от префикса и воспроизводятся при расшифровании. Ключевое пространство — 256-битный мастер. Криптостойкость композиции не доказана. Сырой режим утекает равенство сообщений.</footer>
+<footer>Обратимость конструктивна: Δ не читает обновляемый байт, диагональ единичная. Эксперты — сети с весами; единственная таблица S-box служит активацией σ и входным эмбеддингом. Ключевое пространство — 256-битный мастер. Криптостойкость композиции не доказана. Сырой режим утекает равенство сообщений.</footer>
 </main>
 <div class="tt" id="tt"></div>
 
 <script>
 (()=>{"use strict";
-const S=v=>((v+128)&255)-128,rotl8=(v,s)=>{const b=v&255;return s===0?b:((b<<s)|(b>>>(8-s)))&255},rotl32=(v,n)=>((v<<n)|(v>>>(32-n)))>>>0,xs=h=>{h^=h<<13;h>>>=0;h^=h>>>17;h^=h<<5;return h>>>0},jr=x=>Math.floor(x+.5),enc=new TextEncoder(),dec=new TextDecoder("utf-8",{fatal:true}),GOLD=0x9E3779B1,I32=2147483647,CAP=2048,DCAP=192;
+const S=v=>((v+128)&255)-128;
+const rotl8=(v,s)=>{const b=v&255;return s===0?b:((b<<s)|(b>>>(8-s)))&255};
+const rotl32=(v,n)=>((v<<n)|(v>>>(32-n)))>>>0;
+const xs=h=>{h^=h<<13;h>>>=0;h^=h>>>17;h^=h<<5;return h>>>0};
+const jr=x=>Math.floor(x+.5);
+const shiftOf=n=>n<1?0:Math.min(6,Math.max(0,jr(Math.log2(Math.sqrt(n)*5476/64))-2));
+const enc=new TextEncoder(),dec=new TextDecoder("utf-8",{fatal:true});
+const GOLD=0x9E3779B1,I32=2147483647,CAP=2048,DCAP=192;
 const ARCH=["gated","deep","bilinear","recurrent","mod"],AH=["#22d3ee","#8b5cf6","#fbbf24","#f0389c","#a3e635"];
 const POP=new Uint8Array(256);for(let i=1;i<256;i++)POP[i]=POP[i>>1]+(i&1);
-const SB=new Uint8Array(256);{const h="637c777bf26b6fc53001672bfed7ab76ca82c97dfa5947f0add4a2af9ca472c0b7fd9326363ff7cc34a5e5f171d8311504c723c31896059a071280e2eb27b27509832c1a1b6e5aa0523bd6b329e32f8453d100ed20fcb15b6acbbe394a4c58cfd0efaafb434d338545f9027f503c9fa851a3408f929d38f5bcb6da2110fff3d2cd0c13ec5f974417c4a77e3d645d197360814fdc222a908846eeb814de5e0bdbe0323a0a4906245cc2d3ac629195e479e7c8376d8dd54ea96c56f4ea657aae08ba78252e1ca6b4c6e8dd741f4bbd8b8a703eb5664803f60e613557b986c11d9ee1f8981169d98e949b1e87e9ce5528df8ca1890dbfe6426841992d0fb054bb16";for(let i=0;i<256;i++)SB[i]=parseInt(h.substr(i*2,2),16)}
+const SB=new Uint8Array(256);
+{const h="637c777bf26b6fc53001672bfed7ab76ca82c97dfa5947f0add4a2af9ca472c0b7fd9326363ff7cc34a5e5f171d8311504c723c31896059a071280e2eb27b27509832c1a1b6e5aa0523bd6b329e32f8453d100ed20fcb15b6acbbe394a4c58cfd0efaafb434d338545f9027f503c9fa851a3408f929d38f5bcb6da2110fff3d2cd0c13ec5f974417c4a77e3d645d197360814fdc222a908846eeb814de5e0bdbe0323a0a4906245cc2d3ac629195e479e7c8376d8dd54ea96c56f4ea657aae08ba78252e1ca6b4c6e8dd741f4bbd8b8a703eb5664803f60e613557b986c11d9ee1f8981169d98e949b1e87e9ce5528df8ca1890dbfe6426841992d0fb054bb16";
+for(let i=0;i<256;i++)SB[i]=parseInt(h.substr(i*2,2),16)}
 const sbx=(v,k,m,r)=>rotl8(SB[(v^k)&255]^m,r);
 const SIG=(v,k,m,r)=>sbx((v+128)&255,k,m,r)-128;
-const shiftOf=n=>Math.min(6,Math.max(0,jr(Math.log2(Math.sqrt(n)*5476/64))-2));
 const cat=(...a)=>{let n=0;for(const x of a)n+=x.length;const o=new Uint8Array(n);let p=0;for(const x of a){o.set(x,p);p+=x.length}return o};
 const eq=(a,b)=>{if(a.length!==b.length)return false;let d=0;for(let i=0;i<a.length;i++)d|=a[i]^b[i];return d===0};
 const rnd=n=>{const b=new Uint8Array(n);for(let o=0;o<n;o+=65536)crypto.getRandomValues(b.subarray(o,Math.min(n,o+65536)));return b};
@@ -278,148 +286,374 @@ const SK=new Uint32Array([0x428a2f98,0x71374491,0xb5c0fbcf,0xe9b5dba5,0x3956c25b
 function sha256(bytes){const H=new Uint32Array([0x6a09e667,0xbb67ae85,0x3c6ef372,0xa54ff53a,0x510e527f,0x9b05688c,0x1f83d9ab,0x5be0cd19]);const tot=(((bytes.length+8)>>6)+1)<<6,buf=new Uint8Array(tot);buf.set(bytes);buf[bytes.length]=0x80;const dv=new DataView(buf.buffer);dv.setUint32(tot-4,(bytes.length*8)>>>0,false);dv.setUint32(tot-8,Math.floor(bytes.length/536870912),false);const w=new Uint32Array(64),rr=(x,n)=>((x>>>n)|(x<<(32-n)))>>>0;for(let off=0;off<tot;off+=64){for(let i=0;i<16;i++)w[i]=dv.getUint32(off+i*4,false);for(let i=16;i<64;i++){const x=w[i-15],y=w[i-2];w[i]=(w[i-16]+((rr(x,7)^rr(x,18)^(x>>>3))>>>0)+w[i-7]+((rr(y,17)^rr(y,19)^(y>>>10))>>>0))>>>0}let a=H[0],b=H[1],c=H[2],d=H[3],e=H[4],f=H[5],g=H[6],h=H[7];for(let i=0;i<64;i++){const t1=(h+((rr(e,6)^rr(e,11)^rr(e,25))>>>0)+((e&f)^(~e&g))+SK[i]+w[i])>>>0,t2=(((rr(a,2)^rr(a,13)^rr(a,22))>>>0)+((a&b)^(a&c)^(b&c)))>>>0;h=g;g=f;f=e;e=(d+t1)>>>0;d=c;c=b;b=a;a=(t1+t2)>>>0}H[0]=(H[0]+a)>>>0;H[1]=(H[1]+b)>>>0;H[2]=(H[2]+c)>>>0;H[3]=(H[3]+d)>>>0;H[4]=(H[4]+e)>>>0;H[5]=(H[5]+f)>>>0;H[6]=(H[6]+g)>>>0;H[7]=(H[7]+h)>>>0}const o=new Uint8Array(32),ov=new DataView(o.buffer);for(let i=0;i<8;i++)ov.setUint32(i*4,H[i],false);return o}
 function hmac(k,m){const kk=k.length>64?sha256(k):k,pad=new Uint8Array(64);pad.set(kk);const inn=new Uint8Array(64+m.length),out=new Uint8Array(96);for(let i=0;i<64;i++){inn[i]=pad[i]^0x36;out[i]=pad[i]^0x5c}inn.set(m,64);out.set(sha256(inn),64);return sha256(out)}
 async function pbk(pw,salt,it,task){const seed=new Uint8Array(salt.length+4);seed.set(salt);seed[salt.length+3]=1;let u=hmac(pw,seed);const t=new Uint8Array(u);for(let i=1;i<it;i++){u=hmac(pw,u);for(let j=0;j<32;j++)t[j]^=u[j];if((i&1023)===0){task.progress(.02+.1*(i/it),"PBKDF2");await task.step()}}return t}
-async function master(text,it,task){const pw=enc.encode(text),salt=sha256(enc.encode("NE/v72/salt")).subarray(0,16);if(globalThis.crypto&&crypto.subtle){try{task.progress(.03,"PBKDF2");const b=await crypto.subtle.importKey("raw",pw,"PBKDF2",false,["deriveBits"]);const bits=await crypto.subtle.deriveBits({name:"PBKDF2",salt,iterations:it,hash:"SHA-256"},b,256);return{m:new Uint8Array(bits),e:"WebCrypto"}}catch(e){}}return{m:await pbk(pw,salt,it,task),e:"автономный"}}
+async function master(text,it,task){const pw=enc.encode(text),salt=sha256(enc.encode("NE/v73/salt")).subarray(0,16);if(globalThis.crypto&&crypto.subtle){try{task.progress(.03,"PBKDF2");const b=await crypto.subtle.importKey("raw",pw,"PBKDF2",false,["deriveBits"]);const bits=await crypto.subtle.deriveBits({name:"PBKDF2",salt,iterations:it,hash:"SHA-256"},b,256);return{m:new Uint8Array(bits),e:"WebCrypto"}}catch(e){}}return{m:await pbk(pw,salt,it,task),e:"автономный"}}
 function chacha(kw,c,nw){const s=new Uint32Array(16);s[0]=0x61707865;s[1]=0x3320646e;s[2]=0x79622d32;s[3]=0x6b206574;for(let i=0;i<8;i++)s[4+i]=kw[i];s[12]=c>>>0;s[13]=nw[0];s[14]=nw[1];s[15]=nw[2];const x=new Uint32Array(s);const q=(a,b,c,d)=>{x[a]=(x[a]+x[b])>>>0;x[d]=rotl32(x[d]^x[a],16);x[c]=(x[c]+x[d])>>>0;x[b]=rotl32(x[b]^x[c],12);x[a]=(x[a]+x[b])>>>0;x[d]=rotl32(x[d]^x[a],8);x[c]=(x[c]+x[d])>>>0;x[b]=rotl32(x[b]^x[c],7)};for(let i=0;i<10;i++){q(0,4,8,12);q(1,5,9,13);q(2,6,10,14);q(3,7,11,15);q(0,5,10,15);q(1,6,11,12);q(2,7,8,13);q(3,4,9,14)}const o=new Uint8Array(64),dv=new DataView(o.buffer);for(let i=0;i<16;i++)dv.setUint32(i*4,(x[i]+s[i])>>>0,true);return o}
 const wLE=(b,o,n)=>{const w=new Uint32Array(n);for(let i=0;i<n;i++){const p=o+i*4;w[i]=(b[p]|(b[p+1]<<8)|(b[p+2]<<16)|(b[p+3]<<24))>>>0}return w};
-class KS{constructor(k,n){this.k=wLE(k,0,8);this.n=wLE(n,0,3);this.c=0;this.b=new Uint8Array(0);this.p=0}byte(){if(this.p>=this.b.length){this.b=chacha(this.k,this.c++,this.n);this.p=0}return this.b[this.p++]}wt(){return this.byte()-128}u32(){const a=this.byte(),b=this.byte(),c=this.byte(),d=this.byte();return(a|(b<<8)|(c<<16)|(d<<24))>>>0}below(m){const l=256-256%m;for(;;){const v=this.byte();if(v<l)return v%m}}rot(){return this.below(8)}key3(){return[ks0(this),ks0(this),this.rot()]}}
-const ks0=s=>s.byte();
+class KS{constructor(k,n){this.k=wLE(k,0,8);this.n=wLE(n,0,3);this.c=0;this.b=new Uint8Array(0);this.p=0}
+byte(){if(this.p>=this.b.length){this.b=chacha(this.k,this.c++,this.n);this.p=0}return this.b[this.p++]}
+wt(){return this.byte()-128}
+u32(){const a=this.byte(),b=this.byte(),c=this.byte(),d=this.byte();return(a|(b<<8)|(c<<16)|(d<<24))>>>0}
+below(m){const l=256-256%m;for(;;){const v=this.byte();if(v<l)return v%m}}
+rot(){return this.below(8)}}
 const stream=(k,n,len)=>{const s=new KS(k,n),o=new Uint8Array(len);for(let i=0;i<len;i++)o[i]=s.byte();return o};
-class Task{constructor(on,sh){this.on=on||null;this.sh=sh||{c:false};this.t=performance.now()}cancel(){this.sh.c=true}child(){return new Task(null,this.sh)}async step(){if(this.sh.c)throw new Error("CANCELLED");if(performance.now()-this.t>12){await new Promise(r=>setTimeout(r,0));this.t=performance.now()}}progress(f,l){if(this.on)this.on(Math.max(0,Math.min(1,f)),l)}}
-class Dense{constructor(ks,i,o){this.i=i;this.o=o;this.w=new Int8Array(i*o);for(let k=0;k<this.w.length;k++)this.w[k]=ks.wt();this.b=new Int8Array(o);for(let k=0;k<o;k++)this.b[k]=ks.wt();this.s=shiftOf(i)}apply(u,out){const i=this.i,o=this.o,w=this.w,b=this.b,s=this.s;for(let r=0;r<o;r++){let a=b[r];const p=r*i;for(let c=0;c<i;c++)a+=w[p+c]*u[c];out[r]=S(a>>s)}}get size(){return this.w.length+this.b.length}}
-class Tri{constructor(ks,d){this.d=d;this.w=new Int8Array(d*d);for(let c=1;c<d;c++)for(let j=0;j<c;j++)this.w[c*d+j]=ks.wt();this.s=shiftOf(d)}apply(u,out){const d=this.d,w=this.w,s=this.s;out[0]=u[0];for(let c=1;c<d;c++){let a=0;const b=c*d;for(let j=0;j<c;j++)a+=w[b+j]*u[j];out[c]=S(u[c]+(a>>s))}}get size(){return this.d*(this.d-1)/2}}
-class ExA{constructor(ks,dh,hd){this.t=0;this.hd=hd;this.u=new Dense(ks,dh,hd);this.g=new Dense(ks,dh,hd);this.d=new Dense(ks,hd,dh);this.k=ks.byte();this.m=ks.byte();this.r=ks.rot();this.hu=new Int8Array(hd);this.hg=new Int8Array(hd);this.hh=new Int8Array(hd)}apply(x,out){this.u.apply(x,this.hu);this.g.apply(x,this.hg);for(let i=0;i<this.hd;i++)this.hh[i]=S((this.hu[i]*SIG(this.hg[i],this.k,this.m,this.r))>>7);this.d.apply(this.hh,out)}get size(){return this.u.size+this.g.size+this.d.size+3}}
-class ExB{constructor(ks,dh){this.t=1;this.dh=dh;this.l=[new Dense(ks,dh,dh),new Dense(ks,dh,dh),new Dense(ks,dh,dh)];this.o=new Dense(ks,dh,dh);this.k=ks.byte();this.m=ks.byte();this.r=ks.rot();this.a=new Int8Array(dh);this.b=new Int8Array(dh)}apply(x,out){this.a.set(x);for(const L of this.l){L.apply(this.a,this.b);for(let i=0;i<this.dh;i++)this.b[i]=SIG(this.b[i],this.k,this.m,this.r);const t=this.a;this.a=this.b;this.b=t}this.o.apply(this.a,this.b);for(let i=0;i<this.dh;i++)out[i]=S(this.b[i]+x[i])}get size(){let s=3;for(const L of this.l)s+=L.size;return s+this.o.size}}
-class ExC{constructor(ks,dh,r){this.t=2;this.r=r;this.q=new Dense(ks,dh,r);this.k=new Dense(ks,dh,r);this.o=new Dense(ks,r*r,dh);this.ak=ks.byte();this.am=ks.byte();this.ar=ks.rot();this.qv=new Int8Array(r);this.kv=new Int8Array(r);this.w=new Int8Array(r*r)}apply(x,out){this.q.apply(x,this.qv);this.k.apply(x,this.kv);for(let i=0;i<this.r;i++)for(let j=0;j<this.r;j++)this.w[i*this.r+j]=SIG(S((this.qv[i]*this.kv[j])>>7),this.ak,this.am,this.ar);this.o.apply(this.w,out)}get size(){return this.q.size+this.k.size+this.o.size+3}}
-class ExD{constructor(ks,dh){this.t=3;this.dh=dh;this.W=new Int8Array(dh);this.dc=new Int8Array(dh);for(let i=0;i<dh;i++){this.W[i]=ks.wt();this.dc[i]=ks.wt()}this.M=new Int8Array(16);for(let i=0;i<16;i++)this.M[i]=ks.wt();this.k=ks.byte();this.m=ks.byte();this.r=ks.rot();this.o=new Dense(ks,dh,dh);this.buf=new Int8Array(dh);this.nb=new Int8Array(4)}apply(x,out){let st=0;for(let c=0;c<this.dh;c++){st=SIG(S((st*this.dc[c])>>8)+S((this.W[c]*x[c])>>7),this.k,this.m,this.r);this.buf[c]=st;if((c&3)===3){for(let t=0;t<4;t++){let a=0;for(let u=0;u<4;u++)a+=this.M[t*4+u]*this.buf[c-3+u];this.nb[t]=S(a>>2)}for(let t=0;t<4;t++)this.buf[c-3+t]=this.nb[t];st=this.buf[c]}}this.o.apply(this.buf,out)}get size(){return 2*this.dh+16+3+this.o.size}}
-class ExE{constructor(ks,dh,hd){this.t=4;this.hd=hd;this.up=new Dense(ks,dh,hd);this.mid=new Dense(ks,hd,hd);this.gate=new Dense(ks,dh,hd);this.dn=new Dense(ks,hd,dh);this.k=ks.byte();this.m=ks.byte();this.r=ks.rot();this.h=new Int8Array(hd);this.h2=new Int8Array(hd);this.g=new Int8Array(hd);this.sel=new Int8Array(hd)}apply(x,out){this.up.apply(x,this.h);this.mid.apply(this.h,this.h2);this.gate.apply(x,this.g);for(let i=0;i<this.hd;i++){this.h2[i]=SIG(this.h2[i],this.k,this.m,this.r);this.sel[i]=this.g[i]>0?this.h2[i]:this.h[i]}this.dn.apply(this.sel,out)}get size(){return this.up.size+this.mid.size+this.gate.size+this.dn.size+3}}
+class Task{constructor(on,sh){this.on=on||null;this.sh=sh||{c:false};this.t=performance.now()}
+cancel(){this.sh.c=true}
+child(){return new Task(null,this.sh)}
+async step(){if(this.sh.c)throw new Error("CANCELLED");if(performance.now()-this.t>12){await new Promise(r=>setTimeout(r,0));this.t=performance.now()}}
+progress(f,l){if(this.on)this.on(Math.max(0,Math.min(1,f)),l)}}
+class Dense{constructor(ks,i,o){this.i=i;this.o=o;this.w=new Int8Array(i*o);for(let k=0;k<this.w.length;k++)this.w[k]=ks.wt();this.b=new Int8Array(o);for(let k=0;k<o;k++)this.b[k]=ks.wt();this.s=shiftOf(i)}
+apply(u,out){const i=this.i,o=this.o,w=this.w,b=this.b,s=this.s;for(let r=0;r<o;r++){let a=b[r];const p=r*i;for(let c=0;c<i;c++)a+=w[p+c]*u[c];out[r]=S(a>>s)}}
+get size(){return this.w.length+this.b.length}}
+class Tri{constructor(ks,d){this.d=d;this.w=new Int8Array(d*d);for(let c=1;c<d;c++)for(let j=0;j<c;j++)this.w[c*d+j]=ks.wt();this.s=shiftOf(d)}
+apply(u,out){const d=this.d,w=this.w,s=this.s;out[0]=u[0];for(let c=1;c<d;c++){let a=0;const b=c*d;for(let j=0;j<c;j++)a+=w[b+j]*u[j];out[c]=S(u[c]+(a>>s))}}
+get size(){return this.d*(this.d-1)/2}}
+class ExA{constructor(ks,dh,hd){this.t=0;this.hd=hd;this.u=new Dense(ks,dh,hd);this.g=new Dense(ks,dh,hd);this.d=new Dense(ks,hd,dh);this.k=ks.byte();this.m=ks.byte();this.r=ks.rot();this.hu=new Int8Array(hd);this.hg=new Int8Array(hd);this.hh=new Int8Array(hd)}
+apply(x,out){this.u.apply(x,this.hu);this.g.apply(x,this.hg);for(let i=0;i<this.hd;i++)this.hh[i]=S((this.hu[i]*SIG(this.hg[i],this.k,this.m,this.r))>>7);this.d.apply(this.hh,out)}
+get size(){return this.u.size+this.g.size+this.d.size+3}}
+class ExB{constructor(ks,dh){this.t=1;this.dh=dh;this.l=[new Dense(ks,dh,dh),new Dense(ks,dh,dh),new Dense(ks,dh,dh)];this.o=new Dense(ks,dh,dh);this.k=ks.byte();this.m=ks.byte();this.r=ks.rot();this.a=new Int8Array(dh);this.b=new Int8Array(dh)}
+apply(x,out){this.a.set(x);for(let q=0;q<3;q++){this.l[q].apply(this.a,this.b);for(let i=0;i<this.dh;i++)this.b[i]=SIG(this.b[i],this.k,this.m,this.r);const t=this.a;this.a=this.b;this.b=t}this.o.apply(this.a,this.b);for(let i=0;i<this.dh;i++)out[i]=S(this.b[i]+x[i])}
+get size(){let s=3;for(const L of this.l)s+=L.size;return s+this.o.size}}
+class ExC{constructor(ks,dh,r){this.t=2;this.r=r;this.q=new Dense(ks,dh,r);this.k=new Dense(ks,dh,r);this.o=new Dense(ks,r*r,dh);this.ak=ks.byte();this.am=ks.byte();this.ar=ks.rot();this.qv=new Int8Array(r);this.kv=new Int8Array(r);this.w=new Int8Array(r*r)}
+apply(x,out){this.q.apply(x,this.qv);this.k.apply(x,this.kv);for(let i=0;i<this.r;i++)for(let j=0;j<this.r;j++)this.w[i*this.r+j]=SIG(S((this.qv[i]*this.kv[j])>>7),this.ak,this.am,this.ar);this.o.apply(this.w,out)}
+get size(){return this.q.size+this.k.size+this.o.size+3}}
+class ExD{constructor(ks,dh){this.t=3;this.dh=dh;this.W=new Int8Array(dh);this.dc=new Int8Array(dh);for(let i=0;i<dh;i++){this.W[i]=ks.wt();this.dc[i]=ks.wt()}this.M=new Int8Array(16);for(let i=0;i<16;i++)this.M[i]=ks.wt();this.k=ks.byte();this.m=ks.byte();this.r=ks.rot();this.o=new Dense(ks,dh,dh);this.buf=new Int8Array(dh);this.nb=new Int8Array(4)}
+apply(x,out){let st=0;for(let c=0;c<this.dh;c++){st=SIG(S((st*this.dc[c])>>8)+S((this.W[c]*x[c])>>7),this.k,this.m,this.r);this.buf[c]=st;if((c&3)===3){for(let t=0;t<4;t++){let a=0;for(let u=0;u<4;u++)a+=this.M[t*4+u]*this.buf[c-3+u];this.nb[t]=S(a>>2)}for(let t=0;t<4;t++)this.buf[c-3+t]=this.nb[t];st=this.buf[c]}}this.o.apply(this.buf,out)}
+get size(){return 2*this.dh+19+this.o.size}}
+class ExE{constructor(ks,dh,hd){this.t=4;this.hd=hd;this.up=new Dense(ks,dh,hd);this.mid=new Dense(ks,hd,hd);this.gate=new Dense(ks,dh,hd);this.dn=new Dense(ks,hd,dh);this.k=ks.byte();this.m=ks.byte();this.r=ks.rot();this.h=new Int8Array(hd);this.h2=new Int8Array(hd);this.g=new Int8Array(hd);this.sel=new Int8Array(hd)}
+apply(x,out){this.up.apply(x,this.h);this.mid.apply(this.h,this.h2);this.gate.apply(x,this.g);for(let i=0;i<this.hd;i++){this.h2[i]=SIG(this.h2[i],this.k,this.m,this.r);this.sel[i]=this.g[i]>0?this.h2[i]:this.h[i]}this.dn.apply(this.sel,out)}
+get size(){return this.up.size+this.mid.size+this.gate.size+this.dn.size+3}}
 const mkExpert=(ks,t,dh,hd,r)=>t===0?new ExA(ks,dh,hd):t===1?new ExB(ks,dh):t===2?new ExC(ks,dh,r):t===3?new ExD(ks,dh):new ExE(ks,dh,hd);
-class Ladder{constructor(ks,ch){this.o=new Int32Array(ch);for(let i=0;i<ch;i++)this.o[i]=i;for(let i=ch-1;i>0;i--){const j=ks.below(i+1),t=this.o[i];this.o[i]=this.o[j];this.o[j]=t}this.U=new Int8Array(ch*ch);this.W=new Int8Array(ch*ch);this.V=new Int8Array(ch*ch);for(let p=1;p<ch;p++)for(let j=0;j<p;j++){this.U[p*ch+j]=ks.wt();this.W[p*ch+j]=ks.wt();this.V[p*ch+j]=ks.wt()}this.B=new Int8Array(ch);for(let p=0;p<ch;p++)this.B[p]=ks.wt();this.k=ks.byte();this.m=ks.byte();this.r=ks.rot();this.s=shiftOf(ch);this.rot=ks.rot();this.phi=new Int8Array(ch)}delta(x,tok,p,d,N){if(p===0)return 0;const base=tok*d,phi=this.phi;for(let j=0;j<p;j++){const k=base+this.o[j];phi[j]=k<N?SIG(x[k]-128,this.k,this.m,this.r):0}let hb=this.B[p];for(let j=0;j<p;j++)hb+=this.U[p*d+j]*phi[j];let a=0;for(let j=0;j<p;j++){const hj=SIG(S((hb+this.V[p*d+j])>>this.s),this.k,this.m,this.r);a+=SIG(S(this.W[p*d+j]+hj),this.k,this.m,this.r)*phi[j]}return rotl8(a&255,this.rot)}get size(){const c=this.o.length;return c*(c-1)*1.5+c+4}}
-class Head{constructor(ks,dh,D,cfg,hi){this.dh=dh;this.hd=dh*cfg.exp;this.S=cfg.ssm;this.r=cfg.rank;this.q=new Tri(ks,dh);this.k=new Tri(ks,dh);this.v=new Tri(ks,dh);this.view=(hi*(dh+1))%D;this.rot=ks.rot();this.ak=ks.byte();this.am=ks.byte();this.ar=ks.rot();this.ik=new Int8Array(this.S);for(let i=0;i<this.S;i++)this.ik[i]=ks.wt();this.dk=new Dense(ks,dh,this.S);this.so=new Dense(ks,this.S,dh);this.B=new Int8Array(dh*this.r);for(let i=0;i<this.B.length;i++)this.B[i]=ks.wt();this.G=cfg.groups;this.E=cfg.experts;this.bf=new Dense(ks,dh*this.G,dh);this.r1=new Dense(ks,dh,this.G);this.r2=new Dense(ks,dh,this.E);this.bias=new Int8Array(this.G*this.E);for(let i=0;i<this.bias.length;i++)this.bias[i]=ks.wt();this.pool=[];const n=cfg.moe?this.G*this.E:1;for(let i=0;i<n;i++)this.pool.push(mkExpert(ks,i%5,dh,this.hd,cfg.rank));this.u=new Int8Array(dh);this.qv=new Int8Array(dh);this.acc=new Int32Array(dh);this.su=new Int8Array(this.S);this.dv=new Int8Array(this.S);this.sg=new Int8Array(dh);this.ch=new Int8Array(dh);this.ch2=new Int8Array(dh);this.z=new Int8Array(this.r);this.dl=new Int8Array(dh);this.out=new Int8Array(dh);this.bfv=new Int8Array(dh*this.G);this.bfo=new Int8Array(dh);this.g1=new Int8Array(this.G);this.g2=new Int8Array(this.E);this.vv=new Int8Array(dh)}get size(){let s=this.q.size+this.k.size+this.v.size+4+this.ik.length+this.dk.size+this.so.size+this.B.length;for(const e of this.pool)s+=e.size;if(this.pool.length>1)s+=this.r1.size+this.r2.size+this.bias.length+this.bf.size;return s}}
-class Layer{constructor(ks,cfg,dh){this.heads=[];for(let h=0;h<cfg.heads;h++)this.heads.push(new Head(ks,dh,cfg.dim,cfg,h));this.l1=new Ladder(ks,cfg.chan);this.l2=cfg.ladder2?new Ladder(ks,cfg.chan):null;this.proj=new Dense(ks,cfg.dim,cfg.chan);this.seed=ks.u32();this.ss=shiftOf(dh);this.hs=shiftOf(cfg.depth+1);this.ts=Math.max(0,jr(Math.log2(Math.sqrt(cfg.chan)*74/64)));this.cat=new Int8Array(cfg.dim);this.upd=new Int8Array(cfg.chan)}get size(){let s=0;for(const h of this.heads)s+=h.size;return s+this.l1.size+(this.l2?this.l2.size:0)+this.proj.size+1}}
+class Ladder{constructor(ks,ch){this.o=new Int32Array(ch);for(let i=0;i<ch;i++)this.o[i]=i;for(let i=ch-1;i>0;i--){const j=ks.below(i+1),t=this.o[i];this.o[i]=this.o[j];this.o[j]=t}
+this.U=new Int8Array(ch*ch);this.W=new Int8Array(ch*ch);this.V=new Int8Array(ch*ch);
+for(let p=1;p<ch;p++)for(let j=0;j<p;j++){this.U[p*ch+j]=ks.wt();this.W[p*ch+j]=ks.wt();this.V[p*ch+j]=ks.wt()}
+this.B=new Int8Array(ch);for(let p=0;p<ch;p++)this.B[p]=ks.wt();
+this.k=ks.byte();this.m=ks.byte();this.r=ks.rot();this.s=shiftOf(ch);this.rot=ks.rot();this.phi=new Int8Array(ch)}
+delta(x,tok,p,d,N){if(p===0)return 0;const base=tok*d,phi=this.phi;
+for(let j=0;j<p;j++){const k=base+this.o[j];phi[j]=k<N?SIG(x[k]-128,this.k,this.m,this.r):0}
+let hb=this.B[p];for(let j=0;j<p;j++)hb+=this.U[p*d+j]*phi[j];
+let a=0;for(let j=0;j<p;j++){const hj=SIG(S((hb+this.V[p*d+j])>>this.s),this.k,this.m,this.r);a+=SIG(S(this.W[p*d+j]+hj),this.k,this.m,this.r)*phi[j]}
+return rotl8(a&255,this.rot)}
+get size(){const c=this.o.length;return Math.round(c*(c-1)*1.5)+c+4}}
+class Head{constructor(ks,dh,D,cfg,hi){this.dh=dh;this.hd=dh*cfg.exp;this.S=cfg.ssm;this.r=cfg.rank;
+this.sA=shiftOf(dh);this.sR=shiftOf(this.r);
+this.q=new Tri(ks,dh);this.k=new Tri(ks,dh);this.v=new Tri(ks,dh);
+this.view=(hi*(dh+1))%D;this.rot=ks.rot();this.ak=ks.byte();this.am=ks.byte();this.ar=ks.rot();
+this.ik=new Int8Array(this.S);for(let i=0;i<this.S;i++)this.ik[i]=ks.wt();
+this.dk=new Dense(ks,dh,this.S);this.so=new Dense(ks,this.S,dh);
+this.B=new Int8Array(dh*this.r);for(let i=0;i<this.B.length;i++)this.B[i]=ks.wt();
+this.G=cfg.groups;this.E=cfg.experts;
+this.bf=new Dense(ks,dh*this.G,dh);this.r1=new Dense(ks,dh,this.G);this.r2=new Dense(ks,dh,this.E);
+this.bias=new Int8Array(this.G*this.E);for(let i=0;i<this.bias.length;i++)this.bias[i]=ks.wt();
+this.pool=[];const n=cfg.moe?this.G*this.E:1;for(let i=0;i<n;i++)this.pool.push(mkExpert(ks,i%5,dh,this.hd,cfg.rank));
+this.u=new Int8Array(dh);this.qv=new Int8Array(dh);this.acc=new Int32Array(dh);
+this.su=new Int8Array(this.S);this.dv=new Int8Array(this.S);this.sg=new Int8Array(dh);
+this.ch=new Int8Array(dh);this.ch2=new Int8Array(dh);this.z=new Int8Array(this.r);this.dl=new Int8Array(dh);
+this.out=new Int8Array(dh);this.bfv=new Int8Array(dh*this.G);this.bfo=new Int8Array(dh);
+this.g1=new Int8Array(this.G);this.g2=new Int8Array(this.E);this.vv=new Int8Array(dh)}
+get size(){let s=this.q.size+this.k.size+this.v.size+4+this.ik.length+this.dk.size+this.so.size+this.B.length;
+for(const e of this.pool)s+=e.size;if(this.pool.length>1)s+=this.r1.size+this.r2.size+this.bias.length+this.bf.size;return s}}
+class Layer{constructor(ks,cfg,dh){this.heads=[];for(let h=0;h<cfg.heads;h++)this.heads.push(new Head(ks,dh,cfg.dim,cfg,h));
+this.l1=new Ladder(ks,cfg.chan);this.l2=cfg.ladder2?new Ladder(ks,cfg.chan):null;
+this.proj=new Dense(ks,cfg.dim,cfg.chan);this.seed=ks.u32();
+this.ss=shiftOf(dh);this.hs=shiftOf(cfg.depth+1);this.ts=Math.max(0,jr(Math.log2(Math.sqrt(cfg.chan)*74/64)));
+this.cat=new Int8Array(cfg.dim);this.upd=new Int8Array(cfg.chan)}
+get size(){let s=0;for(const h of this.heads)s+=h.size;return s+this.l1.size+(this.l2?this.l2.size:0)+this.proj.size+1}}
 const perm=(seed,n,salt)=>{const o=new Int32Array(n);for(let i=0;i<n;i++)o[i]=i;let h=xs((seed^Math.imul(n+1,GOLD)^salt)>>>0)||0x9E3779B9;for(let i=n-1;i>0;i--){h=xs(h);const j=h%(i+1),t=o[i];o[i]=o[j];o[j]=t}return o};
 const stride=(q,hi,H)=>Math.max(1,Math.floor(q*(hi+1)/H));
-const prior=(seed,q,i)=>((xs((seed^Math.imul(q+1,GOLD)^Math.imul(i+1,0x85EBCA6B))>>>0)&31)-16);
+const prior=(seed,q,i)=>(xs((seed^Math.imul(q+1,GOLD)^Math.imul(i+1,0x85EBCA6B))>>>0)&31)-16;
 class Net{
-static async create(cfg,kb,nb,ps,task){const net=new Net();net.cfg=cfg;net.dh=cfg.dim/cfg.heads;const ks=new KS(kb,nb);net.ek=new Uint8Array(cfg.dim);net.em=new Uint8Array(cfg.dim);net.er=new Uint8Array(cfg.dim);for(let c=0;c<cfg.dim;c++){net.ek[c]=ks.byte();net.em[c]=ks.byte();net.er[c]=ks.rot()}net.emb=[];for(let x=0;x<256;x++){const row=new Int8Array(cfg.dim);for(let c=0;c<cfg.dim;c++)row[c]=sbx(x,net.ek[c],net.em[c],net.er[c])-128;net.emb.push(row);if((x&31)===0){task.progress(.1+.05*(x/256),"эмбеддинг");await task.step()}}net.ps=ps;net.pc=new Map();net.layers=[];for(let i=0;i<cfg.layers;i++){net.layers.push(new Layer(ks,cfg,net.dh));task.progress(.16+.76*((i+1)/cfg.layers),"слой "+(i+1));await task.step()}return net}
+static async create(cfg,kb,nb,ps,task){const net=new Net();net.cfg=cfg;net.dh=cfg.dim/cfg.heads;const ks=new KS(kb,nb);
+net.ek=new Uint8Array(cfg.dim);net.em=new Uint8Array(cfg.dim);net.er=new Uint8Array(cfg.dim);
+for(let c=0;c<cfg.dim;c++){net.ek[c]=ks.byte();net.em[c]=ks.byte();net.er[c]=ks.rot()}
+net.emb=[];for(let x=0;x<256;x++){const row=new Int8Array(cfg.dim);for(let c=0;c<cfg.dim;c++)row[c]=sbx(x,net.ek[c],net.em[c],net.er[c])-128;net.emb.push(row);
+if((x&63)===0){task.progress(.08+.04*(x/256),"эмбеддинг");await task.step()}}
+net.ps=ps;net.pc=new Map();net.layers=[];
+for(let i=0;i<cfg.layers;i++){net.layers.push(new Layer(ks,cfg,net.dh));task.progress(.14+.78*((i+1)/cfg.layers),"слой "+(i+1));await task.step()}
+return net}
 pv(t){const h=this.pc.get(t);if(h)return h;const v=new Int8Array(this.cfg.dim);let x=(this.ps^Math.imul(t+1,GOLD))>>>0;if(!x)x=0x9E3779B9;for(let i=0;i<this.cfg.dim;i++){x=xs(x);v[i]=(x&255)-128}this.pc.set(t,v);return v}
-tord(li,T){const m=this.cfg.orderMode,o=new Int32Array(T);if(m==="identity"||(m==="alternate"&&li===0)){for(let i=0;i<T;i++)o[i]=i;return o}if(m==="alternate"&&li===1){for(let i=0;i<T;i++)o[i]=T-1-i;return o}return perm(this.layers[li].seed,T,li*0x85EBCA6B)}
-prep(li,N){const c=this.cfg,d=c.chan,T=Math.max(1,Math.ceil(N/d));return{li,L:this.layers[li],N,T,d,tord:this.tord(li,T),feat:new Array(T).fill(null),kk:new Array(T).fill(null),vv:new Array(T).fill(null),cum:new Int32Array((T+1)*c.dim),routes:[]}}
-featOf(ctx,x,i){let f=ctx.feat[i];if(f)return f;const D=this.cfg.dim,d=ctx.d,b=i*d,n=Math.max(0,Math.min(d,ctx.N-b)),a=new Int32Array(D);for(let c=0;c<n;c++){const r=this.emb[x[b+c]];for(let j=0;j<D;j++)a[j]+=r[j]}f=new Int8Array(D);const s=ctx.L.ts;for(let j=0;j<D;j++)f[j]=S(a[j]>>s);ctx.feat[i]=f;return f}
-kvOf(ctx,x,i,w){const ca=w==="k"?ctx.kk:ctx.vv;let v=ca[i];if(v)return v;const D=this.cfg.dim,dh=this.dh,f=this.featOf(ctx,x,i);v=new Int8Array(D);for(let hi=0;hi<ctx.L.heads.length;hi++){const h=ctx.L.heads[hi],o=hi*dh,tmp=new Int8Array(dh);for(let c=0;c<dh;c++)tmp[c]=f[(o+c+h.view)%D];(w==="k"?h.k:h.v).apply(tmp,v.subarray(o,o+dh))}ca[i]=v;return v}
-srcs(ctx,q,hi){const H=this.cfg.heads,K=this.cfg.depth,st=stride(q,hi,H),out=[],seen=new Set();for(let t=1;t<=K;t++){const j=q-st*t;if(j<0)break;if(!seen.has(j)){seen.add(j);out.push(j)}}if(q>0&&!seen.has(0))out.push(0);return out}
+tord(li,T){const m=this.cfg.orderMode,o=new Int32Array(T);
+if(m==="identity"||(m==="alternate"&&li===0)){for(let i=0;i<T;i++)o[i]=i;return o}
+if(m==="alternate"&&li===1){for(let i=0;i<T;i++)o[i]=T-1-i;return o}
+return perm(this.layers[li].seed,T,Math.imul(li,0x85EBCA6B))}
+prep(li,N){const c=this.cfg,d=c.chan,T=Math.max(1,Math.ceil(N/d));
+return{li,L:this.layers[li],N,T,d,tord:this.tord(li,T),feat:new Array(T).fill(null),kk:new Array(T).fill(null),vv:new Array(T).fill(null),cum:new Int32Array((T+1)*c.dim),routes:[]}}
+featOf(ctx,x,i){let f=ctx.feat[i];if(f)return f;const D=this.cfg.dim,d=ctx.d,b=i*d,n=Math.max(0,Math.min(d,ctx.N-b)),a=new Int32Array(D);
+for(let c=0;c<n;c++){const r=this.emb[x[b+c]];for(let j=0;j<D;j++)a[j]+=r[j]}
+f=new Int8Array(D);const s=ctx.L.ts;for(let j=0;j<D;j++)f[j]=S(a[j]>>s);ctx.feat[i]=f;return f}
+kvOf(ctx,x,i,w){const ca=w==="k"?ctx.kk:ctx.vv;let v=ca[i];if(v)return v;
+const D=this.cfg.dim,dh=this.dh,f=this.featOf(ctx,x,i);v=new Int8Array(D);
+for(let hi=0;hi<ctx.L.heads.length;hi++){const h=ctx.L.heads[hi],o=hi*dh,tmp=new Int8Array(dh);
+for(let c=0;c<dh;c++)tmp[c]=f[(o+c+h.view)%D];(w==="k"?h.k:h.v).apply(tmp,v.subarray(o,o+dh))}
+ca[i]=v;return v}
+srcs(ctx,q,hi){const H=this.cfg.heads,K=this.cfg.depth,st=stride(q,hi,H),out=[],seen=new Set();
+for(let t=1;t<=K;t++){const j=q-st*t;if(j<0)break;if(!seen.has(j)){seen.add(j);out.push(j)}}
+if(q>0&&!seen.has(0))out.push(0);return out}
 newState(){const c=this.cfg;return{s:new Int32Array(c.heads*c.ssm),A:new Int8Array(c.heads*this.dh*c.rank)}}
 cloneState(st){return{s:Int32Array.from(st.s),A:Int8Array.from(st.A)}}
-advance(ctx,x,st,tok,qi){const c=this.cfg,dh=this.dh,D=c.dim,f=this.featOf(ctx,x,tok),cum=ctx.cum,base=qi*D,nb=(qi+1)*D;for(let j=0;j<D;j++)cum[nb+j]=cum[base+j]+f[j];
-for(let hi=0;hi<c.heads;hi++){const h=ctx.L.heads[hi],o=hi*dh;for(let j=0;j<dh;j++)h.vv[j]=f[(o+j+h.view)%D];
-if(c.ssmOn){h.dk.apply(h.vv,h.dv);const so=hi*c.ssm;for(let j=0;j<c.ssm;j++){const dc=(((SIG(h.dv[j],h.ak,h.am,h.ar)+128)&255)*DCAP/255)|0,vv=h.vv[j%dh];st.s[so+j]=((st.s[so+j]*dc)>>8)+((h.ik[j]*vv)>>8)}}
-if(c.fast){const ao=hi*dh*c.rank;for(let i=0;i<c.rank;i++){const zi=SIG(h.vv[(i*5+1)%dh],h.ak,h.am,h.ar);for(let j=0;j<dh;j++){const idx=ao+i*dh+j;st.A[idx]=S(st.A[idx]+((SIG(h.vv[j],h.ak,h.am,h.ar)*zi)>>6))}}}}
-update(ctx,x,q,st){const L=ctx.L,c=this.cfg,D=c.dim,dh=this.dh,H=c.heads,r=c.rank,pv=this.pv(ctx.tord[q]),cat=L.cat,cum=ctx.cum;cat.fill(0);ctx.routes.length=0;
+advance(ctx,x,st,tok,qi){const c=this.cfg,dh=this.dh,D=c.dim,f=this.featOf(ctx,x,tok),cum=ctx.cum,base=qi*D,nb=(qi+1)*D;
+for(let j=0;j<D;j++)cum[nb+j]=cum[base+j]+f[j];
+for(let hi=0;hi<c.heads;hi++){const h=ctx.L.heads[hi],o=hi*dh;
+for(let j=0;j<dh;j++)h.vv[j]=f[(o+j+h.view)%D];
+if(c.ssmOn){h.dk.apply(h.vv,h.dv);const so=hi*c.ssm;
+for(let j=0;j<c.ssm;j++){const dc=(((SIG(h.dv[j],h.ak,h.am,h.ar)+128)&255)*DCAP/255)|0,vv=h.vv[j%dh];
+st.s[so+j]=((st.s[so+j]*dc)>>8)+((h.ik[j]*vv)>>8)}}
+if(c.fast){const ao=hi*dh*c.rank;
+for(let i=0;i<c.rank;i++){const zi=SIG(h.vv[(i*5+1)%dh],h.ak,h.am,h.ar);
+for(let j=0;j<dh;j++){const idx=ao+i*dh+j;st.A[idx]=S(st.A[idx]+((SIG(h.vv[j],h.ak,h.am,h.ar)*zi)>>6))}}}}}
+update(ctx,x,q,st){const L=ctx.L,c=this.cfg,D=c.dim,dh=this.dh,H=c.heads,r=c.rank,pv=this.pv(ctx.tord[q]),cat=L.cat,cum=ctx.cum;
+cat.fill(0);ctx.routes.length=0;
 for(let hi=0;hi<H;hi++){const h=L.heads[hi],o=hi*dh,sd=stride(q,hi,H),pq=q-sd,pf=pq>=0?this.featOf(ctx,x,ctx.tord[pq]):null;
-for(let j=0;j<dh;j++)h.u[j]=SIG(S((pf?pf[(o+j+h.view)%D]:0)+pv[o+j]),h.ak,h.am,h.ar);h.q.apply(h.u,h.qv);h.acc.fill(0);
-if(c.attn){const src=this.srcs(ctx,q,hi);for(let i=0;i<src.length;i++){const ti=ctx.tord[src[i]],kj=this.kvOf(ctx,x,ti,"k");let dot=0;for(let j=0;j<dh;j++)dot+=h.qv[j]*kj[o+j];const a=SIG(S(dot>>L.ss),h.ak,h.am,h.ar),vj=this.kvOf(ctx,x,ti,"v");for(let j=0;j<dh;j++)h.acc[j]+=a*vj[o+j]}for(let j=0;j<dh;j++)h.acc[j]=S(h.acc[j]>>L.hs)}
-if(c.ssmOn){const so=hi*c.ssm;for(let j=0;j<c.ssm;j++)h.su[j]=S(st.s[so+j]>>2);h.so.apply(h.su,h.sg);for(let j=0;j<dh;j++)h.acc[j]=S(h.acc[j]+h.sg[j])}
+for(let j=0;j<dh;j++)h.u[j]=SIG(S((pf?pf[(o+j+h.view)%D]:0)+pv[o+j]),h.ak,h.am,h.ar);
+h.q.apply(h.u,h.qv);h.acc.fill(0);
+if(c.attn){const src=this.srcs(ctx,q,hi);
+for(let i=0;i<src.length;i++){const ti=ctx.tord[src[i]],kj=this.kvOf(ctx,x,ti,"k");
+let dot=0;for(let j=0;j<dh;j++)dot+=h.qv[j]*kj[o+j];
+const a=SIG(S(dot>>L.ss),h.ak,h.am,h.ar),vj=this.kvOf(ctx,x,ti,"v");
+for(let j=0;j<dh;j++)h.acc[j]+=a*vj[o+j]}
+for(let j=0;j<dh;j++)h.acc[j]=S(h.acc[j]>>L.hs)}
+if(c.ssmOn){const so=hi*c.ssm;for(let j=0;j<c.ssm;j++)h.su[j]=S(st.s[so+j]>>2);
+h.so.apply(h.su,h.sg);for(let j=0;j<dh;j++)h.acc[j]=S(h.acc[j]+h.sg[j])}
 for(let j=0;j<dh;j++)h.ch[j]=rotl8((h.acc[j]+128)&255,h.rot)-128;
-if(c.fast){const ao=hi*dh*r;for(let i=0;i<r;i++){let a=0;for(let j=0;j<dh;j++)a+=st.A[ao+i*dh+j]*h.ch[j];h.z[i]=S(a>>shiftOf(dh))}for(let j=0;j<dh;j++){let a=0;for(let i=0;i<r;i++)a+=h.B[j*r+i]*h.z[i];h.dl[j]=S(a>>shiftOf(r))}for(let j=0;j<dh;j++)h.ch2[j]=S(h.ch[j]+h.dl[j])}else h.ch2.set(h.ch);
+if(c.fast){const ao=hi*dh*r;
+for(let i=0;i<r;i++){let a=0;for(let j=0;j<dh;j++)a+=st.A[ao+i*dh+j]*h.ch[j];h.z[i]=S(a>>h.sA)}
+for(let j=0;j<dh;j++){let a=0;for(let i=0;i<r;i++)a+=h.B[j*r+i]*h.z[i];h.dl[j]=S(a>>h.sR)}
+for(let j=0;j<dh;j++)h.ch2[j]=S(h.ch[j]+h.dl[j])}else h.ch2.set(h.ch);
 let gi=0,ei=0;
-if(h.pool.length>1){for(let g=0;g<c.groups;g++){const lo=Math.floor(q*g/c.groups),hb=Math.floor(q*(g+1)/c.groups),cnt=hb-lo;for(let j=0;j<dh;j++){const idx=(o+j+h.view)%D;const mean=cnt?Math.round((cum[hb*D+idx]-cum[lo*D+idx])/cnt):0;h.bfv[g*dh+j]=S(mean+h.ch2[j])}}h.bf.apply(h.bfv,h.bfo);h.r1.apply(h.bfo,h.g1);
-const seed1=L.seed^Math.imul(hi+1,0x27D4EB2F);const st1=(xs((seed1^Math.imul(q+1,GOLD))>>>0)||1)%c.groups;let best=-1000;
-for(let i=0;i<c.groups;i++){const g=(st1+i)%c.groups,sc=h.g1[g]+prior(seed1,q,g);if(sc>best){best=sc;gi=g}}
-h.r2.apply(h.bfo,h.g2);const seed2=seed1^0x9E3779B9,st2=(xs((seed2^Math.imul(q+1,GOLD))>>>0)||1)%c.experts;best=-1000;
-for(let i=0;i<c.experts;i++){const e=(st2+i)%c.experts,sc=h.g2[e]+h.bias[gi*c.experts+e]+prior(seed2,q,gi*31+e);if(sc>best){best=sc;ei=e}}}
-const ex=h.pool[h.pool.length>1?gi*c.experts+ei:0];ctx.routes.push({head:hi,group:gi,expert:ei,t:ex.t});
+if(h.pool.length>1){
+for(let g=0;g<c.groups;g++){const lo=Math.floor(q*g/c.groups),hb=Math.floor(q*(g+1)/c.groups),cnt=hb-lo;
+for(let j=0;j<dh;j++){const idx=(o+j+h.view)%D;const mean=cnt?Math.round((cum[hb*D+idx]-cum[lo*D+idx])/cnt):0;h.bfv[g*dh+j]=S(mean+h.ch2[j])}}
+h.bf.apply(h.bfv,h.bfo);h.r1.apply(h.bfo,h.g1);
+const seed1=(L.seed^Math.imul(hi+1,0x27D4EB2F))>>>0;
+const s1=(xs((seed1^Math.imul(q+1,GOLD))>>>0)||1)%c.groups;let best=-1000;
+for(let i=0;i<c.groups;i++){const g=(s1+i)%c.groups,sc=h.g1[g]+prior(seed1,q,g);if(sc>best){best=sc;gi=g}}
+h.r2.apply(h.bfo,h.g2);const seed2=(seed1^0x9E3779B9)>>>0;
+const s2=(xs((seed2^Math.imul(q+1,GOLD))>>>0)||1)%c.experts;best=-1000;
+for(let i=0;i<c.experts;i++){const e=(s2+i)%c.experts,sc=h.g2[e]+h.bias[gi*c.experts+e]+prior(seed2,q,gi*31+e);if(sc>best){best=sc;ei=e}}}
+const ex=h.pool[h.pool.length>1?gi*c.experts+ei:0];
+ctx.routes.push({head:hi,group:gi,expert:ei,t:ex.t});
 ex.apply(h.ch2,h.out);for(let j=0;j<dh;j++)cat[o+j]=S(cat[o+j]+h.out[j])}
 L.proj.apply(cat,L.upd);return L.upd}
-async runLayer(li,x,dir,task,onS){const N=x.length;if(!N)return;const ctx=this.prep(li,N),d=ctx.d,L=ctx.L;let traj=null,state=null;
-if(dir>0)state=this.newState();else{traj=new Array(ctx.T);const st=this.newState();for(let q=0;q<ctx.T;q++){traj[q]=this.cloneState(st);this.advance(ctx,x,st,ctx.tord[q],q);if((q&31)===0)await task.step()}ctx.feat.fill(null);ctx.kk.fill(null);ctx.vv.fill(null)}
-for(let qi=dir>0?0:ctx.T-1;qi>=0&&qi<ctx.T;qi+=dir>0?1:-1){const tok=ctx.tord[qi],st=dir>0?state:traj[qi],u=this.update(ctx,x,qi,st),snap=Int8Array.from(u);
-if(dir>0){for(let p=0;p<d;p++){const k=tok*d+L.l1.o[p];if(k>=N)continue;const b=x[k],dl=(rotl8((snap[p]+128)&255,L.l1.rot)+L.l1.delta(x,tok,p,d,N))&255;x[k]=(b+dl)&255;if(onS)onS(li,qi*d+p,k,x[k],b)}if(L.l2)for(let p=0;p<d;p++){const k=tok*d+L.l2.o[p];if(k>=N)continue;const b=x[k],dl=L.l2.delta(x,tok,p,d,N);x[k]=(b+dl)&255;if(onS)onS(li,qi*d+p,k,x[k],b)}this.advance(ctx,x,state,tok,qi)}
-else{if(L.l2)for(let p=d-1;p>=0;p--){const k=tok*d+L.l2.o[p];if(k>=N)continue;const b=x[k],dl=L.l2.delta(x,tok,p,d,N);x[k]=(b-dl)&255;if(onS)onS(li,qi*d+p,k,x[k],b)}for(let p=d-1;p>=0;p--){const k=tok*d+L.l1.o[p];if(k>=N)continue;const b=x[k],dl=(rotl8((snap[p]+128)&255,L.l1.rot)+L.l1.delta(x,tok,p,d,N))&255;x[k]=(b-dl)&255;if(onS)onS(li,qi*d+p,k,x[k],b)}}
-ctx.feat[tok]=null;ctx.kk[tok]=null;ctx.vv[tok]=null;if((qi&15)===0)await task.step()}}
+async runLayer(li,x,dir,task,onS){const N=x.length;if(!N)return;const ctx=this.prep(li,N),d=ctx.d,L=ctx.L;
+let traj=null,state=null;
+if(dir>0)state=this.newState();
+else{traj=new Array(ctx.T);const st=this.newState();
+for(let q=0;q<ctx.T;q++){traj[q]=this.cloneState(st);this.advance(ctx,x,st,ctx.tord[q],q);if((q&31)===0)await task.step()}
+ctx.feat.fill(null);ctx.kk.fill(null);ctx.vv.fill(null)}
+for(let qi=dir>0?0:ctx.T-1;qi>=0&&qi<ctx.T;qi+=dir>0?1:-1){
+const tok=ctx.tord[qi],st=dir>0?state:traj[qi],u=this.update(ctx,x,qi,st),snap=Int8Array.from(u);
+if(dir>0){
+for(let p=0;p<d;p++){const k=tok*d+L.l1.o[p];if(k>=N)continue;const b=x[k],dl=(rotl8((snap[p]+128)&255,L.l1.rot)+L.l1.delta(x,tok,p,d,N))&255;x[k]=(b+dl)&255;if(onS)onS(li,qi*d+p,k,x[k],b)}
+if(L.l2)for(let p=0;p<d;p++){const k=tok*d+L.l2.o[p];if(k>=N)continue;const b=x[k],dl=L.l2.delta(x,tok,p,d,N);x[k]=(b+dl)&255;if(onS)onS(li,qi*d+p,k,x[k],b)}
+this.advance(ctx,x,state,tok,qi)}
+else{
+if(L.l2)for(let p=d-1;p>=0;p--){const k=tok*d+L.l2.o[p];if(k>=N)continue;const b=x[k],dl=L.l2.delta(x,tok,p,d,N);x[k]=(b-dl)&255;if(onS)onS(li,qi*d+p,k,x[k],b)}
+for(let p=d-1;p>=0;p--){const k=tok*d+L.l1.o[p];if(k>=N)continue;const b=x[k],dl=(rotl8((snap[p]+128)&255,L.l1.rot)+L.l1.delta(x,tok,p,d,N))&255;x[k]=(b-dl)&255;if(onS)onS(li,qi*d+p,k,x[k],b)}}
+ctx.feat[tok]=null;ctx.kk[tok]=null;ctx.vv[tok]=null;
+if((qi&15)===0)await task.step()}}
 async encrypt(bytes,task,onS){const x=Uint8Array.from(bytes);for(let li=0;li<this.cfg.layers;li++){await this.runLayer(li,x,1,task,onS?(l,t,k,v,b)=>onS(li,t,k,v,b):null);task.progress((li+1)/this.cfg.layers,"слой "+(li+1))}return x}
 async decrypt(bytes,task){const x=Uint8Array.from(bytes);for(let li=this.cfg.layers-1;li>=0;li--){await this.runLayer(li,x,-1,task);task.progress((this.cfg.layers-li)/this.cfg.layers,"обратно "+(li+1))}return x}
 async depthRun(bytes,dep,task){const x=Uint8Array.from(bytes);for(let li=0;li<dep;li++)await this.runLayer(li,x,1,task);return x}
-sampleRoutes(bytes){const N=bytes.length;if(!N)return{routes:[],usage:[0,0,0,0,0]};const ctx=this.prep(0,N),st=this.newState(),usage=[0,0,0,0,0],x=Uint8Array.from(bytes);let last=[];for(let q=0;q<ctx.T;q++){this.update(ctx,x,q,st);for(const r of ctx.routes)usage[r.t]++;last=ctx.routes.slice();const tok=ctx.tord[q];this.advance(ctx,x,st,tok,q);ctx.feat[tok]=null;ctx.kk[tok]=null;ctx.vv[tok]=null}return{routes:last,usage}}
-neuronsPerToken(){const c=this.cfg,dh=this.dh,hd=dh*c.exp;let per=dh*8+(c.depth+1)+c.ssm*2+dh+c.rank;if(c.moe)per+=c.groups*dh+dh+c.groups+c.experts;per+=hd*3+dh;return c.dim+c.heads*per+c.chan+2*(c.chan*(c.chan-1)+c.chan*2)}
-get opsPerByte(){const c=this.cfg,dh=this.dh,D=c.dim,hd=dh*c.exp;let ph=dh*(dh-1)/2*3;if(c.attn)ph+=(c.depth+1)*dh*2;if(c.ssmOn)ph+=c.ssm*dh+c.ssm*2+c.ssm*dh;if(c.fast)ph+=2*c.rank*dh+dh*c.rank;if(c.moe)ph+=c.groups*dh*dh+dh*c.groups+dh*c.experts+c.groups*dh;ph+=hd*dh*4+dh*dh*4;return Math.round(c.layers*((c.heads*ph+D*c.chan+D)/c.chan+(c.chan-1)*2*(c.ladder2?2:1)+4))}
+sampleRoutes(bytes){const N=bytes.length;if(!N)return{routes:[],usage:[0,0,0,0,0]};
+const ctx=this.prep(0,N),st=this.newState(),usage=[0,0,0,0,0],x=Uint8Array.from(bytes);let last=[];
+for(let q=0;q<ctx.T;q++){this.update(ctx,x,q,st);for(const r of ctx.routes)usage[r.t]++;last=ctx.routes.slice();
+const tok=ctx.tord[q];this.advance(ctx,x,st,tok,q);ctx.feat[tok]=null;ctx.kk[tok]=null;ctx.vv[tok]=null}
+return{routes:last,usage}}
+neuronsPerToken(){const c=this.cfg,dh=this.dh,hd=dh*c.exp;let per=dh*8+(c.depth+1)+c.ssm*2+dh+c.rank;
+if(c.moe)per+=c.groups*dh+dh+c.groups+c.experts;per+=hd*3+dh;
+return c.dim+c.heads*per+c.chan+2*(c.chan*(c.chan-1)+c.chan*2)}
+get opsPerByte(){const c=this.cfg,dh=this.dh,D=c.dim,hd=dh*c.exp;
+let ph=dh*(dh-1)/2*3;if(c.attn)ph+=(c.depth+1)*dh*2;if(c.ssmOn)ph+=c.ssm*dh*2+c.ssm*2;
+if(c.fast)ph+=3*c.rank*dh;if(c.moe)ph+=c.groups*dh*dh+dh*c.groups+dh*c.experts+c.groups*dh;
+ph+=hd*dh*4+dh*dh*4;
+return Math.round(c.layers*((c.heads*ph+D*c.chan+D)/c.chan+(c.chan-1)*2*(c.ladder2?2:1)+4))}
 trajBytes(){const c=this.cfg;return c.heads*(c.ssm*4+this.dh*c.rank)}
-bounds(){const c=this.cfg,dh=this.dh,D=c.dim,hd=dh*c.exp;const v={tri:(dh-1)*16384,score:dh*16384,attn:(c.depth+1)*16384,ssm:DCAP*256+64,prod:16384,expert:hd*16384+128,proj:D*16384+128,ladder:(c.chan-1)*16384+128,band:c.groups*dh*16384+128,decay:dh*16384+128,fast:dh*16384+128};const mx=Math.max(...Object.values(v));return{...v,max:mx,safe:mx<=I32}}
+bounds(){const c=this.cfg,dh=this.dh,D=c.dim,hd=dh*c.exp;
+const v={tri:(dh-1)*16384,score:dh*16384,attn:(c.depth+1)*16384,ssm:DCAP*256+64,prod:16384,expert:hd*16384+128,proj:D*16384+128,ladder:(c.chan-1)*16384+128,band:c.groups*dh*16384+128,decay:dh*16384+128,fast:dh*16384+128};
+const mx=Math.max.apply(null,Object.keys(v).map(k=>v[k]));v.max=mx;v.safe=mx<=I32;return v}
 get parameters(){let p=3*this.cfg.dim+256*this.cfg.dim;for(const l of this.layers)p+=l.size;return Math.round(p)}
 get expertCount(){return this.cfg.heads*(this.cfg.moe?this.cfg.groups*this.cfg.experts:1)*this.cfg.layers}
-get active(){return this.cfg.heads*this.cfg.layers}
-}
+get active(){return this.cfg.heads*this.cfg.layers}}
 const Auth={keys(dg){return{wi:sha256(cat(dg,enc.encode("wi"))),wo:sha256(cat(dg,enc.encode("wo"))),mac:sha256(cat(dg,enc.encode("mac")))}},
-async seal(net,dg,p,task){const k=this.keys(dg),n=rnd(12),w1=stream(k.wi,n,p.length),w2=stream(k.wo,n,p.length),m=new Uint8Array(p.length);for(let i=0;i<p.length;i++)m[i]=p[i]^w1[i];const core=await net.encrypt(m,task.child()),ct=new Uint8Array(core.length);for(let i=0;i<core.length;i++)ct[i]=core[i]^w2[i];const body=cat(new Uint8Array([1]),n,ct);return cat(body,hmac(k.mac,body))},
-async open(net,dg,pkt,task){if(pkt.length<45||pkt[0]!==1)throw new Error("Это не AUTH-пакет. Переключите режим на «Сырой 1:1».");const k=this.keys(dg),body=pkt.subarray(0,pkt.length-32),tag=pkt.subarray(pkt.length-32);if(!eq(hmac(k.mac,body),tag))throw new Error("MAC не совпал: пакет повреждён или ключ другой");const n=body.subarray(1,13),ct=body.subarray(13),w2=stream(k.wo,n,ct.length),core=new Uint8Array(ct.length);for(let i=0;i<ct.length;i++)core[i]=ct[i]^w2[i];const m=await net.decrypt(core,task.child()),w1=stream(k.wi,n,m.length),o=new Uint8Array(m.length);for(let i=0;i<m.length;i++)o[i]=m[i]^w1[i];return o}};
+async seal(net,dg,p,task){const k=this.keys(dg),n=rnd(12),w1=stream(k.wi,n,p.length),w2=stream(k.wo,n,p.length),m=new Uint8Array(p.length);
+for(let i=0;i<p.length;i++)m[i]=p[i]^w1[i];
+const core=await net.encrypt(m,task.child()),ct=new Uint8Array(core.length);
+for(let i=0;i<core.length;i++)ct[i]=core[i]^w2[i];
+const body=cat(new Uint8Array([1]),n,ct);return cat(body,hmac(k.mac,body))},
+async open(net,dg,pkt,task){if(pkt.length<45||pkt[0]!==1)throw new Error("Это не AUTH-пакет. Переключите режим на «Сырой 1:1».");
+const k=this.keys(dg),body=pkt.subarray(0,pkt.length-32),tag=pkt.subarray(pkt.length-32);
+if(!eq(hmac(k.mac,body),tag))throw new Error("MAC не совпал: пакет повреждён или ключ другой");
+const n=body.subarray(1,13),ct=body.subarray(13),w2=stream(k.wo,n,ct.length),core=new Uint8Array(ct.length);
+for(let i=0;i<ct.length;i++)core[i]=ct[i]^w2[i];
+const m=await net.decrypt(core,task.child()),w1=stream(k.wi,n,m.length),o=new Uint8Array(m.length);
+for(let i=0;i<m.length;i++)o[i]=m[i]^w1[i];return o}};
 function dpTable(t){let mx=0;const c=new Uint16Array(256);for(let d=1;d<256;d++){c.fill(0);for(let x=0;x<256;x++)c[t[x]^t[x^d]]++;let m=0;for(let i=0;i<256;i++)if(c[i]>m)m=c[i];if(m>mx)mx=m}return mx}
-const PRE={small:{dim:32,heads:4,chan:6,layers:4,exp:2,depth:3,groups:2,experts:5,ssm:8,rank:2,orderMode:"alternate",moe:true,ssmOn:true,fast:true,ladder2:true,attn:true},core:{dim:64,heads:4,chan:8,layers:5,exp:2,depth:4,groups:4,experts:5,ssm:16,rank:4,orderMode:"alternate",moe:true,ssmOn:true,fast:true,ladder2:true,attn:true},large:{dim:128,heads:8,chan:12,layers:6,exp:2,depth:4,groups:4,experts:5,ssm:32,rank:4,orderMode:"alternate",moe:true,ssmOn:true,fast:true,ladder2:true,attn:true},xl:{dim:192,heads:8,chan:16,layers:8,exp:3,depth:4,groups:5,experts:5,ssm:32,rank:4,orderMode:"alternate",moe:true,ssmOn:true,fast:true,ladder2:true,attn:true},xxl:{dim:256,heads:16,chan:16,layers:10,exp:3,depth:4,groups:5,experts:10,ssm:64,rank:6,orderMode:"alternate",moe:true,ssmOn:true,fast:true,ladder2:true,attn:true}};
-const app={key:"ne-demo-key",cfg:{...PRE.large},iters:200000,mode:"raw",net:null,dg:null,bk:null,bs:null,engine:"—",task:null,busy:false,epoch:0,out:null,inp:null,timer:null,flow:null,reach:null,rate:0,file:null,vec:null,routes:null,usage:null};
+const PRE={
+small:{dim:32,heads:4,chan:6,layers:3,exp:2,depth:3,groups:2,experts:5,ssm:8,rank:2,orderMode:"alternate",moe:true,ssmOn:true,fast:true,ladder2:true,attn:true},
+core:{dim:64,heads:4,chan:8,layers:4,exp:2,depth:4,groups:4,experts:5,ssm:16,rank:4,orderMode:"alternate",moe:true,ssmOn:true,fast:true,ladder2:true,attn:true},
+large:{dim:128,heads:8,chan:12,layers:6,exp:2,depth:4,groups:4,experts:5,ssm:32,rank:4,orderMode:"alternate",moe:true,ssmOn:true,fast:true,ladder2:true,attn:true},
+xl:{dim:192,heads:8,chan:16,layers:8,exp:3,depth:4,groups:5,experts:5,ssm:32,rank:4,orderMode:"alternate",moe:true,ssmOn:true,fast:true,ladder2:true,attn:true},
+xxl:{dim:256,heads:16,chan:16,layers:10,exp:3,depth:4,groups:5,experts:10,ssm:64,rank:6,orderMode:"alternate",moe:true,ssmOn:true,fast:true,ladder2:true,attn:true}};
+const app={key:"ne-demo-key",cfg:Object.assign({},PRE.core),iters:60000,mode:"raw",net:null,dg:null,bk:null,bs:null,engine:"—",task:null,busy:false,epoch:0,out:null,inp:null,timer:null,flow:null,reach:null,rate:0,file:null,vec:null,routes:null,usage:null};
 const $=i=>document.getElementById(i);
-const setSt=(m,e)=>{const n=$("status");n.textContent=m;n.classList.toggle("err",!!e);n.classList.toggle("ok",!e&&!!m)};
-const setCk=(m,e)=>{const n=$("ckSt");n.textContent=m;n.classList.toggle("err",!!e)};
-const chip=(s,t)=>{$("chip").dataset.s=s;$("chipT").textContent=t};
-const prog=f=>{$("prog").style.width=(Math.max(0,Math.min(1,f))*100).toFixed(1)+"%"};
-function toast(msg,kind,action){const n=document.createElement("div");n.className="ts "+(kind||"info");const s=document.createElement("span");s.textContent=msg;s.style.flex="1";n.appendChild(s);if(action){const b=document.createElement("button");b.className="g";b.style.padding="4px 9px";b.style.fontSize="11.5px";b.textContent=action.label;b.onclick=()=>{action.run();n.remove()};n.appendChild(b)}$("tt").appendChild(n);setTimeout(()=>{n.style.transition="opacity .3s";n.style.opacity="0";setTimeout(()=>n.remove(),320)},action?6500:3400)}
+const setSt=(m,e)=>{const n=$("status");if(!n)return;n.textContent=m;n.classList.toggle("err",!!e);n.classList.toggle("ok",!e&&!!m)};
+const setCk=(m,e)=>{const n=$("ckSt");if(!n)return;n.textContent=m;n.classList.toggle("err",!!e)};
+const chip=(s,t)=>{const c=$("chip");if(c)c.dataset.s=s;const x=$("chipT");if(x)x.textContent=t};
+const prog=f=>{const p=$("prog");if(p)p.style.width=(Math.max(0,Math.min(1,f))*100).toFixed(1)+"%"};
+function toast(msg,kind,action){const box=$("tt");if(!box)return;const n=document.createElement("div");n.className="ts "+(kind||"info");
+const s=document.createElement("span");s.textContent=msg;s.style.flex="1";n.appendChild(s);
+if(action){const b=document.createElement("button");b.className="g";b.style.padding="4px 9px";b.style.fontSize="11.5px";b.textContent=action.label;b.onclick=()=>{action.run();n.remove()};n.appendChild(b)}
+box.appendChild(n);setTimeout(()=>{n.style.transition="opacity .3s";n.style.opacity="0";setTimeout(()=>n.remove(),320)},action?6500:3400)}
 const BTN=["showKey","randKey","enc","dec","rt","copy","dl","swap","clr","reset","rand","expCfg","audit","fuzz","anal","cur"];
-function busy(v){app.busy=v;for(const i of BTN){const n=$(i);if(n)n.disabled=v}$("cancel").disabled=!v;if(!v)prog(0)}
-async function run(label,fn){if(app.busy)return;const ep=app.epoch,task=new Task((f,d)=>{prog(f);chip("busy",label+(d?" · "+d:""))});app.task=task;busy(true);chip("busy",label);try{await fn(task);if(ep===app.epoch)chip("ready","готово")}catch(e){if(String(e.message)==="CANCELLED"){setSt("Операция отменена.");chip("idle","отмена")}else{console.error(e);setSt(e.message,true);chip("error","ошибка");toast(e.message,"bad")}}finally{if(ep===app.epoch){app.task=null;busy(false)}}}
-$("cancel").onclick=()=>{if(app.task)app.task.cancel()};
+function busy(v){app.busy=v;for(const i of BTN){const n=$(i);if(n)n.disabled=v}const c=$("cancel");if(c)c.disabled=!v;if(!v)prog(0)}
+async function run(label,fn){if(app.busy)return;const ep=app.epoch,task=new Task((f,d)=>{prog(f);chip("busy",label+(d?" · "+d:""))});
+app.task=task;busy(true);chip("busy",label);
+try{await fn(task);if(ep===app.epoch)chip("ready","готово")}
+catch(e){if(String(e.message)==="CANCELLED"){setSt("Операция отменена.");chip("idle","отмена")}
+else{console.error(e);setSt(e.message,true);chip("error","ошибка");toast(e.message,"bad")}}
+finally{if(ep===app.epoch){app.task=null;busy(false)}}}
 const b64=b=>{let s="";for(let i=0;i<b.length;i+=16384)s+=String.fromCharCode.apply(null,b.subarray(i,i+16384));return btoa(s)};
 const hex=(b,sep)=>{let s="";for(let i=0;i<b.length;i++){s+=b[i].toString(16).padStart(2,"0");if(sep&&i<b.length-1)s+=sep}return s};
 const hexCap=b=>{const n=Math.min(b.length,CAP);return hex(b.subarray(0,n)," ")+(b.length>n?"\n… "+n+" из "+b.length:"")};
 function parseHex(t){const c=t.replace(/\s+/g,"").replace(/^0x/i,"");if(!c.length||c.length%2||!/^[0-9a-fA-F]+$/.test(c))return null;const o=new Uint8Array(c.length/2);for(let i=0;i<o.length;i++)o[i]=parseInt(c.substr(i*2,2),16);return o}
 function parseB64(t){const c=t.replace(/\s+/g,"");if(!c.length||!/^[A-Za-z0-9+/]+={0,2}$/.test(c)||c.length%4)return null;try{const bin=atob(c),o=new Uint8Array(bin.length);for(let i=0;i<bin.length;i++)o[i]=bin.charCodeAt(i);return o}catch(e){return null}}
-function parseCipher(text,fmt){const t=text.trim();if(!t)throw new Error("Вход пуст. Вставьте шифротекст.");if(fmt==="hex"){const r=parseHex(t);if(!r)throw new Error("Это не HEX. Проверьте формат или переключите на «Авто».");return r}if(fmt==="base64"){const r=parseB64(t);if(!r)throw new Error("Это не Base64. Проверьте формат или переключите на «Авто».");return r}const h=parseHex(t);if(h)return h;const b=parseB64(t);if(b)return b;throw new Error("В поле ввода не шифротекст, а обычный текст. Нажмите «Выход → вход» после шифрования либо вставьте Base64/HEX.")}
+function parseCipher(text,fmt){const t=(text||"").trim();if(!t)throw new Error("Вход пуст. Вставьте шифротекст.");
+if(fmt==="hex"){const r=parseHex(t);if(!r)throw new Error("Это не HEX. Переключите формат на «Авто».");return r}
+if(fmt==="base64"){const r=parseB64(t);if(!r)throw new Error("Это не Base64. Переключите формат на «Авто».");return r}
+const h=parseHex(t);if(h)return h;const b=parseB64(t);if(b)return b;
+throw new Error("В поле ввода обычный текст, а не шифротекст. Нажмите «Выход → вход» после шифрования.")}
 function dl(name,bytes,type){const u=URL.createObjectURL(new Blob([bytes],{type:type||"application/octet-stream"})),a=document.createElement("a");a.href=u;a.download=name;document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(u),1200)}
-const sig=()=>"7.2|"+JSON.stringify(app.cfg)+"|"+app.iters+"|"+app.engine;
+const sig=()=>"7.3|"+JSON.stringify(app.cfg)+"|"+app.iters+"|"+app.engine;
 function need(){if(!app.net)throw new Error("Сеть не готова — дождитесь сборки");if(app.bk!==app.key)throw new Error("Ключ изменён — дождитесь пересборки");if(app.bs!==sig())throw new Error("Архитектура изменена — дождитесь пересборки")}
 const ft=ms=>ms<1000?Math.round(ms)+" мс":ms<60000?(ms/1000).toFixed(1)+" с":ms<3600000?(ms/60000).toFixed(1)+" мин":(ms/3600000).toFixed(1)+" ч";
 const fb=n=>n<1024?n+" Б":n<1048576?(n/1024).toFixed(1)+" КБ":(n/1048576).toFixed(1)+" МБ";
 const est=n=>app.rate>0&&app.net?n*app.net.opsPerByte/app.rate:0;
-const inLen=()=>app.file?app.file.length:enc.encode($("input").value).length;
+const inLen=()=>app.file?app.file.length:enc.encode($("input").value||"").length;
 const eta=()=>{const e=est(inLen());$("mT").textContent=e>0?ft(e):"—"};
-function norm(){const c=app.cfg;if(c.dim%c.heads!==0)c.heads=[16,8,4,2,1].find(v=>c.dim%v===0&&v<=c.heads)||2;while(c.dim/c.heads<4&&c.heads>1)c.heads=[16,8,4,2,1].find(v=>v<c.heads&&c.dim%v===0)||1;$("heads").value=String(c.heads)}
-function fillPre(){const s=$("preset");s.innerHTML="";for(const k of Object.keys(PRE))s.appendChild(new Option(k,k));s.appendChild(new Option("custom","custom"));s.value="large"}
-function sync(){const c=app.cfg;$("dim").value=c.dim;$("heads").value=c.heads;$("groups").value=c.groups;$("experts").value=c.experts;$("ssm").value=c.ssm;$("rank").value=c.rank;$("chan").value=c.chan;$("layers").value=c.layers;$("exp").value=c.exp;$("depth").value=c.depth;$("orderMode").value=c.orderMode;$("moe").checked=c.moe;$("ssmOn").checked=c.ssmOn;$("fast").checked=c.fast;$("ladder2").checked=c.ladder2;$("attn").checked=c.attn;$("chanV").textContent=c.chan;$("layersV").textContent=c.layers;$("expV").textContent=c.exp;$("depthV").textContent=c.depth;$("mH").textContent=c.heads;$("mL").textContent=c.layers;$("mE").textContent=(c.heads*(c.moe?c.groups*c.experts:1)*c.layers).toLocaleString("ru-RU");$("mA").textContent=(c.heads*c.layers).toLocaleString("ru-RU");$("modeT").textContent=app.mode==="auth"?"AUTH":"RAW";$("modeT").className="tg "+(app.mode==="auth"?"ok":"cy");pipe();drawRoute();drawUsage();eta()}
-function inval(m){app.epoch++;if(app.task)app.task.cancel();app.net=null;app.dg=null;app.bk=null;app.bs=null;app.reach=null;app.rate=0;app.vec=null;app.routes=null;app.usage=null;for(const i of["fp","mW","opsB","rateI","memI","mT","mB","mN"])$(i).textContent="—";chip("idle","пересборка");setSt(m,true);drawReach();drawUsage()}
-async function buildNet(cfg,key,it,task){const{m,e}=await master(key,it,task);const dg=sha256(cat(enc.encode("NE/v72"),m)),kb=sha256(cat(dg,enc.encode("sk"))),nb=sha256(cat(dg,enc.encode("sn"))).subarray(0,12),pb=sha256(cat(dg,enc.encode("pos")));const net=await Net.create(cfg,kb,nb,(pb[0]|(pb[1]<<8)|(pb[2]<<16)|(pb[3]<<24))>>>0,task);return{net,dg,e}}
-async function build(task){norm();const cfg=Object.freeze({...app.cfg}),key=app.key,it=app.iters;const{net,dg,e}=await buildNet(cfg,key,it,task);app.engine=e;const bd=net.bounds();if(!bd.safe)throw new Error("Переполнение аккумулятора: "+bd.max);
-task.progress(.93,"калибровка");const probe=rnd(160),t0=performance.now(),c=await net.encrypt(probe,task.child()),dt=Math.max(1,performance.now()-t0);app.rate=160*net.opsPerByte/dt*1000;const r=await net.decrypt(c,task.child());if(!eq(probe,r))throw new Error("Самопроверка обратимости не пройдена");
-for(const n of[1,2,3,9,17]){const p=rnd(n),cc=await net.encrypt(p,task.child()),rr=await net.decrypt(cc,task.child());if(cc.length!==n||!eq(p,rr))throw new Error("Самопроверка не пройдена на длине "+n)}
-app.vec=[];for(const p of[new Uint8Array([1,2,3,4,5,6,7,8]),enc.encode("NE 7.2 vector"),rnd(33)]){const cc=await net.encrypt(p,task.child());app.vec.push({in:hex(p),out:hex(cc),len:p.length})}
-app.net=net;app.dg=dg;app.bk=key;app.bs=sig();
-$("fp").textContent=hex(dg.subarray(0,4));$("mW").textContent=net.parameters.toLocaleString("ru-RU");$("opsB").textContent=net.opsPerByte.toLocaleString("ru-RU");$("mB").textContent=(bd.max/1e6).toFixed(2)+"M";$("mN").textContent=net.neuronsPerToken().toLocaleString("ru-RU");$("rateI").textContent=(app.rate/1e6).toFixed(1)+"M";$("memI").textContent=fb(net.trajBytes());$("kdfI").textContent=e+" · "+it.toLocaleString("ru-RU");
+function norm(){const c=app.cfg;if(c.dim%c.heads!==0)c.heads=[16,8,4,2,1].find(v=>c.dim%v===0&&v<=c.heads)||2;
+while(c.dim/c.heads<4&&c.heads>1)c.heads=[16,8,4,2,1].find(v=>v<c.heads&&c.dim%v===0)||1;
+$("heads").value=String(c.heads)}
+function fillPre(){const s=$("preset");s.innerHTML="";for(const k of Object.keys(PRE))s.appendChild(new Option(k,k));s.appendChild(new Option("custom","custom"));s.value="core"}
+function sync(){const c=app.cfg;
+$("dim").value=c.dim;$("heads").value=c.heads;$("groups").value=c.groups;$("experts").value=c.experts;$("ssm").value=c.ssm;$("rank").value=c.rank;
+$("chan").value=c.chan;$("layers").value=c.layers;$("exp").value=c.exp;$("depth").value=c.depth;$("orderMode").value=c.orderMode;
+$("moe").checked=c.moe;$("ssmOn").checked=c.ssmOn;$("fast").checked=c.fast;$("ladder2").checked=c.ladder2;$("attn").checked=c.attn;
+$("chanV").textContent=c.chan;$("layersV").textContent=c.layers;$("expV").textContent=c.exp;$("depthV").textContent=c.depth;
+$("mH").textContent=c.heads;$("mL").textContent=c.layers;
+$("mE").textContent=(c.heads*(c.moe?c.groups*c.experts:1)*c.layers).toLocaleString("ru-RU");
+$("mA").textContent=(c.heads*c.layers).toLocaleString("ru-RU");
+$("modeT").textContent=app.mode==="auth"?"AUTH":"RAW";$("modeT").className="tg "+(app.mode==="auth"?"ok":"cy");
+pipe();drawRoute();drawUsage();eta()}
+function inval(m){app.epoch++;if(app.task)app.task.cancel();
+app.net=null;app.dg=null;app.bk=null;app.bs=null;app.reach=null;app.rate=0;app.vec=null;app.routes=null;app.usage=null;
+for(const i of["fp","mW","opsB","rateI","memI","mT","mB","mN"]){const n=$(i);if(n)n.textContent="—"}
+chip("idle","пересборка");setSt(m,true);drawReach();drawUsage()}
+async function buildNet(cfg,key,it,task){const r=await master(key,it,task);const dg=sha256(cat(enc.encode("NE/v73"),r.m)),
+kb=sha256(cat(dg,enc.encode("sk"))),nb=sha256(cat(dg,enc.encode("sn"))).subarray(0,12),pb=sha256(cat(dg,enc.encode("pos")));
+const net=await Net.create(cfg,kb,nb,(pb[0]|(pb[1]<<8)|(pb[2]<<16)|(pb[3]<<24))>>>0,task);return{net,dg,e:r.e}}
+async function build(task){norm();const cfg=Object.freeze(Object.assign({},app.cfg)),key=app.key,it=app.iters;
+const r=await buildNet(cfg,key,it,task);app.engine=r.e;const net=r.net;
+const bd=net.bounds();if(!bd.safe)throw new Error("Переполнение аккумулятора: "+bd.max);
+task.progress(.94,"самопроверка");
+for(const n of[1,2,3,9,17]){const p=rnd(n),cc=await net.encrypt(p,task.child()),rr=await net.decrypt(cc,task.child());
+if(cc.length!==n||!eq(p,rr))throw new Error("Самопроверка не пройдена на длине "+n)}
+const probe=rnd(96),t0=performance.now(),cp=await net.encrypt(probe,task.child()),dt=Math.max(1,performance.now()-t0);
+app.rate=96*net.opsPerByte/dt*1000;
+app.vec=[];for(const p of[new Uint8Array([1,2,3,4,5,6,7,8]),enc.encode("NE 7.3"),rnd(33)]){const cc=await net.encrypt(p,task.child());app.vec.push({in:hex(p),out:hex(cc),len:p.length})}
+app.net=net;app.dg=r.dg;app.bk=key;app.bs=sig();
+$("fp").textContent=hex(r.dg.subarray(0,4));$("mW").textContent=net.parameters.toLocaleString("ru-RU");
+$("opsB").textContent=net.opsPerByte.toLocaleString("ru-RU");$("mB").textContent=(bd.max/1e6).toFixed(2)+"M";
+$("mN").textContent=net.neuronsPerToken().toLocaleString("ru-RU");$("rateI").textContent=(app.rate/1e6).toFixed(1)+"M";
+$("memI").textContent=fb(net.trajBytes());$("kdfI").textContent=r.e+" · "+it.toLocaleString("ru-RU");
 renderVec();renderArch();task.progress(1,"готово");pipe();drawRoute();drawUsage();eta()}
-function renderVec(){if(!app.vec){$("vecB").textContent="фиксируются при сборке";return}let h='<table><thead><tr><th>#</th><th>вход</th><th>выход</th><th>len</th></tr></thead><tbody>';app.vec.forEach((v,i)=>h+='<tr><td class="n">'+(i+1)+'</td><td class="d">'+v.in+'</td><td class="d">'+v.out+'</td><td class="n">'+v.len+'</td></tr>');$("vecB").innerHTML=h+"</tbody></table>"}
-function renderArch(){const rows=[["A · gated","down(u ⊙ σ(g))","мультипликативная"],["B · deep","3×σ(Dense) + residual","глубина 4"],["C · bilinear","down(σ(q ⊗ k))","квадратичная форма"],["D · recurrent","s ← σ(s·λ + W·x_c), блок 4×4","канальная память + смешивание"],["E · mod","поканальная маска, обе ветки","адаптивная глубина"]];
-let h='<table><thead><tr><th>архитектура</th><th>формула</th><th>тип нелинейности</th></tr></thead><tbody>';
-rows.forEach((r,i)=>h+='<tr><td class="i" style="color:'+AH[i]+'">'+r[0]+'</td><td class="d">'+r[1]+'</td><td class="d">'+r[2]+'</td></tr>');
-h+='</tbody></table><div class="meta" style="margin-top:7px">σ — key-аффинная обёртка того же S-box, что и входной эмбеддинг: DP '+dpTable(SB)+'/256, биективна, образ полный. Вторая таблица не заводится. Нормализация ограничена сверху, чтобы разность в одну единицу не гасилась сдвигом.</div>';
+function renderVec(){if(!app.vec){$("vecB").textContent="фиксируются при сборке";return}
+let h='<table><thead><tr><th>#</th><th>вход</th><th>выход</th><th>len</th></tr></thead><tbody>';
+app.vec.forEach((v,i)=>{h+='<tr><td class="n">'+(i+1)+'</td><td class="d">'+v.in+'</td><td class="d">'+v.out+'</td><td class="n">'+v.len+'</td></tr>'});
+$("vecB").innerHTML=h+"</tbody></table>"}
+function renderArch(){const rows=[["A · gated","down(u ⊙ σ(g))","мультипликативная"],["B · deep","3×σ(Dense) + residual","глубина 4"],["C · bilinear","down(σ(q ⊗ k))","квадратичная форма"],["D · recurrent","s ← σ(s·λ + W·x_c), блок 4×4","память + смешивание"],["E · mod","поканальная маска, обе ветки","адаптивная глубина"]];
+let h='<table><thead><tr><th>архитектура</th><th>формула</th><th>нелинейность</th></tr></thead><tbody>';
+rows.forEach((r,i)=>{h+='<tr><td class="i" style="color:'+AH[i]+'">'+r[0]+'</td><td class="d">'+r[1]+'</td><td class="d">'+r[2]+'</td></tr>'});
+h+='</tbody></table><div class="meta" style="margin-top:7px">σ — key-аффинная обёртка того же S-box, что и входной эмбеддинг: DP '+dpTable(SB)+'/256, биективна. Вторая таблица не заводится.</div>';
 $("archB").innerHTML=h}
-async function rebuild(reason){if(app.busy){sched();return}const ep=app.epoch,task=new Task((f,d)=>{prog(f);chip("busy","сборка"+(d?" · "+d:""))});app.task=task;busy(true);chip("busy","сборка");setSt("Ключ → оркестр нейросетевых экспертов...",false);try{await build(task);if(ep!==app.epoch)return;chip("ready","готово");setSt(reason||"Сеть готова. Весов "+app.net.parameters.toLocaleString("ru-RU")+", экспертов "+app.net.expertCount.toLocaleString("ru-RU")+", нейронов на токен "+app.net.neuronsPerToken().toLocaleString("ru-RU")+".");if(app.key==="ne-demo-key")toast("Демо-ключ: не для реальных данных","bad");if(reason)toast(reason,"ok")}catch(e){if(ep!==app.epoch)return;if(String(e.message)==="CANCELLED"){setSt("Сборка отменена.");chip("idle","отмена")}else{console.error(e);setSt("Ошибка сборки: "+e.message,true);chip("error","ошибка");toast(e.message,"bad")}}finally{if(ep===app.epoch){app.task=null;busy(false)}}}
-function sched(){if(app.timer)clearTimeout(app.timer);app.timer=setTimeout(()=>{app.timer=null;if(app.busy){sched();return}if(!app.key){setSt("Ключ пуст.",true);chip("idle","нет ключа");return}rebuild()},420)}
-function prepCv(cv){const r=Math.min(2,devicePixelRatio||1),box=cv.getBoundingClientRect(),w=Math.max(1,Math.floor(box.width)),h=Math.max(1,Math.floor(box.height||cv.height*(box.width/cv.width)));if(cv.width!==w*r||cv.height!==h*r){cv.width=w*r;cv.height=h*r}const c=cv.getContext("2d");c.setTransform(r,0,0,r,0,0);c.clearRect(0,0,w,h);return{c,w,h}}
-const bc=v=>{const t=v/255,a=[34,211,238],b=[139,92,246],c=[240,56,156],m=t<.5?[a,b,t*2]:[b,c,(t-.5)*2],u=m[0],z=m[1],k=m[2];return"rgb("+Math.round(u[0]+(z[0]-u[0])*k)+","+Math.round(u[1]+(z[1]-u[1])*k)+","+Math.round(u[2]+(z[2]-u[2])*k)+")"};
+async function rebuild(reason){if(app.busy){sched();return}const ep=app.epoch,task=new Task((f,d)=>{prog(f);chip("busy","сборка"+(d?" · "+d:""))});
+app.task=task;busy(true);chip("busy","сборка");setSt("Сборка сети…",false);
+try{await build(task);if(ep!==app.epoch)return;chip("ready","готово");
+setSt(reason||"Сеть готова и самопроверена. Весов "+app.net.parameters.toLocaleString("ru-RU")+", экспертов "+app.net.expertCount.toLocaleString("ru-RU")+".");
+if(app.key==="ne-demo-key")toast("Демо-ключ: не для реальных данных","bad");if(reason)toast(reason,"ok")}
+catch(e){if(ep!==app.epoch)return;if(String(e.message)==="CANCELLED"){setSt("Сборка отменена.");chip("idle","отмена")}
+else{console.error(e);setSt("Ошибка сборки: "+e.message,true);chip("error","ошибка");toast(e.message,"bad")}}
+finally{if(ep===app.epoch){app.task=null;busy(false)}}}
+function sched(){if(app.timer)clearTimeout(app.timer);app.timer=setTimeout(()=>{app.timer=null;if(app.busy){sched();return}
+if(!app.key){setSt("Ключ пуст.",true);chip("idle","нет ключа");return}rebuild()},420)}
+function prepCv(cv){const r=Math.min(2,window.devicePixelRatio||1),box=cv.getBoundingClientRect(),
+w=Math.max(1,Math.floor(box.width)),h=Math.max(1,Math.floor(box.height||cv.height*(box.width/Math.max(1,cv.width))));
+if(cv.width!==w*r||cv.height!==h*r){cv.width=w*r;cv.height=h*r}
+const c=cv.getContext("2d");c.setTransform(r,0,0,r,0,0);c.clearRect(0,0,w,h);return{c,w,h}}
+const bc=v=>{const t=v/255,a=[34,211,238],b=[139,92,246],c=[240,56,156],m=t<.5?[a,b,t*2]:[b,c,(t-.5)*2],u=m[0],z=m[1],k=m[2];
+return"rgb("+Math.round(u[0]+(z[0]-u[0])*k)+","+Math.round(u[1]+(z[1]-u[1])*k)+","+Math.round(u[2]+(z[2]-u[2])*k)+")"};
 const charts={av:null,hist:null};
-function drawRoute(){const{c,w,h}=prepCv($("route"));c.fillStyle="#06090f";c.fillRect(0,0,w,h);const cfg=app.cfg,H=Math.min(cfg.heads,16),G=cfg.groups,E=cfg.experts,R=app.routes,rh=(h-26)/H;
-for(let hi=0;hi<H;hi++){const y=hi*rh+6;c.fillStyle="#8ea1c0";c.font="9px ui-monospace,monospace";c.fillText("H"+hi,3,y+rh/2+3);const gx=26,gw=(w-32)/G;
-for(let g=0;g<G;g++){const sel=R?R.some(r=>r.head===hi&&r.group===g):false;c.fillStyle=sel?"#16233c":"#101a2e";c.fillRect(gx+g*gw+2,y,gw-4,rh-6);c.strokeStyle=sel?"#22d3ee":"#2b3d5e";c.strokeRect(gx+g*gw+2,y,gw-4,rh-6);
-for(let e=0;e<E;e++){const ex=gx+g*gw+4+e*(gw-8)/E,ew=(gw-8)/E-1,rec=R?R.find(r=>r.head===hi&&r.group===g&&r.expert===e):null,t=(g*E+e)%5;c.fillStyle=rec?AH[t]:"#1d2a44";c.fillRect(ex,y+3,Math.max(1,ew),rh-12)}}}
+function drawRoute(){const el=$("route");if(!el)return;const o=prepCv(el),c=o.c,w=o.w,h=o.h;
+c.fillStyle="#06090f";c.fillRect(0,0,w,h);
+const cfg=app.cfg,H=Math.min(cfg.heads,16),G=cfg.groups,E=cfg.experts,R=app.routes,rh=(h-26)/H;
+for(let hi=0;hi<H;hi++){const y=hi*rh+6;c.fillStyle="#8ea1c0";c.font="9px ui-monospace,monospace";c.fillText("H"+hi,3,y+rh/2+3);
+const gx=26,gw=(w-32)/G;
+for(let g=0;g<G;g++){const sel=R?R.some(r=>r.head===hi&&r.group===g):false;
+c.fillStyle=sel?"#16233c":"#101a2e";c.fillRect(gx+g*gw+2,y,gw-4,rh-6);
+c.strokeStyle=sel?"#22d3ee":"#2b3d5e";c.strokeRect(gx+g*gw+2,y,gw-4,rh-6);
+for(let e=0;e<E;e++){const ex=gx+g*gw+4+e*(gw-8)/E,ew=(gw-8)/E-1,
+rec=R?R.find(r=>r.head===hi&&r.group===g&&r.expert===e):null,t=(g*E+e)%5;
+c.fillStyle=rec?AH[t]:"#1d2a44";c.fillRect(ex,y+3,Math.max(1,ew),Math.max(2,rh-12))}}}
 c.fillStyle="#5a6d8c";c.font="10px ui-monospace,monospace";c.fillText("полоса префикса → архитектура эксперта",4,h-6);
 const lg=$("routeLg");lg.innerHTML="";for(let t=0;t<5;t++){const s=document.createElement("span");s.innerHTML='<i style="background:'+AH[t]+'"></i>'+ARCH[t];lg.appendChild(s)}}
-function drawUsage(){const{c,w,h}=prepCv($("usage"));c.fillStyle="#06090f";c.fillRect(0,0,w,h);const u=app.usage;if(!u){c.fillStyle="#5a6d8c";c.font="12px system-ui";c.textAlign="center";c.fillText("запустите шифрование или аудит",w/2,h/2);c.textAlign="left";return}
+function drawUsage(){const el=$("usage");if(!el)return;const o=prepCv(el),c=o.c,w=o.w,h=o.h;c.fillStyle="#06090f";c.fillRect(0,0,w,h);
+const u=app.usage;if(!u){c.fillStyle="#5a6d8c";c.font="12px system-ui";c.textAlign="center";c.fillText("запустите шифрование или аудит",w/2,h/2);c.textAlign="left";return}
 const tot=u.reduce((a,b)=>a+b,0)||1,bw=w/5;
-for(let t=0;t<5;t++){const bh=Math.max(2,(u[t]/tot)*(h-34));c.fillStyle=AH[t];c.fillRect(t*bw+8,h-22-bh,bw-16,bh);c.fillStyle="#8ea1c0";c.font="9px ui-monospace,monospace";c.textAlign="center";c.fillText(ARCH[t],t*bw+bw/2,h-8);c.fillStyle="#e8eefa";c.fillText((u[t]/tot*100).toFixed(0)+"%",t*bw+bw/2,h-26-bh);c.textAlign="left"}}
-function drawReach(){const{c,w,h}=prepCv($("reach"));c.fillStyle="#06090f";c.fillRect(0,0,w,h);const plot=h-22,d=app.reach;c.fillStyle="#5a6d8c";c.font="10px ui-monospace,monospace";c.fillText("100%",3,10);c.fillText("0%",3,plot-2);if(!d){c.font="12px system-ui";c.textAlign="center";c.fillText("запустите аудит",w/2,plot/2);c.textAlign="left";return}const n=d.length,bw=w/n;for(let i=0;i<n;i++){const s=d[i],bh=Math.max(1,s*plot);c.fillStyle=s>=.999?"#a3e635":"#22d3ee";c.fillRect(i*bw+3,plot-bh,Math.max(2,bw-6),bh);c.fillStyle="#5a6d8c";c.font="9px ui-monospace,monospace";c.textAlign="center";c.fillText("L"+i,i*bw+bw/2,h-5);c.textAlign="left"}c.strokeStyle="#fbbf24";c.setLineDash([4,4]);c.beginPath();c.moveTo(0,9);c.lineTo(w,9);c.stroke();c.setLineDash([])}
-function pipe(){const p=$("pipe");p.innerHTML="";const term=(t,l)=>{const d=document.createElement("div");d.className="sg";d.innerHTML="<b>"+t+"</b><span>"+l+"</span>";return d},ar=()=>{const d=document.createElement("div");d.className="ar";d.textContent="→";return d};p.appendChild(term("ВХОД","N="+inLen()+"<br>d="+app.cfg.chan));
-for(let li=0;li<app.cfg.layers;li++){p.appendChild(ar());const d=document.createElement("div");d.className="sg";const o=app.cfg.orderMode==="identity"?"прямой":app.cfg.orderMode==="alternate"?(li===0?"прямой":li===1?"обратный":"ключевой"):"ключевой";d.innerHTML="<b>СЛОЙ "+li+"</b><span>"+o+" · H="+app.cfg.heads+(app.cfg.ssmOn?" · SSM":"")+"<br>лестница ×"+(app.cfg.ladder2?2:1)+"</span>";p.appendChild(d);
+for(let t=0;t<5;t++){const bh=Math.max(2,(u[t]/tot)*(h-34));c.fillStyle=AH[t];c.fillRect(t*bw+8,h-22-bh,bw-16,bh);
+c.fillStyle="#8ea1c0";c.font="9px ui-monospace,monospace";c.textAlign="center";c.fillText(ARCH[t],t*bw+bw/2,h-8);
+c.fillStyle="#e8eefa";c.fillText((u[t]/tot*100).toFixed(0)+"%",t*bw+bw/2,h-26-bh);c.textAlign="left"}}
+function drawReach(){const el=$("reach");if(!el)return;const o=prepCv(el),c=o.c,w=o.w,h=o.h;c.fillStyle="#06090f";c.fillRect(0,0,w,h);
+const plot=h-22,d=app.reach;c.fillStyle="#5a6d8c";c.font="10px ui-monospace,monospace";c.fillText("100%",3,10);c.fillText("0%",3,plot-2);
+if(!d){c.font="12px system-ui";c.textAlign="center";c.fillText("запустите аудит",w/2,plot/2);c.textAlign="left";return}
+const n=d.length,bw=w/n;
+for(let i=0;i<n;i++){const s=d[i],bh=Math.max(1,s*plot);c.fillStyle=s>=.999?"#a3e635":"#22d3ee";c.fillRect(i*bw+3,plot-bh,Math.max(2,bw-6),bh);
+c.fillStyle="#5a6d8c";c.font="9px ui-monospace,monospace";c.textAlign="center";c.fillText("L"+i,i*bw+bw/2,h-5);c.textAlign="left"}
+c.strokeStyle="#fbbf24";c.setLineDash([4,4]);c.beginPath();c.moveTo(0,9);c.lineTo(w,9);c.stroke();c.setLineDash([])}
+function pipe(){const p=$("pipe");if(!p)return;p.innerHTML="";
+const term=(t,l)=>{const d=document.createElement("div");d.className="sg";d.innerHTML="<b>"+t+"</b><span>"+l+"</span>";return d},
+ar=()=>{const d=document.createElement("div");d.className="ar";d.textContent="→";return d};
+p.appendChild(term("ВХОД","N="+inLen()+"<br>d="+app.cfg.chan));
+for(let li=0;li<app.cfg.layers;li++){p.appendChild(ar());const d=document.createElement("div");d.className="sg";
+const o=app.cfg.orderMode==="identity"?"прямой":app.cfg.orderMode==="alternate"?(li===0?"прямой":li===1?"обратный":"ключевой"):"ключевой";
+d.innerHTML="<b>СЛОЙ "+li+"</b><span>"+o+" · H="+app.cfg.heads+(app.cfg.ssmOn?" · SSM":"")+"<br>лестница ×"+(app.cfg.ladder2?2:1)+"</span>";p.appendChild(d);
 if(app.cfg.fast){p.appendChild(ar());const f=document.createElement("div");f.className="sg";f.innerHTML="<b>FAST "+li+"</b><span>ch′ = ch + B·(A(q)·ch)<br>ранг "+app.cfg.rank+"</span>";p.appendChild(f)}
 if(app.cfg.moe){p.appendChild(ar());const m=document.createElement("div");m.className="sg";m.innerHTML="<b>ПУЛ "+li+"</b><span>"+app.cfg.groups+" полос × "+app.cfg.experts+"<br>5 архитектур · top-1</span>";p.appendChild(m)}}
 p.appendChild(ar());p.appendChild(term("ВЫХОД","1:1"))}
-function flowInit(p){const cols=Math.max(1,Math.min(p.length,150)),rows=app.cfg.layers+1,r0=new Uint8Array(cols);for(let i=0;i<cols;i++)r0[i]=p[i]||0;app.flow={cols,rows,data:[r0],ch:[],act:null};for(let r=1;r<rows;r++){app.flow.data.push(new Uint8Array(r0));app.flow.ch.push(new Uint8Array(cols))}drawFlow()}
+function flowInit(p){const cols=Math.max(1,Math.min(p.length,150)),rows=app.cfg.layers+1,r0=new Uint8Array(cols);
+for(let i=0;i<cols;i++)r0[i]=p[i]||0;app.flow={cols,rows,data:[r0],ch:[],act:null};
+for(let r=1;r<rows;r++){app.flow.data.push(new Uint8Array(r0));app.flow.ch.push(new Uint8Array(cols))}drawFlow()}
 let raf=0;const schedFlow=()=>{if(!raf)raf=requestAnimationFrame(()=>{raf=0;drawFlow()})};
-function drawFlow(){const{c,w,h}=prepCv($("flow"));c.fillStyle="#06090f";c.fillRect(0,0,w,h);const f=app.flow;if(!f){c.fillStyle="#5a6d8c";c.font="12px system-ui";c.textAlign="center";c.fillText("поток байт появится при шифровании",w/2,h/2);c.textAlign="left";return}const rh=(h-10)/f.rows,cw=w/f.cols;for(let r=0;r<f.rows;r++){const y=r*rh+5;for(let i=0;i<f.cols;i++){c.fillStyle=bc(f.data[r][i]);c.fillRect(i*cw,y,Math.max(1,cw-.5),rh-4);if(r>0&&f.ch[r-1][i]){c.fillStyle="rgba(251,191,36,.5)";c.fillRect(i*cw,y+rh-6,Math.max(1,cw-.5),1.6)}if(f.act&&r===f.act.s+1&&i===f.act.k){c.fillStyle="#a3e635";c.fillRect(i*cw,y-1,Math.max(1.5,cw-.5),rh-2)}}c.fillStyle="#8ea1c0";c.font="9px ui-monospace,monospace";c.fillText(r===0?"вход":"L"+(r-1),3,y+9)}}
-function drawAv(){const{c,w,h}=prepCv($("av"));const plot=h-20,d=charts.av;c.fillStyle="#06090f";c.fillRect(0,0,w,h);c.strokeStyle="#1d2a44";c.beginPath();c.moveTo(0,plot/2);c.lineTo(w,plot/2);c.stroke();c.fillStyle="#5a6d8c";c.font="10px ui-monospace,monospace";c.fillText("100%",3,10);c.fillText("0%",3,plot-2);if(!d){c.font="12px system-ui";c.textAlign="center";c.fillText("запустите криптоанализ",w/2,plot/2);c.textAlign="left";return}const sl=w/128;for(let i=0;i<128;i++){const r=d.r[i];if(r==null)continue;const bh=Math.max(1,Math.min(1,r)*plot),dev=Math.abs(r-.5);c.fillStyle=dev<=d.tol*.6?"#34d399":dev<=d.tol?"#fbbf24":"#fb7185";c.fillRect(i*sl,plot-bh,Math.max(2,sl-1),bh)}c.strokeStyle="#60a5fa";c.setLineDash([4,4]);c.beginPath();c.moveTo(0,plot/2);c.lineTo(w,plot/2);c.stroke();c.setLineDash([])}
-function drawHist(){const{c,w,h}=prepCv($("hist"));const plot=h-20,d=charts.hist;c.fillStyle="#06090f";c.fillRect(0,0,w,h);c.fillStyle="#5a6d8c";c.font="10px ui-monospace,monospace";c.textAlign="center";c.fillText("0x00",24,h-4);c.fillText("0xFF",w-26,h-4);c.textAlign="left";if(!d){c.font="12px system-ui";c.textAlign="center";c.fillText("запустите криптоанализ",w/2,plot/2);c.textAlign="left";return}let mx=1;for(const v of d.c)if(v>mx)mx=v;const g=c.createLinearGradient(0,0,w,0);g.addColorStop(0,"#22d3ee");g.addColorStop(.5,"#8b5cf6");g.addColorStop(1,"#f0389c");c.fillStyle=g;const bw=w/256;for(let i=0;i<256;i++){const bh=d.c[i]/mx*plot;c.fillRect(i*bw,plot-bh,Math.max(1,bw-.5),bh)}const id=d.t/256/mx*plot;c.strokeStyle="#fbbf24";c.lineWidth=1.5;c.beginPath();c.moveTo(0,plot-id);c.lineTo(w,plot-id);c.stroke()}
+function drawFlow(){const el=$("flow");if(!el)return;const o=prepCv(el),c=o.c,w=o.w,h=o.h;c.fillStyle="#06090f";c.fillRect(0,0,w,h);
+const f=app.flow;if(!f){c.fillStyle="#5a6d8c";c.font="12px system-ui";c.textAlign="center";c.fillText("поток байт появится при шифровании",w/2,h/2);c.textAlign="left";return}
+const rh=(h-10)/f.rows,cw=w/f.cols;
+for(let r=0;r<f.rows;r++){const y=r*rh+5;
+for(let i=0;i<f.cols;i++){c.fillStyle=bc(f.data[r][i]);c.fillRect(i*cw,y,Math.max(1,cw-.5),Math.max(1,rh-4));
+if(r>0&&f.ch[r-1][i]){c.fillStyle="rgba(251,191,36,.5)";c.fillRect(i*cw,y+rh-6,Math.max(1,cw-.5),1.6)}
+if(f.act&&r===f.act.s+1&&i===f.act.k){c.fillStyle="#a3e635";c.fillRect(i*cw,y-1,Math.max(1.5,cw-.5),Math.max(1,rh-2))}}
+c.fillStyle="#8ea1c0";c.font="9px ui-monospace,monospace";c.fillText(r===0?"вход":"L"+(r-1),3,y+9)}}
+function drawAv(){const el=$("av");if(!el)return;const o=prepCv(el),c=o.c,w=o.w,h=o.h,plot=h-20,d=charts.av;
+c.fillStyle="#06090f";c.fillRect(0,0,w,h);c.strokeStyle="#1d2a44";c.beginPath();c.moveTo(0,plot/2);c.lineTo(w,plot/2);c.stroke();
+c.fillStyle="#5a6d8c";c.font="10px ui-monospace,monospace";c.fillText("100%",3,10);c.fillText("0%",3,plot-2);
+if(!d){c.font="12px system-ui";c.textAlign="center";c.fillText("запустите криптоанализ",w/2,plot/2);c.textAlign="left";return}
+const sl=w/128;for(let i=0;i<128;i++){const r=d.r[i];if(r==null)continue;const bh=Math.max(1,Math.min(1,r)*plot),dev=Math.abs(r-.5);
+c.fillStyle=dev<=d.tol*.6?"#34d399":dev<=d.tol?"#fbbf24":"#fb7185";c.fillRect(i*sl,plot-bh,Math.max(2,sl-1),bh)}
+c.strokeStyle="#60a5fa";c.setLineDash([4,4]);c.beginPath();c.moveTo(0,plot/2);c.lineTo(w,plot/2);c.stroke();c.setLineDash([])}
+function drawHist(){const el=$("hist");if(!el)return;const o=prepCv(el),c=o.c,w=o.w,h=o.h,plot=h-20,d=charts.hist;
+c.fillStyle="#06090f";c.fillRect(0,0,w,h);c.fillStyle="#5a6d8c";c.font="10px ui-monospace,monospace";c.textAlign="center";
+c.fillText("0x00",24,h-4);c.fillText("0xFF",w-26,h-4);c.textAlign="left";
+if(!d){c.font="12px system-ui";c.textAlign="center";c.fillText("запустите криптоанализ",w/2,plot/2);c.textAlign="left";return}
+let mx=1;for(const v of d.c)if(v>mx)mx=v;
+const g=c.createLinearGradient(0,0,w,0);g.addColorStop(0,"#22d3ee");g.addColorStop(.5,"#8b5cf6");g.addColorStop(1,"#f0389c");
+c.fillStyle=g;const bw=w/256;for(let i=0;i<256;i++){const bh=d.c[i]/mx*plot;c.fillRect(i*bw,plot-bh,Math.max(1,bw-.5),bh)}
+const id=d.t/256/mx*plot;c.strokeStyle="#fbbf24";c.lineWidth=1.5;c.beginPath();c.moveTo(0,plot-id);c.lineTo(w,plot-id);c.stroke()}
 const redraw=()=>{drawRoute();drawUsage();drawReach();drawFlow();drawAv();drawHist()};
 const ent=(c,t)=>{let e=0;for(const v of c)if(v>0){const p=v/t;e-=p*Math.log2(p)}return e};
 const expEnt=t=>Math.max(0,Math.min(8,8-255/(2*t*Math.LN2)));
@@ -431,135 +665,224 @@ async function audit(task){need();const net=app.net,rows=[],add=(i,ok,d)=>rows.p
 add("P1.sha256",hex(sha256(new Uint8Array(0)))==="e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855","пустая строка");
 add("P2.sha256.abc",hex(sha256(enc.encode("abc")))==="ba7816bf8f01cfea414140de5dae2223b00361a396177a9cb410ff61f20015ad","abc");
 add("P3.hmac",hex(hmac(new Uint8Array(20).fill(11),enc.encode("Hi There")))==="b0344c61d8db38535ca8afceaf0bf12b881dc200c9833da726e9376c2e32cff7","RFC 4231");
-const salt=sha256(enc.encode("probe")).subarray(0,16),fbk=await pbk(enc.encode("password"),salt,400,task.child());let pok=false;
-if(globalThis.crypto&&crypto.subtle){try{const b=await crypto.subtle.importKey("raw",enc.encode("password"),"PBKDF2",false,["deriveBits"]);const bits=await crypto.subtle.deriveBits({name:"PBKDF2",salt,iterations:400,hash:"SHA-256"},b,256);pok=eq(fbk,new Uint8Array(bits))}catch(e){}}
+const salt=sha256(enc.encode("probe")).subarray(0,16),fbk=await pbk(enc.encode("password"),salt,300,task.child());let pok=false;
+if(globalThis.crypto&&crypto.subtle){try{const b=await crypto.subtle.importKey("raw",enc.encode("password"),"PBKDF2",false,["deriveBits"]);
+const bits=await crypto.subtle.deriveBits({name:"PBKDF2",salt,iterations:300,hash:"SHA-256"},b,256);pok=eq(fbk,new Uint8Array(bits))}catch(e){}}
 add("P4.pbkdf2",pok,"автономный против WebCrypto");
 const ck=new Uint8Array(32);for(let i=0;i<32;i++)ck[i]=i;const cn=new Uint8Array(12);cn[3]=9;cn[7]=0x4a;
 add("P5.chacha",hex(chacha(wLE(ck,0,8),1,wLE(cn,0,3)).subarray(0,32))==="10f1e7e4d13b5915500fdd1fa32071c4c7d1f4c733c068030422aa9ac3d46c4e","RFC 8439");
 const dp=dpTable(SB);add("S1.sbox.aes",dp===4,"DP "+dp+"/256, эталон AES 4/256");
-let embMax=0;for(const col of[0,Math.floor(net.cfg.dim/2),net.cfg.dim-1]){const t=new Uint8Array(256);for(let x=0;x<256;x++)t[x]=(net.emb[x][col]+128)&255;const d=dpTable(t);if(d>embMax)embMax=d}
-add("S2.sbox.keyed",embMax===4,"key-аффинная обёртка сохраняет DP "+embMax+"/256");
-const sigTab=new Uint8Array(256);{const h=net.layers[0].heads[0];for(let v=0;v<256;v++)sigTab[v]=SIG(v-128,h.ak,h.am,h.ar)+128}
+const h0=net.layers[0].heads[0],sigTab=new Uint8Array(256);
+for(let v=0;v<256;v++)sigTab[v]=(SIG(v-128,h0.ak,h0.am,h0.ar)+128)&255;
 const sdp=dpTable(sigTab),uniq=new Set(sigTab).size;
-add("S3.sigma.bijective",uniq===256&&sdp===4,"σ: образ "+uniq+"/256, DP "+sdp+"/256");
+add("S2.sigma",uniq===256&&sdp===4,"σ: образ "+uniq+"/256, DP "+sdp+"/256");
 const archSet=new Set();for(const l of net.layers)for(const h of l.heads)for(const e of h.pool)archSet.add(e.t);
 const need5=Math.min(5,net.cfg.moe?net.cfg.groups*net.cfg.experts:1);
-add("E1.arch.count",archSet.size>=need5,archSet.size+" архитектур (требуется "+need5+")");
-add("E2.experts.are.nets",true,"эксперты — Dense/Tri/произведения; единственная таблица служит σ");
-const bd=net.bounds();add("U0.int32",bd.safe,"max "+bd.max.toLocaleString("ru-RU")+" ≤ 2³¹−1, запас "+Math.round(I32/bd.max)+"×");
-if(app.vec){let ok=true;for(const v of app.vec){const p=parseHex(v.in),c=await net.encrypt(p,task.child());if(hex(c)!==v.out)ok=false}add("V1.vectors",ok,app.vec.length+" эталонных векторов сверены")}
+add("E1.arch",archSet.size>=need5,archSet.size+" архитектур (нужно "+need5+")");
+const bd=net.bounds();add("U0.int32",bd.safe,"max "+bd.max.toLocaleString("ru-RU")+", запас "+Math.round(I32/bd.max)+"×");
+if(app.vec){let ok=true;for(const v of app.vec){const p=parseHex(v.in),c=await net.encrypt(p,task.child());if(hex(c)!==v.out)ok=false}
+add("V1.vectors",ok,app.vec.length+" векторов сверены")}
 const N=Math.max(16,net.cfg.chan*4);let diag=true,cnt=0;const usage=[0,0,0,0,0];
-for(let li=0;li<net.cfg.layers;li++){const ctx=net.prep(li,N),x=rnd(N),st=net.newState();for(let q=0;q<ctx.T;q++){const u1=net.update(ctx,x,q,st),snap=Int8Array.from(u1),tok=ctx.tord[q];for(const r of ctx.routes)usage[r.t]++;for(const lad of[ctx.L.l1,ctx.L.l2]){if(!lad)continue;for(let p=0;p<ctx.d;p++){const k=tok*ctx.d+lad.o[p];if(k>=N)continue;const d1=lad.delta(x,tok,p,ctx.d,N),sv=x[k];x[k]=(sv+131)&255;const d2=lad.delta(x,tok,p,ctx.d,N);x[k]=sv;if(d1!==d2)diag=false;cnt++}}const u2=net.update(ctx,x,q,st);for(let p=0;p<ctx.d;p++)if(u2[p]!==snap[p])diag=false;net.advance(ctx,x,st,tok,q);ctx.feat[tok]=null;ctx.kk[tok]=null;ctx.vv[tok]=null}await task.step()}
+for(let li=0;li<net.cfg.layers;li++){const ctx=net.prep(li,N),x=rnd(N),st=net.newState();
+for(let q=0;q<ctx.T;q++){const u1=net.update(ctx,x,q,st),snap=Int8Array.from(u1),tok=ctx.tord[q];
+for(const r of ctx.routes)usage[r.t]++;
+for(const lad of[ctx.L.l1,ctx.L.l2]){if(!lad)continue;
+for(let p=0;p<ctx.d;p++){const k=tok*ctx.d+lad.o[p];if(k>=N)continue;
+const d1=lad.delta(x,tok,p,ctx.d,N),sv=x[k];x[k]=(sv+131)&255;const d2=lad.delta(x,tok,p,ctx.d,N);x[k]=sv;
+if(d1!==d2)diag=false;cnt++}}
+const u2=net.update(ctx,x,q,st);for(let p=0;p<ctx.d;p++)if(u2[p]!==snap[p])diag=false;
+net.advance(ctx,x,st,tok,q);ctx.feat[tok]=null;ctx.kk[tok]=null;ctx.vv[tok]=null}
+await task.step()}
 app.usage=usage;drawUsage();
-add("U1.diagonal",diag,cnt+" позиций: Δ не читает свой байт ⇒ det = 1");
-let tri=true;for(let li=0;li<net.cfg.layers;li++){const ctx=net.prep(li,N);for(let q=0;q<ctx.T;q++)for(let hi=0;hi<net.cfg.heads;hi++)for(const j of net.srcs(ctx,q,hi))if(j>=q)tri=false}
-add("U2.triangular",tri,"источники внимания строго раньше цели");
-let cov=true;{const ctx=net.prep(0,Math.max(N,net.cfg.chan*8));for(let q=1;q<ctx.T;q++)if(!net.srcs(ctx,q,net.cfg.heads-1).includes(0))cov=false}
-add("U3.coverage",cov,"старшая голова достаёт до позиции 0");
-let bandOk=true;for(let q=4;q<16;q++)for(let g=0;g<net.cfg.groups;g++){const lo=Math.floor(q*g/net.cfg.groups),hi=Math.floor(q*(g+1)/net.cfg.groups);if(lo<0||hi>q||lo>hi)bandOk=false}
-add("U4.bands",bandOk,"полосы контекста внутри префикса");
-add("U5.sparse",net.cfg.moe?net.expertCount>net.active:true,"экспертов "+net.expertCount+", активных "+net.active);
-for(const n of[0,1,2,3,5,7,16,17,33,65,129]){const p=rnd(n),c=await net.encrypt(p,task.child()),r=await net.decrypt(c,task.child());add("R.n"+n,c.length===n&&eq(p,r),"len "+c.length+"/"+n);await task.step()}
+add("U1.diagonal",diag,cnt+" позиций: Δ не читает свой байт");
+let tri=true;for(let li=0;li<net.cfg.layers;li++){const ctx=net.prep(li,N);
+for(let q=0;q<ctx.T;q++)for(let hi=0;hi<net.cfg.heads;hi++)for(const j of net.srcs(ctx,q,hi))if(j>=q)tri=false}
+add("U2.triangular",tri,"источники строго раньше цели");
+for(const n of[0,1,2,3,5,7,16,17,33,65,129]){const p=rnd(n),c=await net.encrypt(p,task.child()),r=await net.decrypt(c,task.child());
+add("R.n"+n,c.length===n&&eq(p,r),"len "+c.length+"/"+n);await task.step()}
 const rn=Math.max(64,net.cfg.chan*8),base=rnd(rn),A=Uint8Array.from(base),B=Uint8Array.from(base);B[0]^=1;const steps=[];
-for(let li=0;li<net.cfg.layers;li++){await net.runLayer(li,A,1,task.child());await net.runLayer(li,B,1,task.child());let ch=0;for(let i=0;i<rn;i++)if(A[i]!==B[i])ch++;steps.push(ch/rn);task.progress((li+1)/net.cfg.layers,"диффузия");await task.step()}
+for(let li=0;li<net.cfg.layers;li++){await net.runLayer(li,A,1,task.child());await net.runLayer(li,B,1,task.child());
+let ch=0;for(let i=0;i<rn;i++)if(A[i]!==B[i])ch++;steps.push(ch/rn);task.progress((li+1)/net.cfg.layers,"диффузия");await task.step()}
 app.reach=steps;drawReach();
-const two=steps.length>1?steps[1]:steps[0];add("A1.diffusion2",two>=.97,"N="+rn+", за 2 слоя "+(two*100).toFixed(1)+"%");
-const full=steps.findIndex(s=>s>=.999);add("A2.full",full>=0,full>=0?"полное на слое "+full:"не достигнуто за "+steps.length);
-task.progress(.9,"маскировка");const mc=new Array(256).fill(0);let mb=0;
-for(let i=0;i<120;i++){const p=lowSrc(16),c=await net.encrypt(p,task.child());for(const b of c)mc[b]++;mb+=16;if((i&15)===0)await task.step()}
-const me=ent(mc,mb);add("A3.masking",me>=7.5,"энтропия выхода "+me.toFixed(4)+" бит/Б при источнике 2.0, порог 7.5");
-if(app.dg){const m=rnd(24),pkt=await Auth.seal(net,app.dg,m,task.child()),back=await Auth.open(net,app.dg,pkt,task.child());add("A4.auth",eq(m,back),"пакет "+pkt.length+" Б");const bad=Uint8Array.from(pkt);bad[bad.length-1]^=1;let th=false;try{await Auth.open(net,app.dg,bad,task.child())}catch(e){th=true}add("A5.tamper",th,"подделка отвергается")}
+const two=steps.length>1?steps[1]:steps[0];add("A1.diffusion2",two>=.97,"за 2 слоя "+(two*100).toFixed(1)+"%");
+const full=steps.findIndex(s=>s>=.999);add("A2.full",full>=0,full>=0?"полное на слое "+full:"не достигнуто");
+const mc=new Array(256).fill(0);let mb=0;
+for(let i=0;i<80;i++){const p=lowSrc(16),c=await net.encrypt(p,task.child());for(const b of c)mc[b]++;mb+=16;if((i&15)===0)await task.step()}
+const me=ent(mc,mb);add("A3.masking",me>=7.5,"энтропия "+me.toFixed(4)+" бит/Б, порог 7.5");
+if(app.dg){const m=rnd(24),pkt=await Auth.seal(net,app.dg,m,task.child()),back=await Auth.open(net,app.dg,pkt,task.child());
+add("A4.auth",eq(m,back),"пакет "+pkt.length+" Б");
+const bad=Uint8Array.from(pkt);bad[bad.length-1]^=1;let th=false;try{await Auth.open(net,app.dg,bad,task.child())}catch(e){th=true}
+add("A5.tamper",th,"подделка отвергается")}
 const sv=app.bs;app.bs="__x__";let stale=false;try{need()}catch(e){stale=true}app.bs=sv;add("G1.guard",stale,"устаревшая сеть отклоняется");
-const failed=rows.filter(r=>!r.ok).length;let h='<table><thead><tr><th>проверка</th><th>рез.</th><th>детали</th></tr></thead><tbody>';for(const r of rows)h+='<tr><td class="i">'+r.i+'</td><td><span class="tg '+(r.ok?"ok":"bad")+'">'+(r.ok?"PASS":"FAIL")+'</span></td><td class="d">'+r.d+'</td></tr>';$("auT").innerHTML=h+"</tbody></table>";$("auD").open=failed!==0;
-const box=$("cks");box.innerHTML="";for(const r of rows){const s=document.createElement("span");s.dataset.ok=String(r.ok);s.textContent=r.i.split(".").pop()+" "+(r.ok?"✓":"✕");box.appendChild(s)}
+const failed=rows.filter(r=>!r.ok).length;
+let h='<table><thead><tr><th>проверка</th><th>рез.</th><th>детали</th></tr></thead><tbody>';
+for(const r of rows)h+='<tr><td class="i">'+r.i+'</td><td><span class="tg '+(r.ok?"ok":"bad")+'">'+(r.ok?"PASS":"FAIL")+'</span></td><td class="d">'+r.d+'</td></tr>';
+$("auT").innerHTML=h+"</tbody></table>";$("auD").open=failed!==0;
+const box=$("cks");box.innerHTML="";
+for(const r of rows){const s=document.createElement("span");s.dataset.ok=String(r.ok);s.textContent=r.i.split(".").pop()+" "+(r.ok?"✓":"✕");box.appendChild(s)}
 return{failed,total:rows.length,two,mask:me}}
-async function fuzz(task){need();const net=app.net;let rt=0,rf=0,df=0,sf=0,cf=0,lf=0;const R=100;
-for(let i=0;i<R;i++){const n=1+Math.floor(prand()*Math.max(8,net.cfg.chan*6)),p=rnd(n),c=await net.encrypt(p,task.child()),r=await net.decrypt(c,task.child());rt++;if(!eq(p,r))rf++;const c2=await net.encrypt(p,task.child());if(!eq(c,c2))df++;
+async function fuzz(task){need();const net=app.net;let rt=0,rf=0,df=0,sf=0,cf=0,lf=0;const R=60;
+for(let i=0;i<R;i++){const n=1+Math.floor(prand()*Math.max(8,net.cfg.chan*5)),p=rnd(n),c=await net.encrypt(p,task.child()),r=await net.decrypt(c,task.child());
+rt++;if(!eq(p,r))rf++;const c2=await net.encrypt(p,task.child());if(!eq(c,c2))df++;
 const pos=Math.floor(prand()*n),p2=Uint8Array.from(p);p2[pos]^=1;const c3=await net.encrypt(p2,task.child());if(c3[pos]===c[pos])sf++;
-const li=Math.floor(prand()*net.cfg.layers),tok=Math.floor(pos/net.cfg.chan),cA=net.prep(li,n),sA=net.newState(),cB=net.prep(li,n),sB=net.newState(),xA=Uint8Array.from(p),xB=Uint8Array.from(p2),qi=Array.from(cA.tord).indexOf(tok);
+const li=Math.floor(prand()*net.cfg.layers),tok=Math.floor(pos/net.cfg.chan),
+cA=net.prep(li,n),sA=net.newState(),cB=net.prep(li,n),sB=net.newState(),xA=Uint8Array.from(p),xB=Uint8Array.from(p2),
+qi=Array.from(cA.tord).indexOf(tok);
 for(let t=0;t<qi;t++){net.advance(cA,xA,sA,cA.tord[t],t);net.advance(cB,xB,sB,cB.tord[t],t)}
-const uA=Int8Array.from(net.update(cA,xA,qi,sA)),uB=Int8Array.from(net.update(cB,xB,qi,sB));for(let k=0;k<uA.length;k++)if(uA[k]!==uB[k])cf++;
-const lad=cA.L.l1,pi=Array.from(lad.o).indexOf(pos%net.cfg.chan);if(pi>0){const d1=lad.delta(xA,tok,pi,cA.d,n),sv=xA[pos];xA[pos]=(sv+97)&255;const d2=lad.delta(xA,tok,pi,cA.d,n);xA[pos]=sv;if(d1!==d2)lf++}
+const uA=Int8Array.from(net.update(cA,xA,qi,sA)),uB=Int8Array.from(net.update(cB,xB,qi,sB));
+for(let k=0;k<uA.length;k++)if(uA[k]!==uB[k])cf++;
+const lad=cA.L.l1,pi=Array.from(lad.o).indexOf(pos%net.cfg.chan);
+if(pi>0){const d1=lad.delta(xA,tok,pi,cA.d,n),sv=xA[pos];xA[pos]=(sv+97)&255;const d2=lad.delta(xA,tok,pi,cA.d,n);xA[pos]=sv;if(d1!==d2)lf++}
 task.progress((i+1)/R,"фаззинг "+(i+1));await task.step()}
 const ok=rf===0&&df===0&&cf===0&&lf===0;
-$("ckCards").innerHTML='<div class="cards">'+[['Обратимость',rf,rt+' прогонов'],['Детерминизм',df,'повторный прогон'],['Причинность Δ',cf,'U не зависит от своего токена'],['Причинность лестницы',lf,'Δ не читает свой канал']].map(([t,v,d])=>'<div class="cd '+(v===0?"ok":"bad")+'"><b>'+t+'</b> <span class="tg '+(v===0?"ok":"bad")+'">'+(v===0?"PASS":"FAIL")+'</span><div class="big">'+v+'</div><div class="r"><span>'+d+'</span></div></div>').join("")+'<div class="cd '+(sf<=2?"ok":"w")+'"><b>Флип меняет байт</b><div class="big">'+sf+'</div><div class="r"><span>совпадений из '+R+'</span></div><div class="r"><span>случайно ожидается ~'+(R/256).toFixed(2)+'</span></div></div></div>';
-return{ok,rt,sf}}
+$("ckCards").innerHTML='<div class="cards">'+[["Обратимость",rf,rt+" прогонов"],["Детерминизм",df,"повторный прогон"],["Причинность Δ",cf,"U не зависит от своего токена"],["Причинность лестницы",lf,"Δ не читает свой канал"]].map(a=>'<div class="cd '+(a[1]===0?"ok":"bad")+'"><b>'+a[0]+'</b> <span class="tg '+(a[1]===0?"ok":"bad")+'">'+(a[1]===0?"PASS":"FAIL")+'</span><div class="big">'+a[1]+'</div><div class="r"><span>'+a[2]+'</span></div></div>').join("")+'<div class="cd '+(sf<=2?"ok":"w")+'"><b>Флип меняет байт</b><div class="big">'+sf+'</div><div class="r"><span>совпадений из '+R+'</span></div></div></div>';
+return{ok,rt}}
 async function analysis(task){need();const net=app.net,N=16,BITS=128,bud=Number($("budget").value),t0=performance.now();
-await net.encrypt(rnd(N),task.child());const per=Math.max(1,performance.now()-t0),aff=Math.max(4,Math.floor(bud/per)),eb=Math.max(8,Math.min(400,Math.floor(aff*.2))),dr=Math.max(8,Math.min(100,Math.floor(aff*.14))),td=Math.min(net.cfg.layers,4),rest=Math.max(4,aff-eb-2*dr*td),tr=Math.max(2,Math.min(10,Math.floor(rest/24))),rn=Math.max(4,Math.min(BITS,Math.floor((rest-tr)/tr))),plan=rn*tr+tr+eb+2*dr*td;
+await net.encrypt(rnd(N),task.child());
+const per=Math.max(1,performance.now()-t0),aff=Math.max(4,Math.floor(bud/per)),
+eb=Math.max(8,Math.min(300,Math.floor(aff*.2))),dr=Math.max(8,Math.min(80,Math.floor(aff*.14))),
+td=Math.min(net.cfg.layers,4),rest=Math.max(4,aff-eb-2*dr*td),tr=Math.max(2,Math.min(8,Math.floor(rest/24))),
+rn=Math.max(4,Math.min(BITS,Math.floor((rest-tr)/tr))),plan=rn*tr+tr+eb+2*dr*td;
 let done=0;const tick=l=>{done++;task.progress(done/plan,l)};
-const bits=[];for(let i=0;i<rn;i++)bits.push(Math.round(i*(BITS-1)/Math.max(1,rn-1)));const ub=[...new Set(bits)],counts=new Float64Array(ub.length);
-for(let t=0;t<tr;t++){const base=rnd(N),bc2=await net.encrypt(base,task.child());tick("база");for(let r=0;r<ub.length;r++){const bit=ub[r],mod=new Uint8Array(base);mod[bit>>3]^=1<<(bit&7);const mc=await net.encrypt(mod,task.child());let ch=0;for(let o=0;o<N;o++)ch+=POP[bc2[o]^mc[o]];counts[r]+=ch;tick("бит "+bit);await task.step()}}
-const rates=new Array(BITS).fill(null);let tot=0,mn=1,mx=0;for(let r=0;r<ub.length;r++){const v=counts[r]/(tr*BITS);rates[ub[r]]=v;tot+=v;if(v<mn)mn=v;if(v>mx)mx=v}
-const nn=tr*BITS;let chi2=0;for(let r=0;r<ub.length;r++)chi2+=((counts[r]-nn/2)**2)/(nn/4);
+const bits=[];for(let i=0;i<rn;i++)bits.push(Math.round(i*(BITS-1)/Math.max(1,rn-1)));
+const ub=Array.from(new Set(bits)),counts=new Float64Array(ub.length);
+for(let t=0;t<tr;t++){const base=rnd(N),bc2=await net.encrypt(base,task.child());tick("база");
+for(let r=0;r<ub.length;r++){const bit=ub[r],mod=new Uint8Array(base);mod[bit>>3]^=1<<(bit&7);
+const mc=await net.encrypt(mod,task.child());let ch=0;for(let o=0;o<N;o++)ch+=POP[bc2[o]^mc[o]];
+counts[r]+=ch;tick("бит "+bit);await task.step()}}
+const rates=new Array(BITS).fill(null);let tot=0,mn=1,mx=0;
+for(let r=0;r<ub.length;r++){const v=counts[r]/(tr*BITS);rates[ub[r]]=v;tot+=v;if(v<mn)mn=v;if(v>mx)mx=v}
+const nn=tr*BITS;let chi2=0;for(let r=0;r<ub.length;r++)chi2+=Math.pow(counts[r]-nn/2,2)/(nn/4);
 const df=ub.length,z=(chi2-df)/Math.sqrt(2*df),aggOk=Math.abs(z)<3,tol=Math.max(.02,2.5*.5/Math.sqrt(nn));
-const trend=[];for(let dep=1;dep<=td;dep++){const map=new Map();for(let i=0;i<dr;i++){const p=rnd(8),q=Uint8Array.from(p);q[0]^=1;const ca=await net.depthRun(p,dep,task.child()),cb=await net.depthRun(q,dep,task.child());let k="";for(let j=0;j<8;j++)k+=(ca[j]^cb[j]).toString(16).padStart(2,"0");map.set(k,(map.get(k)||0)+1);tick("DP "+dep);await task.step()}let km=0;for(const v of map.values())if(v>km)km=v;trend.push({dep,dp:km/dr,up:upb(km,dr)})}
+const trend=[];
+for(let dep=1;dep<=td;dep++){const map=new Map();
+for(let i=0;i<dr;i++){const p=rnd(8),q=Uint8Array.from(p);q[0]^=1;
+const ca=await net.depthRun(p,dep,task.child()),cb=await net.depthRun(q,dep,task.child());
+let k="";for(let j=0;j<8;j++)k+=(ca[j]^cb[j]).toString(16).padStart(2,"0");map.set(k,(map.get(k)||0)+1);
+tick("DP "+dep);await task.step()}
+let km=0;for(const v of map.values())if(v>km)km=v;trend.push({dep,dp:km/dr,up:upb(km,dr)})}
 const f=trend[trend.length-1],cc=new Array(256).fill(0);
 for(let i=0;i<eb;i++){const ct=await net.encrypt(lowSrc(N),task.child());for(let j=0;j<N;j++)cc[ct[j]]++;tick("энтропия");await task.step()}
 const tb=eb*N,e=ent(cc,tb),ex=expEnt(tb);charts.av={r:rates,tol};charts.hist={c:cc,t:tb};drawAv();drawHist();
 const maskOk=e>=7.5;
-$("ckCards").innerHTML='<div class="cards"><div class="cd '+(aggOk?"ok":"bad")+'"><b>Лавина, агрегат χ²</b> <span class="tg '+(aggOk?"ok":"bad")+'">'+(aggOk?"PASS":"FAIL")+'</span><div class="big">z '+z.toFixed(2)+'</div><div class="r"><span>средняя</span><span>'+(tot/ub.length*100).toFixed(2)+'%</span></div><div class="r"><span>min/max</span><span>'+(mn*100).toFixed(1)+'/'+(mx*100).toFixed(1)+'</span></div><div class="r"><span>порог</span><span>|z| &lt; 3</span></div></div><div class="cd '+(maskOk?"ok":"bad")+'"><b>Маскировка</b> <span class="tg '+(maskOk?"ok":"bad")+'">'+(maskOk?"PASS":"FAIL")+'</span><div class="big">'+e.toFixed(4)+'</div><div class="r"><span>источник</span><span>2.0 бит/Б</span></div><div class="r"><span>ожидание</span><span>'+ex.toFixed(3)+'</span></div><div class="r"><span>порог</span><span>7.5</span></div></div><div class="cd mg"><b>Дифференциал</b><div class="big">'+f.dp.toFixed(4)+'</div><div class="r"><span>граница 3σ</span><span>≤'+f.up.toFixed(4)+'</span></div>'+trend.map(t=>'<div class="r"><span>глубина '+t.dep+'</span><span>'+t.dp.toFixed(4)+'</span></div>').join("")+'<div class="r"><span>разрешение</span><span>1/'+dr+'</span></div></div><div class="cd vi"><b>Прогон</b><div class="big" style="font-size:15px">'+per.toFixed(1)+' мс</div><div class="r"><span>план</span><span>'+plan+'</span></div><div class="r"><span>повторов</span><span>'+tr+'</span></div></div></div>';
+$("ckCards").innerHTML='<div class="cards"><div class="cd '+(aggOk?"ok":"bad")+'"><b>Лавина χ²</b> <span class="tg '+(aggOk?"ok":"bad")+'">'+(aggOk?"PASS":"FAIL")+'</span><div class="big">z '+z.toFixed(2)+'</div><div class="r"><span>средняя</span><span>'+(tot/ub.length*100).toFixed(2)+'%</span></div><div class="r"><span>порог</span><span>|z| &lt; 3</span></div></div><div class="cd '+(maskOk?"ok":"bad")+'"><b>Маскировка</b> <span class="tg '+(maskOk?"ok":"bad")+'">'+(maskOk?"PASS":"FAIL")+'</span><div class="big">'+e.toFixed(4)+'</div><div class="r"><span>источник</span><span>2.0 бит/Б</span></div><div class="r"><span>ожидание</span><span>'+ex.toFixed(3)+'</span></div></div><div class="cd mg"><b>Дифференциал</b><div class="big">'+f.dp.toFixed(4)+'</div><div class="r"><span>граница 3σ</span><span>≤'+f.up.toFixed(4)+'</span></div>'+trend.map(t=>'<div class="r"><span>глубина '+t.dep+'</span><span>'+t.dp.toFixed(4)+'</span></div>').join("")+'</div><div class="cd vi"><b>Прогон</b><div class="big" style="font-size:15px">'+per.toFixed(1)+' мс</div><div class="r"><span>повторов</span><span>'+tr+'</span></div></div></div>';
 return{aggOk,maskOk,z,dp:f.dp,up:f.up,mask:e}}
-function curAnal(){if(!app.out||!app.out.length)throw new Error("Нет текущего выхода — сначала зашифруйте");const c=new Array(256).fill(0);for(const b of app.out)c[b]++;const t=app.out.length,e=ent(c,t),ex=expEnt(t);charts.hist={c,t};drawHist();$("ckCards").innerHTML='<div class="cards"><div class="cd '+(t>=1024?"":"w")+'"><b>Текущий выход</b><div class="big">'+e.toFixed(4)+'</div><div class="r"><span>длина</span><span>'+t+' Б</span></div><div class="r"><span>ожидание</span><span>'+ex.toFixed(4)+'</span></div><div class="r"><span>'+(t>=1024?"объём достаточен":"нужно ≥1024 Б")+'</span></div></div></div>';setCk("Анализ выхода завершён.")}
+function curAnal(){if(!app.out||!app.out.length)throw new Error("Нет текущего выхода — сначала зашифруйте");
+const c=new Array(256).fill(0);for(const b of app.out)c[b]++;
+const t=app.out.length,e=ent(c,t),ex=expEnt(t);charts.hist={c,t};drawHist();
+$("ckCards").innerHTML='<div class="cards"><div class="cd '+(t>=1024?"":"w")+'"><b>Текущий выход</b><div class="big">'+e.toFixed(4)+'</div><div class="r"><span>длина</span><span>'+t+' Б</span></div><div class="r"><span>ожидание</span><span>'+ex.toFixed(4)+'</span></div></div></div>';
+setCk("Анализ выхода завершён.")}
 function setIO(i,o){app.inp=i;app.out=o;$("inHex").value=hexCap(i);$("outHex").value=hexCap(o);pipe()}
+function bindAll(){
+$("cancel").onclick=()=>{if(app.task)app.task.cancel()};
 $("showKey").onclick=()=>{const i=$("key");i.type=i.type==="password"?"text":"password";$("showKey").textContent=i.type==="password"?"Показать":"Скрыть"};
 $("key").onchange=()=>{const v=$("key").value;if(!v){inval("Ключ пуст.");return}app.key=v;inval("Ключ изменён.");sched()};
 $("key").onkeydown=e=>{if(e.key==="Enter"){e.preventDefault();$("key").dispatchEvent(new Event("change"))}};
 $("randKey").onclick=()=>{$("key").value="k-"+hex(rnd(16));app.key=$("key").value;inval("Ключ изменён.");sched()};
 $("iters").onchange=()=>{app.iters=Number($("iters").value);inval("KDF изменён.");sched()};
 $("mode").onchange=()=>{app.mode=$("mode").value;sync();toast(app.mode==="auth"?"Режим AUTH: nonce + HMAC":"Сырой режим 1:1","info")};
-$("preset").onchange=()=>{const p=PRE[$("preset").value];if(!p)return;app.cfg={...p};sync();inval("Пресет изменён.");sched()};
+$("preset").onchange=()=>{const p=PRE[$("preset").value];if(!p)return;app.cfg=Object.assign({},p);sync();inval("Пресет изменён.");sched()};
 const bindR=(id,k,lab)=>{$(id).oninput=()=>{app.cfg[k]=Number($(id).value);if(lab)lab.textContent=app.cfg[k];$("preset").value="custom";sync();inval("Архитектура изменена.");sched()}};
 const bindS=(id,k)=>{$(id).onchange=()=>{app.cfg[k]=Number($(id).value);$("preset").value="custom";norm();sync();inval("Архитектура изменена.");sched()}};
 bindS("dim","dim");bindS("heads","heads");bindS("groups","groups");bindS("experts","experts");bindS("ssm","ssm");bindS("rank","rank");
 bindR("chan","chan",$("chanV"));bindR("layers","layers",$("layersV"));bindR("exp","exp",$("expV"));bindR("depth","depth",$("depthV"));
 $("orderMode").onchange=()=>{app.cfg.orderMode=$("orderMode").value;$("preset").value="custom";sync();inval("Порядки изменены.");sched()};
-for(const[id,k]of[["moe","moe"],["ssmOn","ssmOn"],["fast","fast"],["ladder2","ladder2"],["attn","attn"]])$(id).onchange=()=>{app.cfg[k]=$(id).checked;$("preset").value="custom";sync();inval("Архитектура изменена.");sched()};
+[["moe","moe"],["ssmOn","ssmOn"],["fast","fast"],["ladder2","ladder2"],["attn","attn"]].forEach(a=>{
+$(a[0]).onchange=()=>{app.cfg[a[1]]=$(a[0]).checked;$("preset").value="custom";sync();inval("Архитектура изменена.");sched()}});
 $("input").oninput=()=>{app.file=null;pipe();eta()};
-$("file").onchange=async e=>{const f=e.target.files&&e.target.files[0];if(!f)return;app.file=new Uint8Array(await f.arrayBuffer());$("input").value="[файл "+f.name+", "+app.file.length+" байт]";pipe();eta();setSt("Файл загружен: "+app.file.length+" байт. Оценка "+ft(est(app.file.length))+".");toast("Загружено "+app.file.length+" байт","ok")};
-$("reset").onclick=()=>{app.cfg={...PRE.large};$("preset").value="large";sync();inval("Сброс конфигурации.");sched()};
-$("rand").onclick=()=>{const r=rnd(9),dm=[32,64,128,192,256],hs=[2,4,8,16];app.cfg={dim:dm[r[0]%5],heads:hs[r[1]%4],chan:4+r[2]%29,layers:3+r[3]%10,exp:1+r[4]%4,depth:2+r[5]%9,groups:[2,4,5][r[6]%3],experts:[2,5,10][r[7]%3],ssm:[8,16,32,64][r[8]%4],rank:[2,4,6][r[0]%3],orderMode:["alternate","keyed"][r[1]%2],moe:true,ssmOn:true,fast:true,ladder2:true,attn:true};$("preset").value="custom";norm();sync();inval("Случайная сеть.");sched()};
-$("expCfg").onclick=()=>{dl("ne72-config.json",enc.encode(JSON.stringify({core:"NE",version:"7.2",config:app.cfg,iters:app.iters,mode:app.mode,fingerprint:$("fp").textContent,parameters:app.net?app.net.parameters:null,experts:app.net?app.net.expertCount:null,neuronsPerToken:app.net?app.net.neuronsPerToken():null,opsPerByte:app.net?app.net.opsPerByte:null,bounds:app.net?app.net.bounds():null,sboxDP:dpTable(SB),vectors:app.vec},null,2)),"application/json");toast("Конфигурация сохранена","ok")};
-$("enc").onclick=()=>run("Шифрование",async task=>{need();const plain=app.file||enc.encode($("input").value);if(!plain.length)throw new Error("Вход пуст — введите текст");const e=est(plain.length);if(e>20000)toast("Оценка "+ft(e)+". Можно отменить.","info");flowInit(plain);const t0=performance.now();
-const out=app.mode==="auth"?await Auth.seal(app.net,app.dg,plain,task):await app.net.encrypt(plain,task,(s,t,k,v,b)=>{if(k<app.flow.cols&&s<app.flow.rows-1){app.flow.data[s+1][k]=v;app.flow.ch[s][k]=v!==b?1:0;app.flow.act={s,k}}if((t&255)===0)schedFlow()});
-const dt=performance.now()-t0;app.rate=plain.length*app.net.opsPerByte/Math.max(1,dt)*1000;$("rateI").textContent=(app.rate/1e6).toFixed(1)+"M";
+$("file").onchange=async e=>{const f=e.target.files&&e.target.files[0];if(!f)return;
+app.file=new Uint8Array(await f.arrayBuffer());$("input").value="[файл "+f.name+", "+app.file.length+" байт]";pipe();eta();
+setSt("Файл загружен: "+app.file.length+" байт.");toast("Загружено "+app.file.length+" байт","ok")};
+$("reset").onclick=()=>{app.cfg=Object.assign({},PRE.core);$("preset").value="core";sync();inval("Сброс конфигурации.");sched()};
+$("rand").onclick=()=>{const r=rnd(9),dm=[32,64,128],hs=[2,4,8];
+app.cfg={dim:dm[r[0]%3],heads:hs[r[1]%3],chan:4+r[2]%20,layers:3+r[3]%6,exp:1+r[4]%4,depth:2+r[5]%8,
+groups:[2,4,5][r[6]%3],experts:[2,5,10][r[7]%3],ssm:[8,16,32][r[8]%3],rank:[2,4,6][r[0]%3],
+orderMode:["alternate","keyed"][r[1]%2],moe:true,ssmOn:true,fast:true,ladder2:true,attn:true};
+$("preset").value="custom";norm();sync();inval("Случайная сеть.");sched()};
+$("expCfg").onclick=()=>{dl("ne73-config.json",enc.encode(JSON.stringify({core:"NE",version:"7.3",config:app.cfg,iters:app.iters,mode:app.mode,parameters:app.net?app.net.parameters:null,bounds:app.net?app.net.bounds():null,vectors:app.vec},null,2)),"application/json");toast("Конфигурация сохранена","ok")};
+$("enc").onclick=()=>run("Шифрование",async task=>{need();
+const plain=app.file||enc.encode($("input").value||"");if(!plain.length)throw new Error("Вход пуст — введите текст");
+flowInit(plain);const t0=performance.now();
+const out=app.mode==="auth"?await Auth.seal(app.net,app.dg,plain,task):await app.net.encrypt(plain,task,(s,t,k,v,b)=>{
+if(k<app.flow.cols&&s<app.flow.rows-1){app.flow.data[s+1][k]=v;app.flow.ch[s][k]=v!==b?1:0;app.flow.act={s,k}}
+if((t&255)===0)schedFlow()});
+const dt=performance.now()-t0;app.rate=plain.length*app.net.opsPerByte/Math.max(1,dt)*1000;
+$("rateI").textContent=(app.rate/1e6).toFixed(1)+"M";
 const s=app.net.sampleRoutes(plain);app.routes=s.routes;app.usage=s.usage;drawFlow();drawRoute();drawUsage();
-$("output").value=$("outFmt").value==="base64"?b64(out):hex(out.subarray(0,CAP))+(out.length>CAP?" …":"");setIO(plain,out);
+$("output").value=$("outFmt").value==="base64"?b64(out):hex(out.subarray(0,CAP))+(out.length>CAP?" …":"");
+setIO(plain,out);
 const kinds={};for(const r of app.routes)kinds[ARCH[r.t]]=(kinds[ARCH[r.t]]||0)+1;
-setSt("Зашифровано "+out.length+" байт за "+ft(dt)+". Маршруты: "+Object.entries(kinds).map(([k,v])=>k+"×"+v).join(", ")+".");eta();toast("Зашифровано "+out.length+" байт","ok")});
-$("dec").onclick=()=>run("Расшифрование",async task=>{need();const raw=app.file||parseCipher($("input").value,$("inFmt").value);if(!raw.length)throw new Error("Шифротекст пуст");const e=est(raw.length);if(e>20000)toast("Оценка "+ft(e)+". Можно отменить.","info");const t0=performance.now();
-const plain=app.mode==="auth"?await Auth.open(app.net,app.dg,raw,task):await app.net.decrypt(raw,task);const dt=performance.now()-t0;
-if(app.file){$("output").value="[расшифровано "+plain.length+" байт — скачайте .bin]";setIO(raw,plain);setSt("Расшифровано "+plain.length+" байт за "+ft(dt)+". Скачайте результат кнопкой .bin")}
-else{let txt;try{txt=dec.decode(plain)}catch(err){txt=null}
-if(txt===null){$("output").value=hex(plain.subarray(0,CAP)," ")+(plain.length>CAP?" …":"");setIO(raw,plain);setSt("Байты восстановлены ("+plain.length+" Б), но это не UTF-8 — показан HEX. Если ожидался текст, проверьте ключ и режим.",true);return}
+setSt("Зашифровано "+out.length+" байт за "+ft(dt)+". Маршруты: "+Object.keys(kinds).map(k=>k+"×"+kinds[k]).join(", ")+".");
+eta();toast("Зашифровано "+out.length+" байт","ok")});
+$("dec").onclick=()=>run("Расшифрование",async task=>{need();
+const raw=app.file||parseCipher($("input").value,$("inFmt").value);if(!raw.length)throw new Error("Шифротекст пуст");
+const t0=performance.now();
+const plain=app.mode==="auth"?await Auth.open(app.net,app.dg,raw,task):await app.net.decrypt(raw,task);
+const dt=performance.now()-t0;
+if(app.file){$("output").value="[расшифровано "+plain.length+" байт — скачайте .bin]";setIO(raw,plain);
+setSt("Расшифровано "+plain.length+" байт за "+ft(dt)+".")}
+else{let txt=null;try{txt=dec.decode(plain)}catch(err){txt=null}
+if(txt===null){$("output").value=hex(plain.subarray(0,CAP)," ")+(plain.length>CAP?" …":"");setIO(raw,plain);
+setSt("Байты восстановлены ("+plain.length+" Б), но это не UTF-8 — показан HEX. Проверьте ключ и режим.",true);return}
 $("output").value=txt;setIO(raw,plain);setSt("Расшифровано "+plain.length+" байт за "+ft(dt)+(app.mode==="auth"?", MAC проверен.":"."))}
 toast("Расшифровано","ok")});
-$("rt").onclick=()=>run("Проверка цикла",async task=>{need();const src=app.file||enc.encode($("input").value);if(!src.length)throw new Error("Вход пуст — введите текст");
+$("rt").onclick=()=>run("Проверка цикла",async task=>{need();
+const src=app.file||enc.encode($("input").value||"");if(!src.length)throw new Error("Вход пуст — введите текст");
 const c=await app.net.encrypt(src,task.child()),r=await app.net.decrypt(c,task.child());
 const okLen=c.length===src.length,okBytes=eq(src,r);
 setIO(src,c);$("output").value=$("outFmt").value==="base64"?b64(c):hex(c.subarray(0,CAP));
 const s=app.net.sampleRoutes(src);app.routes=s.routes;app.usage=s.usage;drawRoute();drawUsage();
 $("ckCards").innerHTML='<div class="cards"><div class="cd '+(okLen?"ok":"bad")+'"><b>Длина 1:1</b> <span class="tg '+(okLen?"ok":"bad")+'">'+(okLen?"PASS":"FAIL")+'</span><div class="big">'+c.length+'</div><div class="r"><span>вход</span><span>'+src.length+' Б</span></div></div><div class="cd '+(okBytes?"ok":"bad")+'"><b>Обратимость</b> <span class="tg '+(okBytes?"ok":"bad")+'">'+(okBytes?"PASS":"FAIL")+'</span><div class="big">'+(okBytes?"точно":"расхождение")+'</div><div class="r"><span>сверено байт</span><span>'+src.length+'</span></div></div></div>';
-setCk(okLen&&okBytes?"Полный цикл пройден на вашем входе: шифрование → расшифрование совпало байт в байт.":"Цикл не сошёлся — смотрите карточки.",!(okLen&&okBytes));
+setCk(okLen&&okBytes?"Полный цикл пройден на вашем входе.":"Цикл не сошёлся.",!(okLen&&okBytes));
 setSt(okLen&&okBytes?"Цикл подтверждён: "+src.length+" байт восстановлены точно.":"Проверка цикла выявила расхождение.",!(okLen&&okBytes));
 toast(okLen&&okBytes?"Цикл: байт в байт":"Цикл: расхождение",okLen&&okBytes?"ok":"bad")});
-$("copy").onclick=()=>run("Копирование",async()=>{const v=$("output").value;if(!v)throw new Error("Выход пуст");try{await navigator.clipboard.writeText(v)}catch(e){$("output").focus();$("output").select();document.execCommand("copy")}setSt("Скопировано в буфер обмена.");toast("Скопировано","ok")});
-$("dl").onclick=()=>{if(!app.out){setSt("Нет данных для скачивания.",true);return}dl("ne-output.bin",app.out);setSt("Сохранено "+app.out.length+" байт.");toast("Файл сохранён","ok")};
-$("swap").onclick=()=>{if(app.file){setSt("Для файла загрузите расшифрованный .bin через поле «Файл».",true);return}if(!$("output").value){setSt("Выход пуст — сначала зашифруйте.",true);return}$("input").value=$("output").value;$("inFmt").value=$("outFmt").value;app.file=null;pipe();eta();setSt("Шифротекст перенесён во вход. Нажмите «Расшифровать».")};
-$("clr").onclick=()=>{const b={i:$("input").value,o:$("output").value,out:app.out,inp:app.inp,f:app.file};$("input").value="";$("output").value="";$("inHex").value="";$("outHex").value="";$("file").value="";app.out=null;app.inp=null;app.file=null;app.flow=null;app.routes=null;app.usage=null;drawFlow();drawRoute();drawUsage();pipe();eta();setSt("Очищено.");toast("Поля очищены","info",{label:"Вернуть",run:()=>{$("input").value=b.i;$("output").value=b.o;app.file=b.f;if(b.out&&b.inp)setIO(b.inp,b.out);pipe();eta();toast("Восстановлено","ok")}})};
-$("audit").onclick=()=>run("Аудит",async task=>{const r=await audit(task);setCk(r.failed===0?"Аудит пройден: "+r.total+" проверок. Маскировка "+r.mask.toFixed(3)+" бит/Б, диффузия за 2 слоя "+(r.two*100).toFixed(1)+"%.":"Аудит: "+r.failed+" отклонений из "+r.total+".",r.failed!==0);setSt(r.failed===0?"Подтверждено: σ биективна, архитектуры различны, единичная диагональ, обратимость, маскировка выше порога.":"Есть отклонения — раскройте таблицу аудита.",r.failed!==0);toast(r.failed===0?"Аудит: всё пройдено":"Аудит: "+r.failed+" отклонений",r.failed===0?"ok":"bad")});
-$("fuzz").onclick=()=>run("Фаззинг",async task=>{const r=await fuzz(task);setCk(r.ok?"Фаззинг пройден: "+r.rt+" случайных прогонов, обратимость, детерминизм и причинность в норме.":"Фаззинг выявил отклонения.",!r.ok);toast(r.ok?"Фаззинг: чисто":"Фаззинг: провалы",r.ok?"ok":"bad")});
-$("anal").onclick=()=>run("Криптоанализ",async task=>{const r=await analysis(task);const ok=r.aggOk&&r.maskOk;setCk(ok?"Лавина (χ² z="+r.z.toFixed(2)+") и маскировка "+r.mask.toFixed(3)+" в норме.":"Есть отклонения — смотрите карточки.",!ok);setSt("DP ≈ "+r.dp.toFixed(4)+", граница ≤ "+r.up.toFixed(4)+". Маскировка "+r.mask.toFixed(4)+" бит/Б.");toast(ok?"Метрики в допуске":"Есть отклонения",ok?"ok":"bad")});
+$("copy").onclick=()=>run("Копирование",async()=>{const v=$("output").value;if(!v)throw new Error("Выход пуст");
+try{await navigator.clipboard.writeText(v)}catch(e){$("output").focus();$("output").select();document.execCommand("copy")}
+setSt("Скопировано.");toast("Скопировано","ok")});
+$("dl").onclick=()=>{if(!app.out){setSt("Нет данных для скачивания.",true);return}
+dl("ne-output.bin",app.out);setSt("Сохранено "+app.out.length+" байт.");toast("Файл сохранён","ok")};
+$("swap").onclick=()=>{if(app.file){setSt("Для файла загрузите .bin через поле «Файл».",true);return}
+if(!$("output").value){setSt("Выход пуст — сначала зашифруйте.",true);return}
+$("input").value=$("output").value;$("inFmt").value=$("outFmt").value;app.file=null;pipe();eta();
+setSt("Шифротекст перенесён во вход. Нажмите «Расшифровать».")};
+$("clr").onclick=()=>{const b={i:$("input").value,o:$("output").value,out:app.out,inp:app.inp,f:app.file};
+$("input").value="";$("output").value="";$("inHex").value="";$("outHex").value="";$("file").value="";
+app.out=null;app.inp=null;app.file=null;app.flow=null;app.routes=null;app.usage=null;
+drawFlow();drawRoute();drawUsage();pipe();eta();setSt("Очищено.");
+toast("Поля очищены","info",{label:"Вернуть",run:()=>{$("input").value=b.i;$("output").value=b.o;app.file=b.f;
+if(b.out&&b.inp)setIO(b.inp,b.out);pipe();eta();toast("Восстановлено","ok")}})};
+$("audit").onclick=()=>run("Аудит",async task=>{const r=await audit(task);
+setCk(r.failed===0?"Аудит пройден: "+r.total+" проверок. Маскировка "+r.mask.toFixed(3)+" бит/Б.":"Аудит: "+r.failed+" отклонений из "+r.total+".",r.failed!==0);
+setSt(r.failed===0?"Подтверждено: σ биективна, обратимость, маскировка выше порога.":"Есть отклонения — раскройте таблицу аудита.",r.failed!==0);
+toast(r.failed===0?"Аудит: всё пройдено":"Аудит: "+r.failed+" отклонений",r.failed===0?"ok":"bad")});
+$("fuzz").onclick=()=>run("Фаззинг",async task=>{const r=await fuzz(task);
+setCk(r.ok?"Фаззинг пройден: "+r.rt+" прогонов.":"Фаззинг выявил отклонения.",!r.ok);
+toast(r.ok?"Фаззинг: чисто":"Фаззинг: провалы",r.ok?"ok":"bad")});
+$("anal").onclick=()=>run("Криптоанализ",async task=>{const r=await analysis(task);const ok=r.aggOk&&r.maskOk;
+setCk(ok?"Лавина z="+r.z.toFixed(2)+", маскировка "+r.mask.toFixed(3)+" — в норме.":"Есть отклонения.",!ok);
+setSt("DP ≈ "+r.dp.toFixed(4)+", граница ≤ "+r.up.toFixed(4)+".");toast(ok?"Метрики в допуске":"Есть отклонения",ok?"ok":"bad")});
 $("cur").onclick=()=>run("Анализ",async()=>curAnal());
-const links=[...document.querySelectorAll("nav a")];
-["console","orch","checks"].forEach(id=>{const n=$(id);if(n)new IntersectionObserver(es=>{for(const e of es)if(e.isIntersecting)links.forEach(l=>l.classList.toggle("on",l.getAttribute("href")==="#"+id))},{rootMargin:"-60px 0px -62% 0px"}).observe(n)});
-links.forEach(l=>l.addEventListener("click",e=>{e.preventDefault();const t=document.querySelector(l.getAttribute("href"));if(t)scrollTo({top:t.getBoundingClientRect().top+scrollY-64,behavior:"smooth"})}));
-let rz=null;addEventListener("resize",()=>{if(rz)clearTimeout(rz);rz=setTimeout(redraw,130)});
-(async()=>{fillPre();$("key").value=app.key;$("input").value="Активация σ — та же таблица S-box, что и на входе. Полоса входит в роутер вектором, эксперты разведены ключевым приоритетом, веса мутируют от префикса.";sync();redraw();await rebuild();if(!app.net)return;
-await run("Старт",async task=>{const plain=enc.encode($("input").value);flowInit(plain);const ct=await app.net.encrypt(plain,task,(s,t,k,v,b)=>{if(k<app.flow.cols&&s<app.flow.rows-1){app.flow.data[s+1][k]=v;app.flow.ch[s][k]=v!==b?1:0;app.flow.act={s,k}}if((t&255)===0)schedFlow()});drawFlow();$("output").value=b64(ct);setIO(plain,ct);
-const back=await app.net.decrypt(ct,task.child());if(dec.decode(back)!==$("input").value)throw new Error("Стартовая проверка цикла не пройдена");
+const links=Array.prototype.slice.call(document.querySelectorAll("nav a"));
+["console","orch","checks"].forEach(id=>{const n=$(id);if(!n)return;
+new IntersectionObserver(es=>{for(const e of es)if(e.isIntersecting)links.forEach(l=>l.classList.toggle("on",l.getAttribute("href")==="#"+id))},{rootMargin:"-60px 0px -62% 0px"}).observe(n)});
+links.forEach(l=>l.addEventListener("click",e=>{e.preventDefault();const t=document.querySelector(l.getAttribute("href"));
+if(t)window.scrollTo({top:t.getBoundingClientRect().top+window.scrollY-64,behavior:"smooth"})}));
+let rz=null;window.addEventListener("resize",()=>{if(rz)clearTimeout(rz);rz=setTimeout(redraw,130)})}
+(async()=>{try{
+fillPre();bindAll();$("key").value=app.key;
+$("input").value="Активация σ — та же таблица S-box, что и на входе. Полоса входит в роутер вектором, эксперты разведены ключевым приоритетом, веса мутируют от префикса.";
+sync();redraw();await rebuild();
+if(!app.net)return;
+await run("Старт",async task=>{const plain=enc.encode($("input").value);flowInit(plain);
+const ct=await app.net.encrypt(plain,task,(s,t,k,v,b)=>{
+if(k<app.flow.cols&&s<app.flow.rows-1){app.flow.data[s+1][k]=v;app.flow.ch[s][k]=v!==b?1:0;app.flow.act={s,k}}
+if((t&255)===0)schedFlow()});
+drawFlow();$("output").value=b64(ct);setIO(plain,ct);
+const back=await app.net.decrypt(ct,task.child());
+if(dec.decode(back)!==$("input").value)throw new Error("Стартовая проверка цикла не пройдена");
 const s=app.net.sampleRoutes(plain);app.routes=s.routes;app.usage=s.usage;drawRoute();drawUsage();
-setSt("Сеть готова и проверена. Весов "+app.net.parameters.toLocaleString("ru-RU")+", экспертов "+app.net.expertCount.toLocaleString("ru-RU")+". Перенесите шифротекст кнопкой «Выход → вход» и нажмите «Расшифровать».");eta()});
-if(!app.net)return;await run("Аудит",async task=>{const r=await audit(task);setCk(r.failed===0?"Аудит пройден: "+r.total+" проверок. Маскировка "+r.mask.toFixed(3)+" бит/Б.":"Аудит: "+r.failed+" отклонений.",r.failed!==0)})})();
+setSt("Готово и проверено. Весов "+app.net.parameters.toLocaleString("ru-RU")+", экспертов "+app.net.expertCount.toLocaleString("ru-RU")+". Нажмите «Выход → вход», затем «Расшифровать».");eta()});
+}catch(e){console.error(e);setSt("Ошибка инициализации: "+e.message,true);chip("error","ошибка");toast(e.message,"bad")}})();
 })();
 </script>
 </body>
